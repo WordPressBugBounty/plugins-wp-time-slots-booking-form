@@ -121,7 +121,7 @@ echo $this->clean_sanitize($this->filter_list( array(
 
 <div id="cpabc_printable_contents">
 
-<p>The purpose of this page is to <strong>display the bookings/schedule in a calendar view</strong>. You can add bookings from the public booking form or <a href="?page=<?php echo esc_attr($this->menu_parameter); ?>&cal=<?php echo esc_attr($this->item); ?>&addbk=1">add bookings from the dashboard</a> and the bookings will appear in this calendar.<br />For CSV export, print and filter options switch to the "<strong>List View</strong>" with the button above this text. </p>
+<p><?php esc_html_e("The purpose of this page is to",'wp-time-slots-booking-form'); ?> <strong><?php esc_html_e("display the bookings/schedule in a calendar view",'wp-time-slots-booking-form'); ?></strong>. <?php esc_html_e("You can add bookings from the public booking form or",'wp-time-slots-booking-form'); ?> <a href="?page=<?php echo esc_attr($this->menu_parameter); ?>&cal=<?php echo esc_attr($this->item); ?>&addbk=1"><?php esc_html_e("add bookings from the dashboard",'wp-time-slots-booking-form'); ?></a> <?php esc_html_e("and the bookings will appear in this calendar.",'wp-time-slots-booking-form'); ?><br /><?php esc_html_e("For CSV export, print and filter options switch to the",'wp-time-slots-booking-form'); ?> "<strong><?php esc_html_e("List View",'wp-time-slots-booking-form'); ?></strong>" <?php esc_html_e("with the button above this text.",'wp-time-slots-booking-form'); ?> </p>
 <div class="clearer"></div>
          
             <script type="text/javascript">

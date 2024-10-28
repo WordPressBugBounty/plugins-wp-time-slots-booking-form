@@ -163,7 +163,7 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_list' );
 	<div class="ahb-section">
 		<label><?php _e('New Calendar','wp-time-slots-booking-form'); ?></label>&nbsp;&nbsp;&nbsp;
 		<input type="text" name="cp_itemname" id="cp_itemname" placeholder=" - <?php esc_attr(_e('Calendar Name','wp-time-slots-booking-form')); ?> - " class="ahb-new-calendar" />
-		<input type="button" class="button-primary" value="Add New" onclick="cp_addItem();" />
+		<input type="button" class="button-primary" value="<?php esc_html_e("Add New",'wp-time-slots-booking-form'); ?>" onclick="cp_addItem();" />
 	</div>
 </div>
 <?php } ?>

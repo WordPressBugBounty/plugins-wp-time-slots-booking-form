@@ -348,14 +348,14 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
             <th scope="row"><?php _e('Date Format','wp-time-slots-booking-form'); ?></th>
             <td><?php $v = $this->get_option('date_format','mm/dd/yy'); ?>
          	   <select name="date_format">
-    		   <option <?php if ($v == '' || $v == 'mm/dd/yy') echo 'selected'; ?> value="mm/dd/yy">Default - mm/dd/yyyy</option>
+    		   <option <?php if ($v == '' || $v == 'mm/dd/yy') echo 'selected'; ?> value="mm/dd/yy"><?php esc_html_e("Default",'wp-time-slots-booking-form'); ?> - mm/dd/yyyy</option>
                <option <?php if ($v == 'dd/mm/yy') echo 'selected'; ?> value="dd/mm/yy">dd/mm/yyyy</option>
                <option <?php if ($v == 'mm.dd.yy') echo 'selected'; ?> value="mm.dd.yy">mm.dd.yyyy</option>
                <option <?php if ($v == 'dd.mm.yy') echo 'selected'; ?> value="dd.mm.yy">dd.mm.yyyy</option>
     		   <option <?php if ($v == 'yy-mm-dd') echo 'selected'; ?> value="yy-mm-dd">ISO 8601 - yyyy-mm-dd</option>
-    		   <option <?php if ($v == 'd M, y') echo 'selected'; ?> value="d M, y">Short - d M, yy</option>
-    		   <option <?php if ($v == 'd MM, y') echo 'selected'; ?> value="d MM, y">Medium - d MM, yy</option>
-    		   <option <?php if ($v == 'DD, d MM, yy') echo 'selected'; ?> value="DD, d MM, yy">Full - DD, d MM, yyyy</option>
+    		   <option <?php if ($v == 'd M, y') echo 'selected'; ?> value="d M, y"><?php esc_html_e("Short",'wp-time-slots-booking-form'); ?> - d M, yy</option>
+    		   <option <?php if ($v == 'd MM, y') echo 'selected'; ?> value="d MM, y"><?php esc_html_e("Medium",'wp-time-slots-booking-form'); ?> - d MM, yy</option>
+    		   <option <?php if ($v == 'DD, d MM, yy') echo 'selected'; ?> value="DD, d MM, yy"><?php esc_html_e("Full",'wp-time-slots-booking-form'); ?> - DD, d MM, yyyy</option>
         	   </select>
             </td>
             </tr>
@@ -513,10 +513,10 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
                  <option value="customer"<?php if ($option == 'customer') echo ' selected'; ?>><?php _e('From the email address indicated by the custome','wp-time-slots-booking-form'); ?>r</option>
                 </select><br />
                 <span style="font-size:10px;color:#666666">
-                * If you select "from fixed..." the customer email address will appear in the "to" address when you hit "reply", this is the recommended setting to avoid mail server restrictions. 
+                * <?php esc_html_e("If you select \"from fixed...\" the customer email address will appear in the \"to\" address when you hit \"reply\", this is the recommended setting to avoid mail server restrictions. ",'wp-time-slots-booking-form'); ?>
                 <br />
-                * If you select "from customer email" then the customer email will appear also visually when you receive the email, but this isn't supported by all hosting services, so this
-                option isn't recommended in most cases.
+                * <?php esc_html_e("If you select \"from customer email\" then the customer email will appear also visually when you receive the email, but this isn't supported by all hosting services, so this
+                option isn't recommended in most cases.",'wp-time-slots-booking-form'); ?>
                 </span>
             </td>
             </tr>       
@@ -533,9 +533,9 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
                  <option value="customer"<?php if ($option == 'customer') echo ' selected'; ?>><?php _e('To the email address selected in a form field (ex: captcha image enabled is recommended in this case)','wp-time-slots-booking-form'); ?></option>
                 </select><br />
                 <span style="font-size:10px;color:#666666">
-                * <?php _e('If you select "To fixed..." enter the destination emails in the next field. ','wp-time-slots-booking-form'); ?>
+                * <?php esc_html_e('If you select "To fixed..." enter the destination emails in the next field. ','wp-time-slots-booking-form'); ?>
                 <br />
-                * <?php _e('If you select "To email ...in form field" then add a field like a drop-down, radio-button or checkbox that contains the email address in the field value (not needed in the field text but in the internal value).','wp-time-slots-booking-form'); ?>
+                * <?php esc_html_e('If you select "To email ...in form field" then add a field like a drop-down, radio-button or checkbox that contains the email address in the field value (not needed in the field text but in the internal value).','wp-time-slots-booking-form'); ?>
                 </span>
             </td>
             </tr>        
@@ -775,9 +775,9 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
         else
         {
             ?>
-            <p>You can optionally <a target="_blank" href="?page=cp_timeslotsbooking_addons">activate add ons in the add ons section</a>.</p> 
-            <p>The add ons can be enabled to add new features.</p> 
-            <p>If you don't want to enable add ons now then <strong>continue saving these settings and publishing the booking form</strong>.</p> 
+            <p><?php esc_html_e("You can optionally",'wp-time-slots-booking-form'); ?> <a target="_blank" href="?page=cp_timeslotsbooking_addons"><?php esc_html_e("activate add ons in the add ons section",'wp-time-slots-booking-form'); ?></a>.</p> 
+            <p><?php esc_html_e("The add ons can be enabled to add new features.",'wp-time-slots-booking-form'); ?></p> 
+            <p><?php esc_html_e("If you don't want to enable add ons now then",'wp-time-slots-booking-form'); ?> <strong><?php esc_html_e("continue saving these settings and publishing the booking form",'wp-time-slots-booking-form'); ?></strong>.</p> 
             <?php
         }
      ?>

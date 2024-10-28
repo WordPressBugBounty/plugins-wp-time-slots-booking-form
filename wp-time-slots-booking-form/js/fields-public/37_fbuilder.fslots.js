@@ -53,7 +53,7 @@ $.extend(
 		arr:new Array(),
 		arrTotal:new Array(),
 		militaryTime:1,
-		percent:0,
+		percent:[],
 		notShowBookedDate:true,
 		formattime:function(t,mt)//mt=2 for database 09:00
 		{
@@ -338,7 +338,7 @@ $.extend(
 			        	      j++;
 			        }			  		        	
 			        me.getExtrasVisible($( '#field' + me.form_identifier + '-' + me.index ).parents( "form" ));
-			        var totalCost = ((me.extras+total)*(1+me.percent/100)).toFixed(2);
+			        var totalCost = me.getTotalCost(me.extras+total);
 			        if (str1!="")
 			        {
 			            var strq = "";
@@ -825,6 +825,13 @@ $.extend(
 		            if (items[i].ftype=="fslots" && ($("#"+items[i].name).parent().is(":visible") || $("#"+items[i].name).parents(".fields").hasClass("cp_active")))
 		                me.getExtras(items[i],f)
 		    } catch (e) {}        
+		}, 		
+		getTotalCost : function(t)
+		{
+		    var totalCost = ((t).toFixed(2))*1;
+		    for (var i = 0; i < me.percent.length; i++)
+		        totalCost += (((t)*(me.percent[i]/100)).toFixed(2))*1;
+		    return totalCost.toFixed(2);            
 		},    
 		getExtras:function(me,f)
 		{
@@ -836,12 +843,12 @@ $.extend(
 		    		if (($(this).parents(".fields").hasClass("cp_active") || $(this).is(":visible") || ($(this).prop("tagName")=="OPTION" && $(this).parent().is(":visible"))) &&  $.isNumeric(this.value)) v += this.value*1;
 		    	});
 		    }
-		    me.percent = 0;
+		    me.percent = [];
 		    var e = f.find(".tsb_service_percent").find(':checked:not(.ignore)');
 		    if( e.length )
 		    {
 		    	e.each( function(){
-		    		if (($(this).parents(".fields").hasClass("cp_active") || $(this).is(":visible") || ($(this).prop("tagName")=="OPTION" && $(this).parent().is(":visible"))) &&  $.isNumeric(this.value)) me.percent += this.value*1;
+		    		if (($(this).parents(".fields").hasClass("cp_active") || $(this).is(":visible") || ($(this).prop("tagName")=="OPTION" && $(this).parent().is(":visible"))) &&  $.isNumeric(this.value)) me.percent[me.percent.length] = this.value*1;
 		    	});
 		    }
 		    e = f.find(".tsb_service_per_slot").find(':checked:not(.ignore)');
@@ -864,7 +871,7 @@ $.extend(
 		    //f.find('#'+me.name+'_services').val(v);
 		    me.extras = v;
 		    var total = $( '#field' + me.form_identifier + '-' + me.index + ' #tcost'+me.name ).val()*1;
-		    var totalCost = ((me.extras+total)*(1+me.percent/100)).toFixed(2);
+		    var totalCost = me.getTotalCost(me.extras+total);
 		    $( '#field' + me.form_identifier + '-' + me.index + ' #totalcost'+me.name ).val(totalCost);
 		    $( '#field' + me.form_identifier + '-' + me.index ).find(".totalCost .n").html(" " +me.showTotalCostFormat.replace("{0}",totalCost));
 		    $( '#field' + me.form_identifier + '-' + me.index + ' #'+me.name ).change();

@@ -156,8 +156,8 @@ a.addonshelp:hover { text-decoration: none; color: #0000ff; }
 </div>
 
 
-<input type="button" value="Activate/Deactivate Marked Add Ons" onclick="cp_activateAddons();" class="button button-primary ahb-first-button" />
-<input type="button" value="Get The Full List of Add Ons" onclick="document.location='?page=cp_timeslotsbooking_upgrade';"class="button" />
+<input type="button" value="<?php esc_html_e("Activate/Deactivate Marked Add Ons",'wp-time-slots-booking-form'); ?>" onclick="cp_activateAddons();" class="button button-primary ahb-first-button" />
+<input type="button" value="<?php esc_html_e("Get The Full List of Add Ons",'wp-time-slots-booking-form'); ?>" onclick="document.location='?page=cp_timeslotsbooking_upgrade';"class="button" />
 <div class="clear"></div>
 
 <!-- Add Ons -->
@@ -195,7 +195,7 @@ foreach ($newlist as $category => $cptslotsb_addons_objs_list)
 
 
 <div class="ahb-addons-container">
-   <?php if ($is_commercial) { ?><div class="ribbon"><span>Upgrade</span></div><?php } ?>
+   <?php if ($is_commercial) { ?><div class="ribbon"><span><?php esc_html_e("Upgrade",'wp-time-slots-booking-form'); ?></span></div><?php } ?>
 	<h2 class="category<?php if ($is_commercial) echo 'commercial'; ?>"><?php echo esc_html($category); ?></h2>
 	<div class="ahb-addons-group">
 
@@ -226,7 +226,7 @@ foreach ($newlist as $category => $cptslotsb_addons_objs_list)
 
 <?php } ?>
 
-<div class="ahb-to-top" style="margin-bottom:10px;"><a href="#top">&uarr; Top</a></div>
+<div class="ahb-to-top" style="margin-bottom:10px;"><a href="#top">&uarr; <?php esc_html_e("Top",'wp-time-slots-booking-form'); ?></a></div>
 
 <input type="button" value="<?php _e('Activate/Deactivate Marked Add Ons','wp-time-slots-booking-form'); ?>" onclick="cp_activateAddons();" class="button button-primary ahb-first-button" />
 <input type="button" value="<?php _e('Get The Full List of Add Ons','wp-time-slots-booking-form'); ?>" onclick="document.location='?page=cp_timeslotsbooking_upgrade';"class="button" />

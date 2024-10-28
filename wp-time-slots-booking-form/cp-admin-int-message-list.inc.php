@@ -262,7 +262,7 @@ echo paginate_links(  array(
 <div style="clear:both"></div>
 <div class="ahb-section-container" style="background-color:#ffcccc;">   
 	<div class="ahb-section">
-      <input style="margin-right:40px;" class="button" type="button" name="pbutton" value="<?php _e('Delete marked items','appointment-hour-booking'); ?>" onclick="cp_deletemarked();" /> 
+      <input style="margin-right:40px;" class="button" type="button" name="pbutton" value="<?php _e('Delete marked items','wp-time-slots-booking-form'); ?>" onclick="cp_deletemarked();" /> 
       <input class="button" type="button" name="pbutton" value="<?php _e('Delete All Bookings','wp-time-slots-booking-form'); ?>" onclick="cp_deleteall();" />
       <div style="clear:both"></div>
     </div>  
