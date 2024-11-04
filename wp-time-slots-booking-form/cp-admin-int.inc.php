@@ -60,7 +60,7 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
    
 </script>
 <div class="wrap">
-<h1><?php _e('Edit','wp-time-slots-booking-form'); ?> - <?php echo esc_html($this->get_option('form_name','Calendar')); ?></h1>
+<h1><?php esc_html_e('Edit','wp-time-slots-booking-form'); ?> - <?php echo esc_html($this->get_option('form_name','Calendar')); ?></h1>
 
 
 <form method="post" action="" name="cpformconf"> 
@@ -70,8 +70,8 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
 <input type="hidden" name="templates" id="templates" value="<?php echo esc_attr( json_encode( $this->available_templates() ) ); ?>" />
    
 <div id="topadminsection"  class="ahb-buttons-container">
-	<input type="submit" class="button button-primary ahb-save-btn" name="savereturn" value="<?php _e('Save Changes and Return','wp-time-slots-booking-form'); ?>"  />
-	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php _e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
+	<input type="submit" class="button button-primary ahb-save-btn" name="savereturn" value="<?php esc_html_e('Save Changes and Return','wp-time-slots-booking-form'); ?>"  />
+	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php esc_html_e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
 	<div class="clear"></div>
 </div>  
    
@@ -79,27 +79,27 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
 	<div class="ahb-breadcrumb">
 		<div class="ahb-step ahb-step-active" data-step="1">
 			<i>1</i>
-			<label><?php _e('Editor','wp-time-slots-booking-form'); ?></label>
+			<label><?php esc_html_e('Editor','wp-time-slots-booking-form'); ?></label>
 		</div>
 		<div class="ahb-step" data-step="2">
 			<i>2</i>
-			<label><?php _e('General Settings','wp-time-slots-booking-form'); ?></label>
+			<label><?php esc_html_e('General Settings','wp-time-slots-booking-form'); ?></label>
 		</div>
 		<div class="ahb-step" data-step="3">
 			<i>3</i>
-			<label><?php _e('Notification Emails','wp-time-slots-booking-form'); ?></label>
+			<label><?php esc_html_e('Notification Emails','wp-time-slots-booking-form'); ?></label>
 		</div>
 		<div class="ahb-step" data-step="4">
 			<i>4</i>
-			<label><?php _e('Antispam','wp-time-slots-booking-form'); ?></label>
+			<label><?php esc_html_e('Antispam','wp-time-slots-booking-form'); ?></label>
 		</div>
 		<div class="ahb-step" data-step="5">
 			<i>5</i>
-			<label><?php _e('Reports','wp-time-slots-booking-form'); ?></label>
+			<label><?php esc_html_e('Reports','wp-time-slots-booking-form'); ?></label>
 		</div>
         <div class="ahb-step" data-step="6">
 			<i>6</i>
-			<label><?php _e('Add Ons','wp-time-slots-booking-form'); ?></label>
+			<label><?php esc_html_e('Add Ons','wp-time-slots-booking-form'); ?></label>
 		</div>
 	</div>
 
@@ -176,9 +176,9 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
              <div class="column width50">
                  <div id="tabs">
          			<ul>
-         				<li><a href="#tabs-1"><?php _e('Add a Field','wp-time-slots-booking-form'); ?></a></li>
-         				<li><a href="#tabs-2"><?php _e('Field Settings','wp-time-slots-booking-form'); ?></a></li>
-         				<li><a href="#tabs-3"><?php _e('Form Settings','wp-time-slots-booking-form'); ?></a></li>
+         				<li><a href="#tabs-1"><?php esc_html_e('Add a Field','wp-time-slots-booking-form'); ?></a></li>
+         				<li><a href="#tabs-2"><?php esc_html_e('Field Settings','wp-time-slots-booking-form'); ?></a></li>
+         				<li><a href="#tabs-3"><?php esc_html_e('Form Settings','wp-time-slots-booking-form'); ?></a></li>
          			</ul>
          			<div id="tabs-1">
          			    
@@ -216,28 +216,28 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
       
       <!-- TEXT DEFINITIONS -->
       <hr style="margin-top:20px;" />
-	  <h2><?php _e('Labels and Texts','wp-time-slots-booking-form'); ?></h2>
+	  <h2><?php esc_html_e('Labels and Texts','wp-time-slots-booking-form'); ?></h2>
 	  <hr />
       
-      <h3 class='hndle' style="padding:5px;"><span><?php _e('Button Labels','wp-time-slots-booking-form'); ?></span></h3>
+      <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Button Labels','wp-time-slots-booking-form'); ?></span></h3>
       <div class="inside">   
          <table class="form-table">    
             <tr valign="top">
             <td scope="row">
-             <strong><?php _e('Submit button label (text)','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('Submit button label (text)','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_submitbtn" size="40" value="<?php $label = ($this->get_option('vs_text_submitbtn', 'Submit')); echo esc_attr($label==''?'Submit':$label); ?>" />
             </td>
             <td>
-              <strong><?php _e('Page {0} of {0} (text)','wp-time-slots-booking-form'); ?>:</strong><br />
+              <strong><?php esc_html_e('Page {0} of {0} (text)','wp-time-slots-booking-form'); ?>:</strong><br />
               <input type="text" name="vs_text_pageof" size="40" value="<?php $label = ($this->get_option('vs_text_pageof', 'Page {0} of {0}')); echo esc_attr($label==''?'Page {0} of {0}':$label); ?>" />
             </td>
             </tr>
             <tr valign="top">
             <td scope="row">
-             <strong><?php _e('Previous page button label (text)','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('Previous page button label (text)','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_previousbtn" size="40" value="<?php $label = ($this->get_option('vs_text_previousbtn', 'Previous')); echo esc_attr($label==''?'Previous':$label); ?>" /></td>
             <td scope="row">
-             <strong><?php _e('Next page button label (text)','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('Next page button label (text)','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_nextbtn" size="40" value="<?php $label = ($this->get_option('vs_text_nextbtn', 'Next')); echo esc_attr($label==''?'Next':$label); ?>" /></td>
             </tr>          
             <tr valign="top">
@@ -248,53 +248,53 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
       
       <hr  size="1" />
         
-      <h3 class='hndle' style="padding:5px;"><span><?php _e('Error messages for validation rules','wp-time-slots-booking-form'); ?></span></h3>
+      <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Error messages for validation rules','wp-time-slots-booking-form'); ?></span></h3>
       <div class="inside">
          <table class="form-table">
             <tr valign="top">
             <td scope="row">
-             <strong><?php _e('"is required" text','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('"is required" text','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_is_required" size="40" value="<?php echo esc_attr($this->get_option('vs_text_is_required', CP_TSLOTSBOOK_DEFAULT_vs_text_is_required)); ?>" />
             </td>
             <td scope="row">
-             <strong><?php _e('"is email" text','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('"is email" text','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_is_email" size="40" value="<?php echo esc_attr($this->get_option('vs_text_is_email', CP_TSLOTSBOOK_DEFAULT_vs_text_is_email)); ?>" />
             </td>
             </tr>       
             <tr valign="top">
             <td scope="row">
-             <strong><?php _e('"is valid captcha" text','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('"is valid captcha" text','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="cv_text_enter_valid_captcha" size="40" value="<?php echo esc_attr($this->get_option('cv_text_enter_valid_captcha', CP_TSLOTSBOOK_DEFAULT_cv_text_enter_valid_captcha)); ?>" />
             </td>
-            <td scope="row"><strong><?php _e('"is valid date (mm/dd/yyyy)" text','wp-time-slots-booking-form'); ?>:</strong><br /><input type="text" name="vs_text_datemmddyyyy" size="40" value="<?php echo esc_attr($this->get_option('vs_text_datemmddyyyy', CP_TSLOTSBOOK_DEFAULT_vs_text_datemmddyyyy)); ?>" /></td>
+            <td scope="row"><strong><?php esc_html_e('"is valid date (mm/dd/yyyy)" text','wp-time-slots-booking-form'); ?>:</strong><br /><input type="text" name="vs_text_datemmddyyyy" size="40" value="<?php echo esc_attr($this->get_option('vs_text_datemmddyyyy', CP_TSLOTSBOOK_DEFAULT_vs_text_datemmddyyyy)); ?>" /></td>
             </tr>
             <tr valign="top">
             <td scope="row">
-             <strong><?php _e('"is valid date (dd/mm/yyyy)" text','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('"is valid date (dd/mm/yyyy)" text','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_dateddmmyyyy" size="40" value="<?php echo esc_attr($this->get_option('vs_text_dateddmmyyyy', CP_TSLOTSBOOK_DEFAULT_vs_text_dateddmmyyyy)); ?>" />
             </td>
             <td scope="row">
-             <strong><?php _e('"is number" text','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('"is number" text','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_number" size="40" value="<?php echo esc_attr($this->get_option('vs_text_number', CP_TSLOTSBOOK_DEFAULT_vs_text_number)); ?>" />
             </td>
             </tr>
             <tr valign="top">
             <td scope="row">
-             <strong><?php _e('"only digits" text','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('"only digits" text','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_digits" size="40" value="<?php echo esc_attr($this->get_option('vs_text_digits', CP_TSLOTSBOOK_DEFAULT_vs_text_digits)); ?>" />
             </td>
             <td scope="row">
-             <strong><?php _e('"under maximum" text','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('"under maximum" text','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_max" size="40" value="<?php echo esc_attr($this->get_option('vs_text_max', CP_TSLOTSBOOK_DEFAULT_vs_text_max)); ?>" />
             </td>
             </tr>
             <tr valign="top">
             <td scope="row">
-             <strong><?php _e('"over minimum" text','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('"over minimum" text','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_min" size="40" value="<?php echo esc_attr($this->get_option('vs_text_min', CP_TSLOTSBOOK_DEFAULT_vs_text_min)); ?>" />
             </td>
             <td scope="row">
-             <strong><?php _e('"Max appointments allowed messsage" text','wp-time-slots-booking-form'); ?>:</strong><br />
+             <strong><?php esc_html_e('"Max appointments allowed messsage" text','wp-time-slots-booking-form'); ?>:</strong><br />
              <input type="text" name="vs_text_maxapp" size="40" value="<?php echo esc_attr($this->get_option('vs_text_maxapp', CP_TSLOTSBOOK_DEFAULT_vs_text_maxapp)); ?>" />
             </td>    
             </tr>            
@@ -303,9 +303,9 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
       </div>    
         <hr>      
 		<div class="ahb-buttons-container">
-			<input type="button" value="<?php _e('Next Step - General Settings >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(2);" />
-			<input type="submit" name="savepublish" value="<?php _e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
-			<input type="submit" name="savereturn" value="<?php _e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="button" value="<?php esc_html_e('Next Step - General Settings >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(2);" />
+			<input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
 			<div class="clear"></div>
 		</div>           
      </div> 
@@ -316,36 +316,36 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
       
       <div class="inside">
       
-         <h3 class='hndle' style="padding-top:5px;padding-bottom:5px;"><span><?php _e('Confirmation / Thank you page','wp-time-slots-booking-form'); ?></span></h3>
+         <h3 class='hndle' style="padding-top:5px;padding-bottom:5px;"><span><?php esc_html_e('Confirmation / Thank you page','wp-time-slots-booking-form'); ?></span></h3>
          <table class="form-table">
             <tr valign="top">
-            <th scope="row"><?php _e('Confirmation / Thank you page','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Confirmation / Thank you page','wp-time-slots-booking-form'); ?></th>
             <td><input type="text" name="fp_return_page" size="70" value="<?php echo esc_attr($this->get_option('fp_return_page', CP_TSLOTSBOOK_DEFAULT_fp_return_page)); ?>" />
-            <br /><em><?php _e('Address / URL of the page where the user will be redirected after submiting the booking form','wp-time-slots-booking-form'); ?></em></td>
+            <br /><em><?php esc_html_e('Address / URL of the page where the user will be redirected after submiting the booking form','wp-time-slots-booking-form'); ?></em></td>
             </tr>
           <table> 
          <hr />
          
-         <h3 class='hndle' style="padding-top:5px;padding-bottom:5px;"><span><?php _e('Booking Status','wp-time-slots-booking-form'); ?></span></h3>
+         <h3 class='hndle' style="padding-top:5px;padding-bottom:5px;"><span><?php esc_html_e('Booking Status','wp-time-slots-booking-form'); ?></span></h3>
          <table class="form-table">
             <tr valign="top">
-            <th scope="row"><?php _e('Default status of new bookings','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Default status of new bookings','wp-time-slots-booking-form'); ?></th>
             <td><?php $this->render_status_box('defaultstatus',$this->get_option('defaultstatus', ''));  ?>
-            <br /><em><?php _e('Only "Approved" items are taken in account for the availability verification.','wp-time-slots-booking-form'); ?></em></td>
+            <br /><em><?php esc_html_e('Only "Approved" items are taken in account for the availability verification.','wp-time-slots-booking-form'); ?></em></td>
             </tr>
             <tr valign="top">
-            <th scope="row"><?php _e('Default status of paid bookings','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Default status of paid bookings','wp-time-slots-booking-form'); ?></th>
             <td><?php $this->render_status_box('defaultpaidstatus',$this->get_option('defaultpaidstatus', ''));  ?>
-            <br /><em><?php _e('If a payment add-on is enabled the booking will be changed to this status after the payment.','wp-time-slots-booking-form'); ?></em></td>
+            <br /><em><?php esc_html_e('If a payment add-on is enabled the booking will be changed to this status after the payment.','wp-time-slots-booking-form'); ?></em></td>
             </tr>            
           <table> 
          <hr />       
       
-         <h3 class='hndle' style="padding:5px;"><span><?php _e('Global Calendar Settings','wp-time-slots-booking-form'); ?></span></h3>
+         <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Global Calendar Settings','wp-time-slots-booking-form'); ?></span></h3>
        
          <table class="form-table">
             <tr valign="top">
-            <th scope="row"><?php _e('Date Format','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Date Format','wp-time-slots-booking-form'); ?></th>
             <td><?php $v = $this->get_option('date_format','mm/dd/yy'); ?>
          	   <select name="date_format">
     		   <option <?php if ($v == '' || $v == 'mm/dd/yy') echo 'selected'; ?> value="mm/dd/yy"><?php esc_html_e("Default",'wp-time-slots-booking-form'); ?> - mm/dd/yyyy</option>
@@ -360,7 +360,7 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
             </td>
             </tr>
             <tr valign="top">
-            <th scope="row"><?php _e('Calendar Language','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Calendar Language','wp-time-slots-booking-form'); ?></th>
             <td><?php $v = $this->get_option('calendar_language',''); ?>            
                  <select name="calendar_language" id="calendar_language">
     <option <?php if ($v == '') echo 'selected'; ?> value=""> - auto-detect - </option>
@@ -443,27 +443,27 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
          </table>   
       </div>
       <hr />
-      <h3 class='hndle' style="padding:5px;"><span><?php _e('Payment Integration Settings','wp-time-slots-booking-form'); ?></span></h3>
+      <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Payment Integration Settings','wp-time-slots-booking-form'); ?></span></h3>
       <div class="inside">
          <table class="form-table">
             <tr valign="top">
-            <th scope="row"><?php _e('Product name at payment page','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Product name at payment page','wp-time-slots-booking-form'); ?></th>
             <td><input type="text" name="product_name" size="40" value="<?php echo esc_attr($this->get_option('product_name', 'Booking')); ?>" /></td>
             </tr>
             <tr valign="top">
-            <th scope="row"><?php _e('Label of "Pay Later" option (if enabled)','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Label of "Pay Later" option (if enabled)','wp-time-slots-booking-form'); ?></th>
             <td><input type="text" name="pay_later_label" size="40" value="<?php echo esc_attr($this->get_option('pay_later_label', 'Pay later')); ?>" /></td>
             </tr>        
          </table>   
-         <em>* <?php _e('Note: To enable a payment method enable first the related addon.','wp-time-slots-booking-form'); ?></em>
+         <em>* <?php esc_html_e('Note: To enable a payment method enable first the related addon.','wp-time-slots-booking-form'); ?></em>
       </div>
       <hr />
       <div <?php if (!$current_user_can_admin) echo 'style="display:none"'; ?>>
-      <h3 class='hndle' style="padding:5px;"><span><?php _e('Users with access to the messages list','wp-time-slots-booking-form'); ?></span></h3>
+      <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Users with access to the messages list','wp-time-slots-booking-form'); ?></span></h3>
       <div class="inside">
          <table class="form-table">    
             <tr valign="top">
-            <th scope="row"><?php _e('Select users with access (CTRL+click for multiple selection)','wp-time-slots-booking-form'); ?>:</th>
+            <th scope="row"><?php esc_html_e('Select users with access (CTRL+click for multiple selection)','wp-time-slots-booking-form'); ?>:</th>
             <td>
               <?php 
                  $users = $wpdb->get_results( "SELECT user_login,ID FROM ".$wpdb->users." ORDER BY ID DESC LIMIT 0,500" );                                                                     
@@ -478,12 +478,12 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
             </td>
            </tr>
            <tr valign="top">
-            <th scope="row"><?php _e('Allow selected users access also to the calendar settings?','wp-time-slots-booking-form'); ?>:</th>
+            <th scope="row"><?php esc_html_e('Allow selected users access also to the calendar settings?','wp-time-slots-booking-form'); ?>:</th>
             <td>
               <?php $option = $this->get_option('cp_user_access_settings', ''); ?>
               <select name="cp_user_access_settings">
-               <option value="true"<?php if ($option == 'true') echo ' selected'; ?>><?php _e('Yes','wp-time-slots-booking-form'); ?></option>
-               <option value=""<?php if ($option == '') echo ' selected'; ?>><?php _e('No','wp-time-slots-booking-form'); ?></option>
+               <option value="true"<?php if ($option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','wp-time-slots-booking-form'); ?></option>
+               <option value=""<?php if ($option == '') echo ' selected'; ?>><?php esc_html_e('No','wp-time-slots-booking-form'); ?></option>
               </select>
             </td>
            </tr>           
@@ -492,25 +492,25 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
       </div>
       <hr>      
 		<div class="ahb-buttons-container">
-			<input type="button" value="<?php _e('Next Step - Notification Emails >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(3);" />
-			<input type="submit" name="savepublish" value="<?php _e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
-			<input type="submit" name="savereturn" value="<?php _e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="button" value="<?php esc_html_e('Next Step - Notification Emails >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(3);" />
+			<input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
 			<div class="clear"></div>
 		</div>      
      </div>
        
      <div class="ahb-adintsection" data-step="3">
-      <h3 class='hndle' style="padding:5px;"><span><?php _e('Form Processing','wp-time-slots-booking-form'); ?> / <?php _e('Email Settings','wp-time-slots-booking-form'); ?></span></h3>
+      <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Form Processing','wp-time-slots-booking-form'); ?> / <?php esc_html_e('Email Settings','wp-time-slots-booking-form'); ?></span></h3>
       <div class="inside">
          <table class="form-table">    
          
             <tr valign="top">
-            <th scope="row"><?php _e('Send email "From"','wp-time-slots-booking-form'); ?> </th>
+            <th scope="row"><?php esc_html_e('Send email "From"','wp-time-slots-booking-form'); ?> </th>
             <td>
               <?php $option = $this->get_option('fp_emailfrommethod', "fixed"); ?>
                <select name="fp_emailfrommethod">
-                 <option value="fixed"<?php if ($option == 'fixed') echo ' selected'; ?>><?php _e('From fixed email address indicated below - Recommended option','wp-time-slots-booking-form'); ?></option>
-                 <option value="customer"<?php if ($option == 'customer') echo ' selected'; ?>><?php _e('From the email address indicated by the custome','wp-time-slots-booking-form'); ?>r</option>
+                 <option value="fixed"<?php if ($option == 'fixed') echo ' selected'; ?>><?php esc_html_e('From fixed email address indicated below - Recommended option','wp-time-slots-booking-form'); ?></option>
+                 <option value="customer"<?php if ($option == 'customer') echo ' selected'; ?>><?php esc_html_e('From the email address indicated by the customer','wp-time-slots-booking-form'); ?></option>
                 </select><br />
                 <span style="font-size:10px;color:#666666">
                 * <?php esc_html_e("If you select \"from fixed...\" the customer email address will appear in the \"to\" address when you hit \"reply\", this is the recommended setting to avoid mail server restrictions. ",'wp-time-slots-booking-form'); ?>
@@ -521,16 +521,16 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
             </td>
             </tr>       
             <tr valign="top">
-            <th scope="row"><?php _e('"From" email (for fixed "from" addresses)','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('"From" email (for fixed "from" addresses)','wp-time-slots-booking-form'); ?></th>
             <td><input type="text" name="fp_from_email" size="40" value="<?php echo esc_attr($this->get_option('fp_from_email', CP_TSLOTSBOOK_DEFAULT_fp_from_email)); ?>" /></td>
             </tr>             
     
-            <th scope="row"><?php _e('Send email "To"','wp-time-slots-booking-form'); ?> </th>
+            <th scope="row"><?php esc_html_e('Send email "To"','wp-time-slots-booking-form'); ?> </th>
             <td>
               <?php $option = $this->get_option('fp_emailtomethod', "fixed"); ?>
                <select name="fp_emailtomethod" onchange="update_cptslotsb_option();">
-                 <option value="fixed"<?php if ($option == 'fixed') echo ' selected'; ?>><?php _e('To the fixed email(s) address(es) indicated below - Recommended option','wp-time-slots-booking-form'); ?></option>
-                 <option value="customer"<?php if ($option == 'customer') echo ' selected'; ?>><?php _e('To the email address selected in a form field (ex: captcha image enabled is recommended in this case)','wp-time-slots-booking-form'); ?></option>
+                 <option value="fixed"<?php if ($option == 'fixed') echo ' selected'; ?>><?php esc_html_e('To the fixed email(s) address(es) indicated below - Recommended option','wp-time-slots-booking-form'); ?></option>
+                 <option value="customer"<?php if ($option == 'customer') echo ' selected'; ?>><?php esc_html_e('To the email address selected in a form field (ex: captcha image enabled is recommended in this case)','wp-time-slots-booking-form'); ?></option>
                 </select><br />
                 <span style="font-size:10px;color:#666666">
                 * <?php esc_html_e('If you select "To fixed..." enter the destination emails in the next field. ','wp-time-slots-booking-form'); ?>
@@ -540,11 +540,11 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
             </td>
             </tr>        
             <tr valign="top" id="cptslotsb_destemails" <?php if ($option == 'customer') echo ' style="display:none;"'; ?>>
-            <th scope="row"><?php _e('Destination emails (comma separated)','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Destination emails (comma separated)','wp-time-slots-booking-form'); ?></th>
             <td><input type="text" name="fp_destination_emails" size="40" value="<?php echo esc_attr($this->get_option('fp_destination_emails', CP_TSLOTSBOOK_DEFAULT_fp_destination_emails)); ?>" /></td>
             </tr>
             <tr valign="top" id="cptslotsb_dropemails" <?php if ($option != 'customer') echo ' style="display:none;"'; ?>>
-            <th scope="row"><?php _e('Field that contains the destination email(s)','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Field that contains the destination email(s)','wp-time-slots-booking-form'); ?></th>
             <td>
                 <select id="fp_destination_emails_field" name="fp_destination_emails_field" def="<?php echo esc_attr($this->get_option('fp_destination_emails_field', '')); ?>"></select>
             </td>
@@ -552,114 +552,114 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
             
             
             <tr valign="top">
-            <th scope="row"><?php _e('Email subject','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Email subject','wp-time-slots-booking-form'); ?></th>
             <td><input type="text" name="fp_subject" size="70" value="<?php echo esc_attr($this->get_option('fp_subject', CP_TSLOTSBOOK_DEFAULT_fp_subject)); ?>" /></td>
             </tr>
             <tr valign="top">
-            <th scope="row"><?php _e('Include additional information?','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Include additional information?','wp-time-slots-booking-form'); ?></th>
             <td>
               <?php $option = $this->get_option('fp_inc_additional_info', CP_TSLOTSBOOK_DEFAULT_fp_inc_additional_info); ?>
               <select name="fp_inc_additional_info">
-               <option value="true"<?php if ($option == 'true') echo ' selected'; ?>><?php _e('Yes','wp-time-slots-booking-form'); ?></option>
-               <option value="false"<?php if ($option == 'false') echo ' selected'; ?>><?php _e('No','wp-time-slots-booking-form'); ?></option>
+               <option value="true"<?php if ($option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','wp-time-slots-booking-form'); ?></option>
+               <option value="false"<?php if ($option == 'false') echo ' selected'; ?>><?php esc_html_e('No','wp-time-slots-booking-form'); ?></option>
               </select>
             </td>
             </tr>        
             <tr valign="top">
-            <th scope="row"><?php _e('Email format?','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Email format?','wp-time-slots-booking-form'); ?></th>
             <td>
               <?php $option = $this->get_option('fp_emailformat', CP_TSLOTSBOOK_DEFAULT_email_format); ?>
               <select name="fp_emailformat">
-               <option value="text"<?php if ($option != 'html') echo ' selected'; ?>><?php _e('Plain Text (default)','wp-time-slots-booking-form'); ?></option>
-               <option value="html"<?php if ($option == 'html') echo ' selected'; ?>><?php _e('HTML (use html in the textarea below)','wp-time-slots-booking-form'); ?></option>
+               <option value="text"<?php if ($option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','wp-time-slots-booking-form'); ?></option>
+               <option value="html"<?php if ($option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','wp-time-slots-booking-form'); ?></option>
               </select>
             </td>
             </tr>        
             <tr valign="top">
-            <th scope="row"><?php _e('Message','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Message','wp-time-slots-booking-form'); ?></th>
             <td><textarea type="text" name="fp_message" rows="6" cols="80"><?php echo esc_textarea($this->get_option('fp_message', CP_TSLOTSBOOK_DEFAULT_fp_message)); ?></textarea></td>
             </tr>                                                               
          </table>  
       </div>    
       <hr />
-      <h3 class='hndle' style="padding:5px;"><span><?php _e('Email Copy to User','wp-time-slots-booking-form'); ?></span></h3>
+      <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Email Copy to User','wp-time-slots-booking-form'); ?></span></h3>
       <div class="inside">
          <table class="form-table">    
             <tr valign="top">
-            <th scope="row"><?php _e('Send confirmation/thank you message to user?','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Send confirmation/thank you message to user?','wp-time-slots-booking-form'); ?></th>
             <td>
               <?php $option = $this->get_option('cu_enable_copy_to_user', CP_TSLOTSBOOK_DEFAULT_cu_enable_copy_to_user); ?>
               <select name="cu_enable_copy_to_user">
-               <option value="true"<?php if ($option == 'true') echo ' selected'; ?>><?php _e('Yes','wp-time-slots-booking-form'); ?></option>
-               <option value="false"<?php if ($option == 'false') echo ' selected'; ?>><?php _e('No','wp-time-slots-booking-form'); ?></option>
+               <option value="true"<?php if ($option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','wp-time-slots-booking-form'); ?></option>
+               <option value="false"<?php if ($option == 'false') echo ' selected'; ?>><?php esc_html_e('No','wp-time-slots-booking-form'); ?></option>
               </select>
             </td>
             </tr>
             <tr valign="top">
-            <th scope="row"><?php _e('Email field on the form','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Email field on the form','wp-time-slots-booking-form'); ?></th>
             <td><select id="cu_user_email_field" name="cu_user_email_field" def="<?php echo esc_attr($this->get_option('cu_user_email_field', CP_TSLOTSBOOK_DEFAULT_cu_user_email_field)); ?>"></select></td>
             </tr>             
             <tr valign="top">
-            <th scope="row"><?php _e('Email subject','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Email subject','wp-time-slots-booking-form'); ?></th>
             <td><input type="text" name="cu_subject" size="70" value="<?php echo esc_attr($this->get_option('cu_subject', CP_TSLOTSBOOK_DEFAULT_cu_subject)); ?>" /></td>
             </tr>
             <tr valign="top">
-            <th scope="row"><?php _e('Email format?','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Email format?','wp-time-slots-booking-form'); ?></th>
             <td>
               <?php $option = $this->get_option('cu_emailformat', CP_TSLOTSBOOK_DEFAULT_email_format); ?>
               <select name="cu_emailformat">
-               <option value="text"<?php if ($option != 'html') echo ' selected'; ?>><?php _e('Plain Text (default)','wp-time-slots-booking-form'); ?></option>
-               <option value="html"<?php if ($option == 'html') echo ' selected'; ?>><?php _e('HTML (use html in the textarea below)','wp-time-slots-booking-form'); ?></option>
+               <option value="text"<?php if ($option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','wp-time-slots-booking-form'); ?></option>
+               <option value="html"<?php if ($option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','wp-time-slots-booking-form'); ?></option>
               </select>
             </td>
             </tr>  
             <tr valign="top">
-            <th scope="row"><?php _e('Message','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Message','wp-time-slots-booking-form'); ?></th>
             <td><textarea type="text" name="cu_message" rows="6" cols="80"><?php echo esc_textarea($this->get_option('cu_message', CP_TSLOTSBOOK_DEFAULT_cu_message)); ?></textarea></td>
             </tr>        
          </table>  
       </div>    
 		<hr>
 		<div class="ahb-buttons-container">
-			<input type="button" value="<?php _e('Next Step - Antispam >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(4);" />
-			<input type="submit" name="savepublish" value="<?php _e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
-			<input type="submit" name="savereturn" value="<?php _e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="button" value="<?php esc_html_e('Next Step - Antispam >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(4);" />
+			<input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
 			<div class="clear"></div>
 		</div>      
      </div>  
      
     
      <div class="ahb-adintsection" data-step="4">
-      <h3 class='hndle' style="padding:5px;"><span><?php _e('Captcha Verification','wp-time-slots-booking-form'); ?></span></h3>
+      <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Captcha Verification','wp-time-slots-booking-form'); ?></span></h3>
       <div class="inside">
          <table class="form-table">    
             <tr valign="top">
-            <th scope="row"><?php _e('Use Captcha Verification?','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Use Captcha Verification?','wp-time-slots-booking-form'); ?></th>
             <td colspan="5">
               <?php $option = $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha); ?>
               <select name="cv_enable_captcha">
-               <option value="true"<?php if ($option == 'true') echo ' selected'; ?>><?php _e('Yes','wp-time-slots-booking-form'); ?></option>
-               <option value="false"<?php if ($option == 'false') echo ' selected'; ?>><?php _e('No','wp-time-slots-booking-form'); ?></option>
+               <option value="true"<?php if ($option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','wp-time-slots-booking-form'); ?></option>
+               <option value="false"<?php if ($option == 'false') echo ' selected'; ?>><?php esc_html_e('No','wp-time-slots-booking-form'); ?></option>
               </select>
             </td>
             </tr>
             
             <tr valign="top">
-             <th scope="row"><?php _e('Width','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row"><?php esc_html_e('Width','wp-time-slots-booking-form'); ?>:</th>
              <td><input type="text" name="cv_width" size="10" value="<?php echo esc_attr($this->get_option('cv_width', CP_TSLOTSBOOK_DEFAULT_cv_width)); ?>"  onblur="generateCaptcha();"  /></td>
-             <th scope="row"><?php _e('Height','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row"><?php esc_html_e('Height','wp-time-slots-booking-form'); ?>:</th>
              <td><input type="text" name="cv_height" size="10" value="<?php echo esc_attr($this->get_option('cv_height', CP_TSLOTSBOOK_DEFAULT_cv_height)); ?>" onblur="generateCaptcha();"  /></td>
-             <th scope="row"><?php _e('Chars','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row"><?php esc_html_e('Chars','wp-time-slots-booking-form'); ?>:</th>
              <td><input type="text" name="cv_chars" size="10" value="<?php echo esc_attr($this->get_option('cv_chars', CP_TSLOTSBOOK_DEFAULT_cv_chars)); ?>" onblur="generateCaptcha();"  /></td>
             </tr>             
     
             <tr valign="top">
-             <th scope="row" valign="top"><?php _e('Min font size','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row" valign="top"><?php esc_html_e('Min font size','wp-time-slots-booking-form'); ?>:</th>
              <td valign="top"><input type="text" name="cv_min_font_size" size="10" value="<?php echo esc_attr($this->get_option('cv_min_font_size', CP_TSLOTSBOOK_DEFAULT_cv_min_font_size)); ?>" onblur="generateCaptcha();"  /></td>
-             <th scope="row" valign="top"><?php _e('Max font size','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row" valign="top"><?php esc_html_e('Max font size','wp-time-slots-booking-form'); ?>:</th>
              <td valign="top"><input type="text" name="cv_max_font_size" size="10" value="<?php echo esc_attr($this->get_option('cv_max_font_size', CP_TSLOTSBOOK_DEFAULT_cv_max_font_size)); ?>" onblur="generateCaptcha();"  /></td>        
              <td colspan="2" rowspan="2">
-               <?php _e('Preview','wp-time-slots-booking-form'); ?>:<br />
+               <?php esc_html_e('Preview','wp-time-slots-booking-form'); ?>:<br />
                  <br />
                 <img src="<?php echo esc_url($this->get_site_url(true).'/?'.$this->prefix).'_captcha=captcha&inAdmin=1'; ?>"  id="captchaimg" alt="security code" border="0"  />            
              </td> 
@@ -667,19 +667,19 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
                     
     
             <tr valign="top">
-             <th scope="row"><?php _e('Noise','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row"><?php esc_html_e('Noise','wp-time-slots-booking-form'); ?>:</th>
              <td><input type="text" name="cv_noise" size="10" value="<?php echo esc_attr($this->get_option('cv_noise', CP_TSLOTSBOOK_DEFAULT_cv_noise)); ?>" onblur="generateCaptcha();" /></td>
-             <th scope="row"><?php _e('Noise Length','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row"><?php esc_html_e('Noise Length','wp-time-slots-booking-form'); ?>:</th>
              <td><input type="text" name="cv_noise_length" size="10" value="<?php echo esc_attr($this->get_option('cv_noise_length', CP_TSLOTSBOOK_DEFAULT_cv_noise_length)); ?>" onblur="generateCaptcha();" /></td>        
             </tr>          
             
     
             <tr valign="top">
-             <th scope="row"><?php _e('Background','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row"><?php esc_html_e('Background','wp-time-slots-booking-form'); ?>:</th>
              <td><input type="color" name="cv_background" size="10" value="#<?php echo esc_attr($this->get_option('cv_background', CP_TSLOTSBOOK_DEFAULT_cv_background)); ?>" onblur="generateCaptcha();" /></td>
-             <th scope="row"><?php _e('Border','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row"><?php esc_html_e('Border','wp-time-slots-booking-form'); ?>:</th>
              <td><input type="color" name="cv_border" size="10" value="#<?php echo esc_attr($this->get_option('cv_border', CP_TSLOTSBOOK_DEFAULT_cv_border)); ?>" onblur="generateCaptcha();" /></td>      
-             <th scope="row"><?php _e('Font','wp-time-slots-booking-form'); ?>:</th>
+             <th scope="row"><?php esc_html_e('Font','wp-time-slots-booking-form'); ?>:</th>
              <td>
                 <select name="cv_font" onchange="generateCaptcha();" >
                   <option value="font-1.ttf"<?php if ("font-1.ttf" == $this->get_option('cv_font', CP_TSLOTSBOOK_DEFAULT_cv_font)) echo " selected"; ?>>Font 1</option>
@@ -693,33 +693,33 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
       </div> 
 		<hr>
 		<div class="ahb-buttons-container">
-			<input type="button" value="<?php _e('Next Step - Reports >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(5);" />
-			<input type="submit" name="savepublish" value="<?php _e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
-			<input type="submit" name="savereturn" value="<?php _e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="button" value="<?php esc_html_e('Next Step - Reports >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(5);" />
+			<input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
 			<div class="clear"></div>
 		</div>      
      </div>    
      
      <div class="ahb-adintsection" data-step="5">
-      <h3 class='hndle' style="padding:5px;"><span><?php _e('Automatic Reports: Send submissions in CSV format via email','wp-time-slots-booking-form'); ?></span></h3>
+      <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Automatic Reports: Send submissions in CSV format via email','wp-time-slots-booking-form'); ?></span></h3>
       <div class="inside">
          <table class="form-table">    
             <tr valign="top">
-            <th scope="row"><?php _e('Enable Reports?','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Enable Reports?','wp-time-slots-booking-form'); ?></th>
             <td>
               <?php $option = $this->get_option('rep_enable', 'no'); ?>
               <select name="rep_enable">
-               <option value="no"<?php if ($option == 'no' || $option == '') echo ' selected'; ?>><?php _e('No','wp-time-slots-booking-form'); ?></option>
-               <option value="yes"<?php if ($option == 'yes') echo ' selected'; ?>><?php _e('Yes','wp-time-slots-booking-form'); ?></option>
+               <option value="no"<?php if ($option == 'no' || $option == '') echo ' selected'; ?>><?php esc_html_e('No','wp-time-slots-booking-form'); ?></option>
+               <option value="yes"<?php if ($option == 'yes') echo ' selected'; ?>><?php esc_html_e('Yes','wp-time-slots-booking-form'); ?></option>
               </select>
             </td>
             </tr>
             <tr valign="top">
-            <th scope="row"><?php _e('Send report every','wp-time-slots-booking-form'); ?></th>
-            <td><input type="text" name="rep_days" size="4" value="<?php echo esc_attr($this->get_option('rep_days', '1')); ?>" /> <?php _e('days (Put a 0 to send the report immediately after each submission)','wp-time-slots-booking-form'); ?></td>
+            <th scope="row"><?php esc_html_e('Send report every','wp-time-slots-booking-form'); ?></th>
+            <td><input type="text" name="rep_days" size="4" value="<?php echo esc_attr($this->get_option('rep_days', '1')); ?>" /> <?php esc_html_e('days (Put a 0 to send the report immediately after each submission)','wp-time-slots-booking-form'); ?></td>
             </tr>        
             <tr valign="top">
-            <th scope="row"><?php _e('Send report after this hour (server time)','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Send report after this hour (server time)','wp-time-slots-booking-form'); ?></th>
             <td>
               <select name="rep_hour">
                <?php
@@ -731,34 +731,34 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
             </td>
             </tr>        
             <tr valign="top">
-            <th scope="row"><?php _e('Send the report to the following email addresses (comma separated)','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Send the report to the following email addresses (comma separated)','wp-time-slots-booking-form'); ?></th>
             <td><input type="text" name="rep_emails" size="70" value="<?php echo esc_attr($this->get_option('rep_emails', '')); ?>" /></td>
             </tr>             
             <tr valign="top">
-            <th scope="row"><?php _e('Email subject','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Email subject','wp-time-slots-booking-form'); ?></th>
             <td><input type="text" name="rep_subject" size="70" value="<?php echo esc_attr($this->get_option('rep_subject', 'Submissions report...')); ?>" /></td>
             </tr>
             <tr valign="top">
-            <th scope="row"><?php _e('Email format?','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Email format?','wp-time-slots-booking-form'); ?></th>
             <td>
               <?php $option = $this->get_option('rep_emailformat', 'text'); ?>
               <select name="rep_emailformat">
-               <option value="text"<?php if ($option != 'html') echo ' selected'; ?>><?php _e('Plain Text (default)','wp-time-slots-booking-form'); ?></option>
-               <option value="html"<?php if ($option == 'html') echo ' selected'; ?>><?php _e('HTML (use html in the textarea below)','wp-time-slots-booking-form'); ?></option>
+               <option value="text"<?php if ($option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','wp-time-slots-booking-form'); ?></option>
+               <option value="html"<?php if ($option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','wp-time-slots-booking-form'); ?></option>
               </select>
             </td>
             </tr>  
             <tr valign="top">
-            <th scope="row"><?php _e('Email Text (CSV file will be attached with the submissions)','wp-time-slots-booking-form'); ?></th>
+            <th scope="row"><?php esc_html_e('Email Text (CSV file will be attached with the submissions)','wp-time-slots-booking-form'); ?></th>
             <td><textarea type="text" name="rep_message" rows="3" cols="80"><?php echo esc_textarea($this->get_option('rep_message', 'Attached you will find the data from the form submissions.')); ?></textarea></td>
             </tr>        
          </table>  
       </div>  
         <hr>
 		<div class="ahb-buttons-container">
-			<input type="button" value="<?php _e('Next Step - Add Ons >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(6);" />
-			<input type="submit" name="savepublish" value="<?php _e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
-			<input type="submit" name="savereturn" value="<?php _e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="button" value="<?php esc_html_e('Next Step - Add Ons >','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-right:10px" onclick="ahbGoToStep(6);" />
+			<input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
 			<div class="clear"></div>
 		</div> 
      </div>   
@@ -783,8 +783,8 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
      ?>
 		<hr>
 		<div class="ahb-buttons-container">
-			<input type="submit" name="savepublish" value="<?php _e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
-			<input type="submit" name="savereturn" value="<?php _e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
+			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','wp-time-slots-booking-form'); ?>" class="button button-primary" style="float:right;margin-right:10px" />
 			<div class="clear"></div>
 		</div>      
     </div> 
@@ -792,14 +792,14 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
  </div>
 
  <div class="ahb-buttons-container">
-	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php _e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
+	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php esc_html_e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
  </div>
 
 </div> 
 
 
 
-[<a href="https://wordpress.dwbooster.com/contact-us" target="_blank"><?php _e('Request Custom Modifications','wp-time-slots-booking-form'); ?></a>] | [<a href="https://wordpress.org/support/plugin/wp-time-slots-booking-form#new-post" target="_blank"><?php _e('Free Support','wp-time-slots-booking-form'); ?></a>] | [<a href="<?php echo esc_url($this->plugin_URL); ?>" target="_blank"><?php _e('Help','wp-time-slots-booking-form'); ?></a>]
+[<a href="https://wordpress.dwbooster.com/contact-us" target="_blank"><?php esc_html_e('Request Custom Modifications','wp-time-slots-booking-form'); ?></a>] | [<a href="https://wordpress.org/support/plugin/wp-time-slots-booking-form#new-post" target="_blank"><?php esc_html_e('Free Support','wp-time-slots-booking-form'); ?></a>] | [<a href="<?php echo esc_url($this->plugin_URL); ?>" target="_blank"><?php esc_html_e('Help','wp-time-slots-booking-form'); ?></a>]
 </form>
 
 <script type="text/javascript">generateCaptcha();</script>

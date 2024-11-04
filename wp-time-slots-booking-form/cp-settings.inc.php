@@ -224,7 +224,7 @@ jQuery(function(){
 	    		</tr>
 	    	</tbody>
 	    </table>
-	    <input type="submit" value="Update Changes" class="button button-primary" />
+	    <input type="submit" value="<?php esc_html_e('Update Changes','wp-time-slots-booking-form'); ?>" class="button button-primary" />
     </form>    
 </div>
 
