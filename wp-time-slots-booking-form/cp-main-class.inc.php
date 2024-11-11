@@ -1076,7 +1076,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
         if(!empty($_REQUEST['cp_slots_action']))
         {
-            $formid = intval($_REQUEST['formid']);
+            $formid = !empty($_REQUEST['formid']) ? intval( $_REQUEST['formid']) : 0;
             $field = (!empty($_REQUEST['formfield'])?sanitize_key($_REQUEST['formfield']):'');
 
             $myrows = $wpdb->get_results( $wpdb->prepare("SELECT posted_data,notifyto,data FROM ".$wpdb->prefix.$this->table_messages." where formid=%d", $formid) );
@@ -1469,6 +1469,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     
     function get_slot_price ($field, $date, $time, $priceindex, $quantity1, $quantity2, $quantity3, $quantity4, $quantity5, $totalslots)
     {   
+        $totalslots--;    
         return floatval($field->prices[$priceindex]->price1[$totalslots])*intval($quantity1) + 
                ( property_exists( $field->prices[$priceindex], 'price2') ? floatval($field->prices[$priceindex]->price2[$totalslots])*intval($quantity2) : 0 ) +
                ( property_exists( $field->prices[$priceindex], 'price3') ? floatval($field->prices[$priceindex]->price3[$totalslots])*intval($quantity3) : 0 ) +
@@ -1481,7 +1482,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     function extract_total_price($apps)
     {
         $userfields = array();
-        $price = 0;
+        $price = 0;                
         foreach($apps as $app)
             if (!in_array($app["field"], $userfields))
             {
