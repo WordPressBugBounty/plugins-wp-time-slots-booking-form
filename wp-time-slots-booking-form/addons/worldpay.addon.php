@@ -19,7 +19,7 @@ if( !class_exists( 'cptslotsb_WorldPay' ) )
 		
         function __construct()
         {
-			$this->description = __("The add-on adds support for WorldPay payments", 'cpabc' );
+			$this->description = __("The add-on adds support for WorldPay payments", 'wp-time-slots-booking-form' );
         } // End __construct
         		
 		

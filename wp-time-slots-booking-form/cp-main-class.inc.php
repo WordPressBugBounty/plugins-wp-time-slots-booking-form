@@ -1558,8 +1558,8 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         
         $dconv = date($format, strtotime($date));
         
-        $dconv = str_replace('K', ucfirst (__(date('l', strtotime($date)))), $dconv);
-        $dconv = str_replace('Q', ucfirst (__(date('F', strtotime($date)))), $dconv);
+        $dconv = str_replace('K', ucfirst (__(date('l', strtotime($date)),'wp-time-slots-booking-form')), $dconv);
+        $dconv = str_replace('Q', ucfirst (__(date('F', strtotime($date)),'wp-time-slots-booking-form')), $dconv);
         
         return $dconv;
     }

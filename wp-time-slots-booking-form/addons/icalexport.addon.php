@@ -89,7 +89,7 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                    <hr />
                    <table class="form-table">
                     <tr valign="top">
-                    <th scope="row"><?php _e('iCal timezone difference vs server time', 'wp-time-slots-booking-form'); ?></th>
+                    <th scope="row"><?php esc_html_e('iCal timezone difference vs server time', 'wp-time-slots-booking-form'); ?></th>
                     <td><select name="cal_time_zone_modify">
                           <option value="">- none -</option>
                           <?php for ($i=-23;$i<24; $i++) { ?>
@@ -100,7 +100,7 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                     </td>
                     </tr>
                     <tr valign="top">
-                    <th scope="row"><?php _e('Observe daylight saving time?', 'wp-time-slots-booking-form'); ?></th>
+                    <th scope="row"><?php esc_html_e('Observe daylight saving time?', 'wp-time-slots-booking-form'); ?></th>
                     <td><select name="observe_day_light">
                           <option value="true" <?php if ($row["observe_day_light"] == '' || $row["observe_day_light"] == 'true') echo ' selected'; ?>>Yes</option>
                           <option value="false" <?php if ($row["observe_day_light"] == 'false') echo ' selected'; ?>>No</option>
@@ -108,7 +108,7 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                     </td>
                     </tr>
                     <tr valign="top">
-                    <th scope="row"><?php _e('Daylight saving time zone', 'wp-time-slots-booking-form'); ?></th>
+                    <th scope="row"><?php esc_html_e('Daylight saving time zone', 'wp-time-slots-booking-form'); ?></th>
                     <td><select name="ical_daylight_zone">
                           <option value="EUROPE" <?php if ($row["ical_daylight_zone"] == '' || $row["ical_daylight_zone"] == 'EUROPE') echo ' selected'; ?>>Europe</option>
                           <option value="USA" <?php if ($row["ical_daylight_zone"] == 'USA') echo ' selected'; ?>>USA</option>
@@ -116,7 +116,7 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                     </td>
                     </tr>
                     <tr valign="top">
-                    <th scope="row"><?php _e('Attach iCal file to notification emails?', 'wp-time-slots-booking-form'); ?></th>
+                    <th scope="row"><?php esc_html_e('Attach iCal file to notification emails?', 'wp-time-slots-booking-form'); ?></th>
                     <td><select name="attachical">
                           <option value="0" <?php if ($row["attachical"] == '' || $row["attachical"] == '0') echo ' selected'; ?>>No</option>
                           <option value="1" <?php if ($row["attachical"] == '1') echo ' selected'; ?>>Yes - for all emails (excluding cancelled and rejected items)</option>
@@ -127,21 +127,21 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                     </td>
                     </tr>
                     <tr valign="top">
-                    <th scope="row"><?php _e('iCal entry summary', 'wp-time-slots-booking-form'); ?></th>
+                    <th scope="row"><?php esc_html_e('iCal entry summary', 'wp-time-slots-booking-form'); ?></th>
                     <td><textarea name="base_summary" cols="80" rows="5"><?php echo esc_textarea($row["base_summary"]); ?></textarea>
                          <br />
                          <em>* Note: You can get the field IDs/tags from the form builder.</em>
                     </td>
                     </tr>
                     <tr valign="top">
-                    <th scope="row"><?php _e('iCal entry description', 'wp-time-slots-booking-form'); ?></th>
+                    <th scope="row"><?php esc_html_e('iCal entry description', 'wp-time-slots-booking-form'); ?></th>
                     <td><textarea name="base_description" cols="80" rows="5"><?php echo esc_textarea($row["base_description"]); ?></textarea>
                          <br />
                          <em>* Note: You can get the field IDs/tags from the form builder.</em>
                     </td>
                     </tr>
                     <tr valign="top">
-                    <th scope="row"><?php _e('iCal event default duration (in minutes)', 'wp-time-slots-booking-form'); ?></th>
+                    <th scope="row"><?php esc_html_e('iCal event default duration (in minutes)', 'wp-time-slots-booking-form'); ?></th>
                     <td><input type="number" name="ical_default_duration" value="<?php echo esc_attr($row["default_duration"]); ?>" />
                     </td>
                     </tr>
@@ -314,7 +314,7 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                             echo "DTSTART:".gmdate("Ymd",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify))."T".gmdate("His",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify))."Z\n";
                             echo "DTEND:".gmdate("Ymd",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify.$duration))."T".gmdate("His",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify.$duration))."Z\n";
                             echo "DTSTAMP:".gmdate("Ymd",$submissiontime)."T".gmdate("His",$submissiontime)."Z\n";
-                            echo "UID:uid".intval($item->id).'_'.intval($ct)."@".$_SERVER["SERVER_NAME"]."\n";
+                            echo "UID:uid".intval($item->id).'_'.intval($ct)."@".esc_html($_SERVER["SERVER_NAME"])."\n";
                             echo "DESCRIPTION:".wp_kses_data($base_description)."\n";
                             echo "LAST-MODIFIED:".gmdate("Ymd",$submissiontime)."T".gmdate("His",$submissiontime)."Z\n";
                             echo "LOCATION:\n";

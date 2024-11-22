@@ -46,7 +46,7 @@ if (!class_exists('CP_WPTimeSlotsBK_Elementor'))
       function register_widget_category( $elements_manager ) {
           $elements_manager->add_category(
                                           'codepeople-widgets', array(
-                                          'title' => __('CodePeople', 'codepeople-builder'),
+                                          'title' => __('CodePeople', 'wp-time-slots-booking-form'),
                                           'icon' => 'fa fa-calendar',
                                           ));
       }

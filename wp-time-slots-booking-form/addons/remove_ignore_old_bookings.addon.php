@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_RemoveIgnoreOld' ) )
 
         function __construct()
         {            
-			$this->description = __("The add-on allows to automatically remove or ignore old bookings to increase the booking form speed", 'appointment-hour-booking' );
+			$this->description = __("The add-on allows to automatically remove or ignore old bookings to increase the booking form speed", 'wp-time-slots-booking-form' );
           
         } // End __construct
 

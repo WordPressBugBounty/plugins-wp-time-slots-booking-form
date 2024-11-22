@@ -62,7 +62,7 @@ $dto = ($rawto ? date("Y-m-d", strtotime($rawto)) : $default_to);
          <option value=""><?php _e('All','wp-time-slots-booking-form'); ?></option>
          <option value="1" <?php if (!empty($_GET["paid"]) && @$_GET["paid"]) echo ' selected'; ?>><?php _e('Paid only','wp-time-slots-booking-form'); ?></option>
       </select></nobr>
-      <nobr><?php _e('Paid Status','wp-time-slots-booking-form'); ?>: <?php $this->render_status_box('status', (!isset($_GET["status"])?'-1':sanitize_text_field($_GET["status"])), true); ?></nobr>
+      <nobr><?php _e('Status','wp-time-slots-booking-form'); ?>: <?php $this->render_status_box('status', (!isset($_GET["status"])?'-1':sanitize_text_field($_GET["status"])), true); ?></nobr>
 		<nobr><label><?php _e('Item','wp-time-slots-booking-form'); ?>:</label> <select id="cal" name="cal">
           <option value="0"><?php _e('[All Items]','wp-time-slots-booking-form'); ?></option>
    <?php

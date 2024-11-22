@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_SharedAvailability' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on allow to share the booked times between calendars (for blocking booked times)", 'appointment-hour-booking' );
+			$this->description = __("The add-on allow to share the booked times between calendars (for blocking booked times)", 'wp-time-slots-booking-form' );
         } // End __construct
 
 

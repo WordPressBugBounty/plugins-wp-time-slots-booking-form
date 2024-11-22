@@ -123,7 +123,7 @@ class Elementor_CPWPTimeSlots_Widget extends \Elementor\Widget_Base {
         
         if ( ! \Elementor\Plugin::instance()->editor->is_edit_mode() ) 
         {
-            echo $cp_tslotsb_plugin->clean_sanitize($cp_tslotsb_plugin->filter_content( array("id" => $id) ));
+            echo $cp_tslotsb_plugin->clean_sanitize($cp_tslotsb_plugin->filter_content( array("id" => intval($id)) ));
             return;
         } 
         else
@@ -132,7 +132,7 @@ class Elementor_CPWPTimeSlots_Widget extends \Elementor\Widget_Base {
             $counter = $cp_tslotsb_plugin->print_counter;     
             define('WPTIMESLOTSBK_ELEMENTOR_EDIT_MODE', true);             
             echo '<fieldset class="ahbgutenberg_editor" disabled>';
-            echo $cp_tslotsb_plugin->clean_sanitize($cp_tslotsb_plugin->filter_content( array("id" => $id) ));
+            echo $cp_tslotsb_plugin->clean_sanitize($cp_tslotsb_plugin->filter_content( array("id" => intval($id)) ));
             echo '</fieldset>';
             echo '<script>'.
                     'function wptimeslotsbk_load_builder'.esc_js($counter).'() { var id = "'.esc_js($counter).'";'.

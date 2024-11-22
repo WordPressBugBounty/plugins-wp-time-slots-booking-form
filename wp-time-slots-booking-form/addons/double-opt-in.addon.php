@@ -19,7 +19,7 @@ if( !class_exists( 'cptslotsb_DoubleOptIn' ) )
 
         function __construct()
         {
-			$this->description = __("Double opt-in email verification link to mark the booking as approved", 'appointment-hour-booking' );
+			$this->description = __("Double opt-in email verification link to mark the booking as approved", 'wp-time-slots-booking-form' );
 
         } // End __construct
 

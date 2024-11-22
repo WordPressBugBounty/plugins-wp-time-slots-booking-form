@@ -39,7 +39,7 @@ else if (isset($_GET['del']) && $_GET['del'] == 'all')
         $wpdb->query('DELETE FROM `'.$wpdb->prefix.$this->table_messages.'`');           
     else
         $wpdb->query('DELETE FROM `'.$wpdb->prefix.$this->table_messages.'` WHERE formid='.$this->item);           
-    $message = __('All items deleted','wp-time-slots-booking-form');;   
+    $message = __('All items deleted','wp-time-slots-booking-form');  
 } 
 else if (isset($_GET['lu']) && $_GET['lu'] != '')
 {
@@ -180,8 +180,8 @@ echo paginate_links(  array(
     'end_size'     => 1,
     'mid_size'     => 2,
     'prev_next'    => true,
-    'prev_text'    => __('&laquo; Previous'),
-    'next_text'    => __('Next &raquo;'),
+    'prev_text'    => __('&laquo; Previous','wp-time-slots-booking-form'),
+    'next_text'    => __('Next &raquo;','wp-time-slots-booking-form'),
     'type'         => 'plain',
     'add_args'     => false
     ) );

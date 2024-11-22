@@ -133,8 +133,8 @@ if ($this->get_param('cp_timeslotsbooking_do_action_loaded') == 'wizard') {
                        <br /> 
                        <h3 style="background:#cccccc; padding:5px;"><?php _e('Using classic WordPress editor or other editors?','wp-time-slots-booking-form'); ?></h3>
                        
-                        <?php _e('You can also publish the form in a post/page, use the dedicated icon','cpappb'); ?> <?php echo '<img hspace="5" src="'.plugins_url('/images/cp_form.gif', __FILE__).'" alt="'.__('Insert '.$this->plugin_name).'" /></a>';     ?>
-                        <?php _e('which has been added to your Upload/Insert Menu, just below the title of your Post/Page', 'cpappb'); ?>
+                        <?php _e('You can also publish the form in a post/page, use the dedicated icon','wp-time-slots-booking-form'); ?> <?php echo '<img hspace="5" src="'.plugins_url('/images/cp_form.gif', __FILE__).'" alt="'.__('Insert '.$this->plugin_name,'wp-time-slots-booking-form').'" /></a>';     ?>
+                        <?php _e('which has been added to your Upload/Insert Menu, just below the title of your Post/Page','wp-time-slots-booking-form'); ?>
    
                          <!-- <select name="publishpage">
                          <?php 
@@ -211,7 +211,7 @@ function mvpublish_displayoption(sel) {
 <div id="metabox_basic_settings" class="postbox" >
   <h3 class='hndle' style="padding:5px;"><span><?php _e('Note','wp-time-slots-booking-form'); ?></span></h3>
   <div class="inside">
-   <?php _e('You can also publish the form in a post/page, use the dedicated icon','wp-time-slots-booking-form'); ?> <?php echo '<img hspace="5" src="'.plugins_url('/images/cp_form.gif', __FILE__).'" alt="'.esc_attr(__('Insert '.$this->plugin_name)).'" /></a>';     ?>
+   <?php _e('You can also publish the form in a post/page, use the dedicated icon','wp-time-slots-booking-form'); ?> <?php echo '<img hspace="5" src="'.plugins_url('/images/cp_form.gif', __FILE__).'" alt="'.esc_attr(__('Insert '.$this->plugin_name,'wp-time-slots-booking-form')).'" /></a>';     ?>
    <?php _e('which has been added to your Upload/Insert Menu, just below the title of your Post/Page or under the "+" icon if using the Gutemberg editor.','wp-time-slots-booking-form'); ?>
    <br /><br />
   </div>

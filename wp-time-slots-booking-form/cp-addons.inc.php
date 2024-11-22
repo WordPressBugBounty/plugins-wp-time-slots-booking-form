@@ -145,13 +145,13 @@ a.addonshelp:hover { text-decoration: none; color: #0000ff; }
 
 <a id="top"></a>
 
-<h1>WP Time Slots Booking Form - <?php _e('Add Ons','wp-time-slots-booking-form'); ?></h1>
+<h1>WP Time Slots Booking Form - <?php esc_html_e('Add Ons','wp-time-slots-booking-form'); ?></h1>
 
 <?php if ($message) echo "<div id='setting-error-settings_updated' class='updated' style='margin:0px;'><h2>".esc_html($message)."</h2></div> <br />";
  ?>
 
 <div class="ahb-buttons-container">
-	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php _e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
+	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php esc_html_e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
 	<div class="clear"></div>
 </div>
 
@@ -161,7 +161,7 @@ a.addonshelp:hover { text-decoration: none; color: #0000ff; }
 <div class="clear"></div>
 
 <!-- Add Ons -->
-<h2><?php _e('Active Add Ons','wp-time-slots-booking-form'); ?></h2>
+<h2><?php esc_html_e('Active Add Ons','wp-time-slots-booking-form'); ?></h2>
 
 <?php
 $printedmsg = false;
@@ -191,7 +191,7 @@ foreach ($newlist as $category => $cptslotsb_addons_objs_list)
 ?>
 
 
-<?php if (!$printedmsg && $is_commercial) { $printedmsg = true; ?><h2><?php _e('The following Add Ons are included in the commercial versions of the plugin:','appointment-hour-booking'); ?></h2><?php } ?>
+<?php if (!$printedmsg && $is_commercial) { $printedmsg = true; ?><h2><?php esc_html_e('The following Add Ons are included in the commercial versions of the plugin:','wp-time-slots-booking-form'); ?></h2><?php } ?>
 
 
 <div class="ahb-addons-container">
