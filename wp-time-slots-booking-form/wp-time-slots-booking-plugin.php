@@ -3,7 +3,7 @@
 Plugin Name: WP Time Slots Booking Form
 Plugin URI: https://wptimeslot.dwbooster.com/
 Description: Time Slots / Appointment Booking Plugin for WordPress
-Version: 1.2.22
+Version: 1.2.23
 Author: CodePeople
 Author URI: https://wptimeslot.dwbooster.com/
 License: GPL
@@ -305,4 +305,12 @@ function cptimeslotsbk_sbp_fix_conflict($option)
 // elementor integration
 include_once dirname( __FILE__ ) . '/controllers/elementor/cp-elementor-widget.inc.php';
 
-?>
+add_action( 'init', function(){
+    add_filter( 'get_post_metadata', function( $v, $object_id, $meta_key, $single, $meta_type ){
+        if ( '_elementor_element_cache' == $meta_key ) {
+            global $wpdb;
+            if ( $wpdb->get_var( $wpdb->prepare('SELECT COUNT(*) FROM ' . $wpdb->postmeta . ' WHERE post_id=%d AND meta_key="_elementor_element_cache" AND meta_value LIKE "%orm_structure%";', $object_id ) ) ) return false;
+        }
+        return $v;
+    }, 10, 5 );
+} );
