@@ -812,3 +812,6 @@ msgstr ""
 
 msgid "Incorrect verification code"
 msgstr ""
+
+msgid "Pay later"
+msgstr ""

@@ -1980,3 +1980,6 @@ msgstr ""
 
 msgid "Please select a quantity"
 msgstr ""
+
+msgid "Pay later"
+msgstr ""

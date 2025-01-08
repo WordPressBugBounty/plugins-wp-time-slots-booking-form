@@ -2219,3 +2219,6 @@ msgstr "Afgewezen"
 
 msgid "Pay now with RedSys"
 msgstr "Betaal met RedSys"
+
+msgid "Pay later"
+msgstr ""

@@ -4,7 +4,7 @@ Donate link: https://wptimeslot.dwbooster.com/download
 Tags: booking,calendar,time,slot,reservation
 Requires at least: 3.0.5
 Tested up to: 6.7
-Stable tag: 1.2.23
+Stable tag: 1.2.24
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -809,7 +809,10 @@ You can also use this area to change the script load method if the booking calen
 = 1.2.23 =
 * Fix JS conflict
 
+= 1.2.24 =
+* Translations and compatibility with older WP
+
 == Upgrade Notice ==
 
-= 1.2.23 =
-* Fix JS conflict
+= 1.2.24 =
+* Translations and compatibility with older WP

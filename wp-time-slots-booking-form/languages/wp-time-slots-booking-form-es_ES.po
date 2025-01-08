@@ -757,3 +757,6 @@ msgstr "Cancelar Reserva"
 
 msgid "Incorrect verification code"
 msgstr "Código de verificación incorrecto"
+
+msgid "Pay later"
+msgstr ""
