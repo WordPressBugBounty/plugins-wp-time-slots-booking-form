@@ -84,10 +84,12 @@ for ($i=0;$i<=23;$i++)
     else
         $hourly_messages .='0'.($i<23?',':'');
 
-if ($date_start == '')
-    $date_start = substr(min(array_keys($fields["date"])),1);
-if ($date_end == '')
-    $date_end = substr(max(array_keys($fields["date"])),1);
+if (count (array_keys($fields["date"]))) {
+    if ($date_start == '')
+        $date_start = substr(min(array_keys($fields["date"])),1);
+    if ($date_end == '')
+        $date_end = substr(max(array_keys($fields["date"])),1);
+}
 
 $daily_messages = '';
 $max_daily_messages = 200;
@@ -213,20 +215,22 @@ else
         <div style="padding:10px;">
         <?php
           $arr = $fields[sanitize_key($_GET["field"])];
-          arsort($arr, SORT_NUMERIC);
-          $total = 0;
-          /* $totalsize = 600; */
-          foreach ($arr as $item => $value)
-              $total += $value;
-          /* $max = max($arr);
-          $totalsize = round(600 / ($max/$total) ); */
-          $count = 0;
-          foreach ($arr as $item => $value)
-          {
-              echo esc_html($value).' times: '.esc_html(strlen($item)>50?substr($item,1,50).'...':substr($item,1));
-              echo '<div style="width:'.round($value/$total*100).'%;border:1px solid white;margin-bottom:3px;font-size:9px;text-align:center;font-weight:bold;background-color:#'.esc_attr($color_array[$count]).'">'.round($value/$total*100,2).'%</div>';
-              $count++;
-              if ($count >= count($color_array)) $count = count($color_array)-1;
+          if (is_array($arr)) {
+              arsort($arr, SORT_NUMERIC);
+              $total = 0;
+              /* $totalsize = 600; */
+              foreach ($arr as $item => $value)
+                  $total += $value;
+              /* $max = max($arr);
+              $totalsize = round(600 / ($max/$total) ); */
+              $count = 0;
+              foreach ($arr as $item => $value)
+              {
+                  echo esc_html($value).' times: '.esc_html(strlen($item)>50?substr($item,1,50).'...':substr($item,1));
+                  echo '<div style="width:'.round($value/$total*100).'%;border:1px solid white;margin-bottom:3px;font-size:9px;text-align:center;font-weight:bold;background-color:#'.esc_attr($color_array[$count]).'">'.round($value/$total*100,2).'%</div>';
+                  $count++;
+                  if ($count >= count($color_array)) $count = count($color_array)-1;
+              }
           }
         ?>
         </div>

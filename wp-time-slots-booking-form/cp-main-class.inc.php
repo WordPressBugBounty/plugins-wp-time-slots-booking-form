@@ -1073,6 +1073,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         global $wpdb;
 
         load_plugin_textdomain( 'wp-time-slots-booking-form', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+        cptslotsb_loading_add_ons();
 
         if(!empty($_REQUEST['cp_slots_action']))
         {
