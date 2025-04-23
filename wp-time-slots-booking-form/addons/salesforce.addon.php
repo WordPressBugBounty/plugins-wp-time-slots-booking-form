@@ -17,7 +17,7 @@ if( !class_exists( 'cptslotsb_SalesForce' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on allows create SalesForce leads with the submitted information", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on allows create SalesForce leads with the submitted information";
         } // End __construct
         
 		

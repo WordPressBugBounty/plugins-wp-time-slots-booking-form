@@ -906,6 +906,13 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     }
 
     /* hook for checking posted data for the admin area */
+    
+   public function data_management_pluginsloaded() {
+       
+       cptslotsb_loading_add_ons();    
+                       
+   }
+   
 
    function data_management_loaded() {
         global $wpdb;
@@ -1072,8 +1079,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     function data_management() {
         global $wpdb;
 
-        load_plugin_textdomain( 'wp-time-slots-booking-form', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-        cptslotsb_loading_add_ons();
+        load_plugin_textdomain( 'wp-time-slots-booking-form', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );        
 
         if(!empty($_REQUEST['cp_slots_action']))
         {

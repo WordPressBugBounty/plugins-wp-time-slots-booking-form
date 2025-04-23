@@ -19,7 +19,7 @@ if( !class_exists( 'cptslotsb_paymentoptionorder' ) )
 
         function __construct()
         {
-			$this->description = __("Tool for setting the order in which the payment options appear in the booking form (if multiple payment options are enabled).", 'wp-time-slots-booking-form');
+			$this->description = "Tool for setting the order in which the payment options appear in the booking form (if multiple payment options are enabled).";
 			
             
         } // End __construct

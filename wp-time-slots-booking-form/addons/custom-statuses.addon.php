@@ -17,7 +17,7 @@ if( !class_exists( 'cptslotsb_CustomStatuses' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on allows to add new statuses to the bookings.", 'wp-time-slots-booking-form');
+			$this->description = "The add-on allows to add new statuses to the bookings.";
         } // End __construct
     
 		

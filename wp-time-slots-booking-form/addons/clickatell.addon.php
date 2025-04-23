@@ -17,7 +17,7 @@ if( !class_exists( 'cptslotsb_Clickatell' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on allows to send notification messages (SMS) via Clickatell after submitting the form", 'wp-time-slots-booking-form');
+			$this->description = "The add-on allows to send notification messages (SMS) via Clickatell after submitting the form";
         } // End __construct
 
 

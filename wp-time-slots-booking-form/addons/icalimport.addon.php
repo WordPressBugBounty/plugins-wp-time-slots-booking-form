@@ -19,7 +19,7 @@ if( !class_exists( 'cptslotsb_iCalImport' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for importing iCal files from external websites/services", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for importing iCal files from external websites/services";
         } // End __construct
 
 

@@ -19,7 +19,7 @@ if( !class_exists( 'cptslotsb_GoogleCalendarAPI' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for Google Calendar API integration", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for Google Calendar API integration";
         } // End __construct
 
 

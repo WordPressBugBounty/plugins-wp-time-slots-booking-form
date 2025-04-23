@@ -3,7 +3,7 @@
 Plugin Name: WP Time Slots Booking Form
 Plugin URI: https://wptimeslot.dwbooster.com/
 Description: Time Slots / Appointment Booking Plugin for WordPress
-Version: 1.2.26
+Version: 1.2.27
 Author: CodePeople
 Author URI: https://wptimeslot.dwbooster.com/
 License: GPL
@@ -64,9 +64,10 @@ define('CP_TSLOTSBOOK_REP_ARR', '[+arr1237]');
 // -----------------------------------------
 global $cptslotsb_addons_active_list, // List of addon IDs
 	   $cptslotsb_addons_objs_list; // List of addon objects
-	   
+
 $cptslotsb_addons_active_list = array();
-$cptslotsb_addons_objs_list	 = array();
+if (!is_array($cptslotsb_addons_objs_list))
+    $cptslotsb_addons_objs_list	 = array();
 	
 function cptslotsb_loading_add_ons()
 {
@@ -75,12 +76,14 @@ function cptslotsb_loading_add_ons()
 	
     // Get the list of active addons
 	$cptslotsb_addons_active_list = get_option( 'cptslotsb_addons_active_list', array() );
+    if (!is_array($cptslotsb_addons_active_list))
+        $cptslotsb_addons_active_list	 = array();   
     if( !empty( $cptslotsb_addons_active_list ) 
         || ( isset( $_GET["page"] ) && $_GET["page"] == "cp_timeslotsbooking" )  
         || ( isset( $_GET["page"] ) && $_GET["page"] == "cp_timeslotsbooking_addons" )
       )
 	{	
-		$path = dirname( __FILE__ ).'/addons';
+		$path = dirname( __FILE__ ).'/addons';        
 		if( file_exists( $path ) )
 		{
 			$addons = dir( $path );
@@ -111,6 +114,7 @@ add_action( 'media_buttons', array($cp_tslotsb_plugin, 'insert_button'), 11);
 add_action( 'init', array($cp_tslotsb_plugin, 'data_management'));
 add_action( 'wp_loaded', array($cp_tslotsb_plugin, 'data_management_loaded'));
 add_action( 'admin_bar_menu', array($cp_tslotsb_plugin, 'codepeople_add_warning_banner') );
+add_action( 'plugins_loaded', array($cp_tslotsb_plugin, 'data_management_pluginsloaded'), -1);
 
 if( class_exists( 'CP_TimeSlotsBookingPlugin_Widget' ) )
     add_action( 'widgets_init', function () { return register_widget("CP_TimeSlotsBookingPlugin_Widget"); } );

@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_Reminder' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for reminder notifications", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for reminder notifications";
         } // End __construct
 
 

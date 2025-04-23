@@ -17,7 +17,7 @@ if( !class_exists( 'WPTS_Signature' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on allows to replace form fields with \"Signature\" fields", 'wp-time-slots-booking-form');
+			$this->description = "The add-on allows to replace form fields with \"Signature\" fields";
 		} // End __construct
 
 

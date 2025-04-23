@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_UserCalendarCreation' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on creates and assign a calendar for each new registered user", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on creates and assign a calendar for each new registered user";
         } // End __construct
 
 

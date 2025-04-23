@@ -17,7 +17,7 @@ if( !class_exists( 'cptslotsb_MailChimp' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on creates MailChimp List members with the submitted information", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on creates MailChimp List members with the submitted information";
         } // End __construct
 
 

@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_QRCode' ) )
 
         function __construct()
         {
-			$this->description = __("Generates a QRCode image for each booking.", 'wp-time-slots-booking-form' );
+			$this->description = "Generates a QRCode image for each booking.";
         } // End __construct
 
 

@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_PayPalStandard' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for PayPal Standard payments", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for PayPal Standard payments";
         } // End __construct
 
 

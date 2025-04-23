@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_SagePay' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for SagePay payments", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for SagePay payments";
         } // End __construct
 
 

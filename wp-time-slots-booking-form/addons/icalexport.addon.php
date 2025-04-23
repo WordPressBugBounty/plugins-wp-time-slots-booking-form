@@ -164,7 +164,7 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for exporting iCal files.", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for exporting iCal files.";
             // Check if the plugin is active
 			if( !$this->addon_is_active() ) return;
 

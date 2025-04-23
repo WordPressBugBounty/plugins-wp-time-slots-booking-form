@@ -20,7 +20,7 @@ if( !class_exists( 'cptslotsb_appLimit' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for limiting the number of appointments per user", 'wp-time-slots-booking-form' );
+			$this->description =  "The add-on adds support for limiting the number of appointments per user";
         } // End __construct
 
 

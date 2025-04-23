@@ -20,7 +20,7 @@ if( !class_exists( 'cptslotsb_serverSidePriceCheck' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds server side verification of the booking price", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds server side verification of the booking price";
         } // End __construct      
 
 

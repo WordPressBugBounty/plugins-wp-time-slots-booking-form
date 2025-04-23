@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_AuthNetSIM' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for Authorize.net Server Integration Method payments", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for Authorize.net Server Integration Method payments";
         } // End __construct
 
 

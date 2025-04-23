@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_reCAPTCHA' ) )
 	
         function __construct()
         {
-			$this->description = __("The add-on allows to protect the forms with reCAPTCHA service of Google", 'wp-time-slots-booking-form');
+			$this->description = "The add-on allows to protect the forms with reCAPTCHA service of Google";
         } // End __construct
         
 		

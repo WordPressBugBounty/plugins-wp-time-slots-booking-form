@@ -24,7 +24,7 @@ if( !class_exists( 'cptslotsb_SchedudeCalContents' ) )
 
         function __construct()
         {
-			$this->description = __("Customize the contents displayed on the schedule calendar and the status colors for each form.", 'wp-time-slots-booking-form' );
+			$this->description = "Customize the contents displayed on the schedule calendar and the status colors for each form.";
         } // End __construct
 
 

@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_Zoom' ) )
 
         function __construct()
         {
-			$this->description = __("Automatically creates a Zoom.us meeting for the booked time", 'wp-time-slots-booking-form' );
+			$this->description = "Automatically creates a Zoom.us meeting for the booked time";
         } // End __construct
 		
 

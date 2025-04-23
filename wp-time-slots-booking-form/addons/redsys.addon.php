@@ -19,7 +19,7 @@ if( !class_exists( 'cptslotsb_SabTPV' ) )
         function __construct()
         {
 			
-			$this->description = __("The add-on adds support for RedSys TPV payments", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for RedSys TPV payments";
         } // End __construct
 
 

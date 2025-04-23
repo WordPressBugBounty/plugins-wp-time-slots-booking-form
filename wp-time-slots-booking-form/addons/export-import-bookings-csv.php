@@ -17,7 +17,7 @@ if( !class_exists( 'cptslotsb_EIBookingsCSV' ) )
 		
         function __construct()
         {
-			$this->description = __("The add-on allows to import bookings in raw CSV format", 'wp-time-slots-booking-form');
+			$this->description = "The add-on allows to import bookings in raw CSV format";
         } // End __construct
 
 		

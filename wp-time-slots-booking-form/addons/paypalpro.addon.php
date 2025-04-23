@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_PayPalPro' ) )
 		
         function __construct()
         {
-			$this->description = __("The add-on adds support for PayPal Payment Pro payments to accept credit cars directly into the website", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for PayPal Payment Pro payments to accept credit cars directly into the website";
         } // End __construct
 
 

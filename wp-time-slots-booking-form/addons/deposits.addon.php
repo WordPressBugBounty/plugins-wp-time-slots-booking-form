@@ -22,7 +22,7 @@ if( !class_exists( 'cptslotsb_Deposits' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on enables the option to accept payment deposit as fixed amount or percent of the booking cost", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on enables the option to accept payment deposit as fixed amount or percent of the booking cost";
         } // End __construct
 
 

@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_iDealTargetPay' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for iDeal via TargetPay payments", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for iDeal via TargetPay payments";
         } // End __construct
 
 

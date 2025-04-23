@@ -21,7 +21,7 @@ if( !class_exists( 'cptslotsb_AutoCancelStatusManagement' ) )
 
         function __construct()
         {
-			$this->description = __("Automatically cancel pending bookings, expiration time for bookings with pending status.", 'wp-time-slots-booking-form' );
+			$this->description = "Automatically cancel pending bookings, expiration time for bookings with pending status.";
         } // End __construct
 
 

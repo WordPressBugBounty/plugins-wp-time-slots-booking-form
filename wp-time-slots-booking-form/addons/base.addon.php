@@ -26,7 +26,7 @@ if( !class_exists( 'cptslotsb_BaseAddon' ) )
 		
 		public function get_addon_description()
 		{
-			return $this->description;
+			return __($this->description, 'wp-time-slots-booking-form');
 		}
 		
 		public function get_addon_form_settings( $form_id )

@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_WooCommerce' ) )
 		
         function __construct()
         {
-			$this->description = __("The add-on allows integrate the forms with WooCommerce products", 'wp-time-slots-booking-form');
+			$this->description = "The add-on allows integrate the forms with WooCommerce products";
         } // End __construct
 
 

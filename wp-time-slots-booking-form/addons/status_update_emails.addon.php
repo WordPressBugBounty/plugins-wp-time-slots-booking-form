@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_StatusUpdateEmails' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on allows to define emails to be sent when the booking status is changed from the bookings list", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on allows to define emails to be sent when the booking status is changed from the bookings list";
         } // End __construct
 
 

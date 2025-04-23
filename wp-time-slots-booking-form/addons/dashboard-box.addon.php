@@ -34,7 +34,7 @@ if( !class_exists( 'cptslotsb_DashboardWidget' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds a widget to display a list of upcoming appointments in the dashboard welcome page.", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds a widget to display a list of upcoming appointments in the dashboard welcome page.";
             // Check if the plugin is active
 			if( !$this->addon_is_active() ) return;
                       

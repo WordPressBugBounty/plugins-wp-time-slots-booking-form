@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_FrontendLists' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on allows to displays list (schedule) of bookings grouped by date in the frontend", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on allows to displays list (schedule) of bookings grouped by date in the frontend";
         } // End __construct
 
 

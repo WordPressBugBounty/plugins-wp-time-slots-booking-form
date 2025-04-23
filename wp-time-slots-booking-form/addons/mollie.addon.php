@@ -18,7 +18,7 @@ if( !class_exists( 'cptslotsb_iDealMollie' ) )
 
         function __construct()
         {
-			$this->description = __("The add-on adds support for iDeal via Mollie payments", 'wp-time-slots-booking-form' );
+			$this->description = "The add-on adds support for iDeal via Mollie payments";
         } // End __construct
 
 
