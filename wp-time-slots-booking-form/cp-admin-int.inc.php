@@ -767,19 +767,24 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
     <div class="ahb-adintsection" data-step="6">
      <?php
     	global $cptslotsb_addons_objs_list, $cptslotsb_addons_active_list;
+        $printed = false;
     	if( count( $cptslotsb_addons_active_list ) )
     	{	
     		_e( '<h2>Add-Ons Settings:</h2><hr />', 'wp-time-slots-booking-form' );
+            ob_start();
     		foreach( $cptslotsb_addons_active_list as $addon_id ) if( isset( $cptslotsb_addons_objs_list[ $addon_id ] ) ) print $cptslotsb_addons_objs_list[ $addon_id ]->get_addon_form_settings( $this->item );	
+            $printed = ob_get_contents() != '';
+            ob_end_flush();
     	}
-        else
+        
+        if (!$printed)
         {
-            ?>
+           ?>
             <p><?php esc_html_e("You can optionally",'wp-time-slots-booking-form'); ?> <a target="_blank" href="?page=cp_timeslotsbooking_addons"><?php esc_html_e("activate add ons in the add ons section",'wp-time-slots-booking-form'); ?></a>.</p> 
             <p><?php esc_html_e("The add ons can be enabled to add new features.",'wp-time-slots-booking-form'); ?></p> 
             <p><?php esc_html_e("If you don't want to enable add ons now then",'wp-time-slots-booking-form'); ?> <strong><?php esc_html_e("continue saving these settings and publishing the booking form",'wp-time-slots-booking-form'); ?></strong>.</p> 
             <?php
-        }
+        }        
      ?>
 		<hr>
 		<div class="ahb-buttons-container">

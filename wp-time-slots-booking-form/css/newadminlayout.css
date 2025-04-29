@@ -234,6 +234,9 @@ label {font-weight:600;}
 }
 
 .button.n{pointer-events: none !important;}
+
+.button-primary2 { background-color: #AADDFF !important; }
+.button-primary3 { background-color: #CCFFFF !important; }
 /*
 #facceptance{
     background: url("cupertino/images/ui-bg_glass_80_eebd4dc_1x400.png") repeat-x scroll 50% 50% #619218;
