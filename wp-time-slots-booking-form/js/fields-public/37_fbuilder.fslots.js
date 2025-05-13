@@ -154,9 +154,9 @@ $.extend(
 			  	            if (me.usedSlots[d][k].h1==me.arr[d][j].h1 && me.usedSlots[d][k].m1==me.arr[d][j].m1)
 			  	                currentSelection = "currentSelection";
 			            if (me.arr[d][j].c >= me.current_quantity )
-			                str += '<div class=\"availableslot '+currentSelection+'\"><a href=\"\" h1="'+me.arr[d][j].h1+'" m1="'+me.arr[d][j].m1+'" c="'+me.arr[d][j].c+'" p="'+((me.arr[d][j].p)?me.arr[d][j].p:0)+'">'+me.formattime(me.arr[d][j].h1*60+me.arr[d][j].m1*1,me.militaryTime)+'<span class=\"ts_slot_availability\"><span class=\"p\">'+me.arr[d][j].c+'</span><span class=\"t\">'+me.arrTotal[d][j].c+'</span></span></a></div>';	 
+			                str += '<div class=\"availableslot '+currentSelection+'\"><a h1="'+me.arr[d][j].h1+'" m1="'+me.arr[d][j].m1+'" c="'+me.arr[d][j].c+'" p="'+((me.arr[d][j].p)?me.arr[d][j].p:0)+'">'+me.formattime(me.arr[d][j].h1*60+me.arr[d][j].m1*1,me.militaryTime)+'<span class=\"ts_slot_availability\"><span class=\"p\">'+me.arr[d][j].c+'</span><span class=\"t\">'+me.arrTotal[d][j].c+'</span></span></a></div>';	 
 			            else if (me.arr[d][j].c < me.current_quantity && (me.usedSlotsCheckbox || currentSelection!=""))    
-			                str += '<div class=\"usedslot\ '+currentSelection+'"><a href=\"\" h1="'+me.arr[d][j].h1+'" m1="'+me.arr[d][j].m1+'" c="'+me.arr[d][j].c+'" p="'+((me.arr[d][j].p)?me.arr[d][j].p:0)+'">'+me.formattime(me.arr[d][j].h1*60+me.arr[d][j].m1*1,me.militaryTime)+'<span class=\"ts_slot_availability\"><span class=\"p\">'+me.arr[d][j].c+'</span><span class=\"t\">'+me.arrTotal[d][j].c+'</span></span></a></div>';	 
+			                str += '<div class=\"usedslot\ '+currentSelection+'"><a h1="'+me.arr[d][j].h1+'" m1="'+me.arr[d][j].m1+'" c="'+me.arr[d][j].c+'" p="'+((me.arr[d][j].p)?me.arr[d][j].p:0)+'">'+me.formattime(me.arr[d][j].h1*60+me.arr[d][j].m1*1,me.militaryTime)+'<span class=\"ts_slot_availability\"><span class=\"p\">'+me.arr[d][j].c+'</span><span class=\"t\">'+me.arrTotal[d][j].c+'</span></span></a></div>';	 
 			                
 			        }   
 			  	if (me.loadOK && str=="")
