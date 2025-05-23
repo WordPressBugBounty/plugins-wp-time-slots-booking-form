@@ -241,5 +241,3 @@ if( !class_exists( 'cptslotsb_DashboardWidget' ) )
 	$cptslotsb_addons_objs_list[ $cptslotsb_DashboardWidget_obj->get_addon_id() ] = $cptslotsb_DashboardWidget_obj;
 }
 
-
-?>

@@ -34,4 +34,3 @@ if( !class_exists( 'cptslotsb_EmailBlacklistaddon' ) )
     global $cptslotsb_addons_objs_list;
 	$cptslotsb_addons_objs_list[ $cptslotsb_EmailBlacklistaddon_obj->get_addon_id() ] = $cptslotsb_EmailBlacklistaddon_obj;
 }
-?>

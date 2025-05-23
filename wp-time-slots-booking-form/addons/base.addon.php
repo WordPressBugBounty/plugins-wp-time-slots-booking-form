@@ -47,4 +47,3 @@ if( !class_exists( 'cptslotsb_BaseAddon' ) )
 		}
 	} // End Class
 }
-?>

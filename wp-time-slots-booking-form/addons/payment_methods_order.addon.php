@@ -36,4 +36,3 @@ if( !class_exists( 'cptslotsb_paymentoptionorder' ) )
 	global $cptslotsb_addons_objs_list;
 	$cptslotsb_addons_objs_list[ $cptslotsb_paymentoptionorder_obj->get_addon_id() ] = $cptslotsb_paymentoptionorder_obj;
 }
-?>

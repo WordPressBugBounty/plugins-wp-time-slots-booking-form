@@ -31,4 +31,3 @@ if( !class_exists( 'cptslotsb_reCAPTCHA' ) )
 	global $cptslotsb_addons_objs_list;
 	$cptslotsb_addons_objs_list[ $cptslotsb_recaptcha_obj->get_addon_id() ] = $cptslotsb_recaptcha_obj;
 }
-?>
