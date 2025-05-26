@@ -25,6 +25,7 @@ $message = "";
 
 if (isset($_GET['delmark']) && $_GET['delmark'] != '')
 {
+    $this->verify_nonce ($_GET["anonce"], 'cptslotsb_actions_booking');
     for ($i=0; $i<=$records_per_page; $i++)
     if (isset($_GET['c'.$i]) && $_GET['c'.$i] != '')   
     {
@@ -35,6 +36,7 @@ if (isset($_GET['delmark']) && $_GET['delmark'] != '')
 }
 else if (isset($_GET['del']) && $_GET['del'] == 'all')
 {    
+    $this->verify_nonce ($_GET["anonce"], 'cptslotsb_actions_booking');
     if ($this->item == '' || $this->item == '0')
         $wpdb->query('DELETE FROM `'.$wpdb->prefix.$this->table_messages.'`');           
     else
@@ -123,7 +125,7 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_booking' );
  {
     if (confirm('Are you sure that you want to delete ALL bookings for this form?'))
     {        
-        document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal=<?php echo intval($_GET["cal"]); ?>&list=1&del=all&r='+Math.random();
+        document.location = 'admin.php?page=<?php echo $this->menu_parameter; ?>&cal=<?php echo intval($_GET["cal"]); ?>&anonce=<?php echo esc_js($nonce); ?>&list=1&del=all&r='+Math.random();
     }    
  }
  function cp_markall()
@@ -194,6 +196,7 @@ echo paginate_links(  array(
  <input type="hidden" name="cal" value="<?php echo intval($_GET["cal"]); ?>" />
  <input type="hidden" name="list" value="1" />
  <input type="hidden" name="delmark" value="1" />
+ <input type="hidden" name="anonce" value="<?php echo esc_attr($nonce); ?>" />
 <div class="ahb-orderssection-container" style="background:#f6f6f6;padding-bottom:20px;">
 <table border="0" style="width:100%;" class="ahb-orders-list" cellpadding="10" cellspacing="10">
 	<thead>
