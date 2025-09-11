@@ -4,7 +4,7 @@ Donate link: https://wptimeslot.dwbooster.com/download
 Tags: booking,booking calendar,time,slot,reservation
 Requires at least: 3.0.5
 Tested up to: 6.8
-Stable tag: 1.2.32
+Stable tag: 1.2.33
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -880,7 +880,10 @@ You can also use this area to change the script load method if the booking calen
 = 1.2.32 =
 * Doc updates
 
+= 1.2.32 =
+* Cloudflare Turnstile add-on
+
 == Upgrade Notice ==
 
 = 1.2.32 =
-* Doc updates
+* Cloudflare Turnstile add-on
