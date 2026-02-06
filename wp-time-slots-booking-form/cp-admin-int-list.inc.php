@@ -247,4 +247,3 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_list' );
 
 [<a href="https://wptimeslot.dwbooster.com/contact-us" target="_blank"><?php _e('Request Custom Modifications','wp-time-slots-booking-form'); ?></a>] | [<a href="<?php echo esc_attr($this->plugin_URL); ?>" target="_blank"><?php _e('Help','wp-time-slots-booking-form'); ?></a>]
 </form>
-</div>

@@ -2,6 +2,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+
 global $wpdb;
 
 $this->item = intval($_GET["cal"]);
@@ -15,57 +16,90 @@ if ( !is_admin() || (!$current_user_access && !@in_array($current_user->ID, unse
     exit;
 }
 
+if ( !is_admin() )
+{
+    echo 'Direct access not allowed.';
+    exit;
+}
+
+global $numberofdates;
+$numberofdates = [];
+
+
 if ($this->item != 0)
-    $myform = $wpdb->get_results( $wpdb->prepare('SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id=%d', $this->item) );
+    $myform = $wpdb->get_results( $wpdb->prepare('SELECT * FROM '.$wpdb->prefix.$this->table_items .' WHERE id=%d', $this->item) );  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 
-$current_page = (!empty($_GET["p"])?intval($_GET["p"]):0);
+$current_page = intval( (empty($_GET["p"])?0:$_GET["p"]));
 if (!$current_page) $current_page = 1;
 $records_per_page = 50;
 
 $date_start = '';
 $date_end = '';
 
-$cond = '';
-if (!empty($_GET["search"]) && $_GET["search"] != '') $cond .= " AND (data like '%".esc_sql($_GET["search"])."%' OR posted_data LIKE '%".esc_sql($_GET["search"])."%')";
-if (!empty($_GET["dfrom"]) && $_GET["dfrom"] != '')
+$rawfrom = (isset($_GET["dfrom"]) ? sanitize_text_field($_GET["dfrom"]) : '');
+$rawto = (isset($_GET["dto"]) ? sanitize_text_field($_GET["dto"]) : '');
+if ($this->get_option('date_format', 'mm/dd/yy') == 'dd/mm/yy')
 {
-    $date_start = sanitize_text_field($_GET["dfrom"]);
-    $cond .= " AND (`time` >= '".esc_sql($date_start)."')";    
+    $rawfrom = str_replace('/','.',$rawfrom);
+    $rawto = str_replace('/','.',$rawto);
 }
-if (!empty($_GET["dto"]) && $_GET["dto"] != '')
+
+$cond = '';
+if (!empty($_GET["search"])) $cond .= " AND (data like '%".esc_sql(sanitize_text_field($_GET["search"]))."%' OR posted_data LIKE '%".esc_sql(sanitize_text_field($_GET["search"]))."%')";
+if ($rawfrom != '')
 {
-    $date_end = sanitize_text_field($_GET["dto"]);
-    $cond .= " AND (`time` <= '".esc_sql($date_end)." 23:59:59')";    
+    $date_start = date("Y-m-d",strtotime($rawfrom));
+    $cond .= " AND (`time` >= '".esc_sql( $date_start )."')";
+}
+if ($rawto != '')
+{
+    $date_end = date("Y-m-d",strtotime($rawto));
+    $cond .= " AND (`time` <= '".esc_sql($date_end)." 23:59:59')";
 }
 if ($this->item != 0) $cond .= " AND formid=".intval($this->item);
 
-$events = $wpdb->get_results( "SELECT ipaddr,time,notifyto,posted_data FROM ".$wpdb->prefix.$this->table_messages." WHERE 1=1 ".$cond." ORDER BY `time` DESC" );
+$events = $wpdb->get_results( "SELECT ipaddr,time,notifyto,posted_data FROM ".$wpdb->prefix.$this->table_messages." WHERE 1=1 ".$cond." ORDER BY `time` DESC" ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 // general initialization
 $fields = array();
 $fields["date"] = array();
 $fields["ip"] = array();
 $fields["notifyto"] = array();
+
+// --- MODIFICATION START: Init revenue variables ---
+$revenue_daily = array();
+$total_revenue = 0;
+// --- MODIFICATION END ---
+
 foreach ($events as $item)
 {
-    if (!isset($fields["date"]["k".substr($item->time,0,10)])) $fields["date"]["k".substr($item->time,0,10)] = 0;
-    if (!isset($fields["time"]["k".substr($item->time,11,2)])) $fields["time"]["k".substr($item->time,11,2)] = 0;
-    if (!isset($fields["notifyto"]["k".$item->notifyto])) $fields["notifyto"]["k".$item->notifyto] = 0;
-    if (!isset($fields["ip"]["k".$item->ipaddr])) $fields["ip"]["k".$item->ipaddr] = 0;
+    if (empty($fields["date"]["k".substr($item->time,0,10)])) $fields["date"]["k".substr($item->time,0,10)] = 0;
+    if (empty($fields["time"]["k".substr($item->time,11,2)])) $fields["time"]["k".substr($item->time,11,2)] = 0;
+    if (empty($fields["notifyto"]["k".$item->notifyto])) $fields["notifyto"]["k".$item->notifyto] = 0;
+    if (empty($fields["ip"]["k".$item->ipaddr])) $fields["ip"]["k".$item->ipaddr] = 0;    
     
     $fields["date"]["k".substr($item->time,0,10)]++;
     $fields["time"]["k".substr($item->time,11,2)]++;
     $fields["notifyto"]["k".$item->notifyto]++;
     $fields["ip"]["k".$item->ipaddr]++;
     $params = unserialize($item->posted_data);
+    
+    // --- MODIFICATION START: Calculate Revenue ---
+    $price = 0;
+    if (isset($params["final_price"])) 
+        $price = floatval($params["final_price"]);
+    
+    $date_key = "k".substr($item->time,0,10);
+    if (empty($revenue_daily[$date_key])) $revenue_daily[$date_key] = 0;
+    $revenue_daily[$date_key] += $price;
+    $total_revenue += $price;
+    // --- MODIFICATION END ---
+
     foreach ($params as $param => $value)
         if (!is_array($value) && strlen($value) < 100)
         {
-            if (!isset($fields[$param]))
-                $fields[$param] = array();
-            if (!isset($fields[$param]["k".$value]))
-                $fields[$param]["k".$value] = 0;
+            if (empty($fields[$param]["k".$value])) $fields[$param]["k".$value] = 0;
             $fields[$param]["k".$value]++;
         }
 }
@@ -84,18 +118,31 @@ for ($i=0;$i<=23;$i++)
     else
         $hourly_messages .='0'.($i<23?',':'');
 
-if (count (array_keys($fields["date"]))) {
-    if ($date_start == '')
-        $date_start = substr(min(array_keys($fields["date"])),1);
-    if ($date_end == '')
-        $date_end = substr(max(array_keys($fields["date"])),1);
+if ($date_start == '')
+{
+    $kkeys = array_keys($fields["date"]);
+    if (count($kkeys))
+        $date_start = substr(min($kkeys),1);
+    else
+        $date_start = date("Y-m-d");
+}
+
+if ($date_end == '')
+{
+    $kkeys = array_keys($fields["date"]);    
+    if (count($kkeys))
+        $date_end = substr(max($kkeys),1);
+    else
+        $date_end = date("Y-m-d");    
 }
 
 $daily_messages = '';
+$daily_revenue_str = ''; // --- MODIFICATION: Init revenue string
 $max_daily_messages = 200;
 $date = $date_start;
 while ($date <= $date_end)
 {
+    // Messages Logic
     if (isset($fields['date']['k'.$date]))
     {
         $daily_messages .= ','.$fields['date']['k'.$date];
@@ -104,11 +151,23 @@ while ($date <= $date_end)
     }        
     else
         $daily_messages .=',0';
+
+    // --- MODIFICATION START: Revenue Logic ---
+    if (isset($revenue_daily['k'.$date]))
+        $daily_revenue_str .= ','.$revenue_daily['k'.$date];
+    else
+        $daily_revenue_str .= ',0';
+    // --- MODIFICATION END ---
+
     $date = date("Y-m-d",strtotime($date." +1 day"));
 }
 $daily_messages = substr($daily_messages,1);
+$daily_revenue_str = substr($daily_revenue_str,1); // --- MODIFICATION: Trim string
 
-if (!isset($_GET["field"])) $_GET["field"] = 'time';
+if (!isset($_GET["field"]))
+    $field_filter = 'time';
+else
+    $field_filter = sanitize_key($_GET["field"]);
 
 $color_array = array('ffb3ba','ffdfba','ffffba', 'baffc9', 'bae1ff', 'a8e6cf', 'dcedc1', 'ffd3b6', 'ffaaa5', 'ff8b94', 'eea990', 'adcbe3', 'e2f4c7');
 
@@ -123,12 +182,16 @@ else
 
 ?>
 
-<h1><?php _e('Stats','wp-time-slots-booking-form'); ?> - <?php echo esc_html($this->get_option("form_name")); ?></h1>
+<h1><?php esc_html_e('Stats','wp-time-slots-booking-form'); ?> - <?php echo esc_html($this->get_option("form_name")); ?></h1>
 
 <div class="ahb-buttons-container">
-	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php _e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
+	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php esc_html_e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
 	<div class="clear"></div>
 </div>
+
+<?php do_action("cp_apphourbooking_do_action_reportstats"); ?>
+
+<?php require_once dirname( __FILE__ ).'/cp-full-stats.inc.php'; ?>
 
 
 <div class="ahb-section-container">
@@ -137,54 +200,75 @@ else
         <input type="hidden" name="page" value="<?php echo esc_attr($this->menu_parameter); ?>" />
         <input type="hidden" name="cal" value="<?php echo intval($this->item); ?>" />
         <input type="hidden" name="report" value="1" />
-        <input type="hidden" name="field" value="<?php echo esc_attr($_GET["field"]); ?>" />
-		<nobr><label><?php _e('Search for','wp-time-slots-booking-form'); ?>:</label> <input type="text" name="search" value="<?php if (!empty($_GET["search"])) echo esc_attr($_GET["search"]); ?>">&nbsp;&nbsp;</nobr>
-		<nobr><label><?php _e('From','wp-time-slots-booking-form'); ?>:</label> <input autocomplete="off" type="text" id="dfrom" name="dfrom" value="<?php if (!empty($_GET["dfrom"])) echo esc_attr($_GET["dfrom"]); ?>" >&nbsp;&nbsp;</nobr>
-		<nobr><label><?php _e('To','wp-time-slots-booking-form'); ?>:</label> <input autocomplete="off" type="text" id="dto" name="dto" value="<?php if (!empty($_GET["dto"])) echo esc_attr($_GET["dto"]); ?>" >&nbsp;&nbsp;</nobr>
-		<nobr><label><?php _e('Item','wp-time-slots-booking-form'); ?>:</label> <select id="cal" name="cal">
-          <option value="0">[<?php _e('All Items','wp-time-slots-booking-form'); ?>]</option>
+        <input type="hidden" name="field" value="<?php echo esc_attr($field_filter); ?>" />
+		<nobr><label><?php esc_html_e('Search for','wp-time-slots-booking-form'); ?>:</label> <input type="text" name="search" value="<?php echo esc_attr( (!empty($_GET["search"])?sanitize_text_field($_GET["search"]):'')); ?>">&nbsp;&nbsp;</nobr>
+		<nobr><label><?php esc_html_e('From','wp-time-slots-booking-form'); ?>:</label> <input autocomplete="off" type="text" id="dfrom" name="dfrom" value="<?php echo esc_attr((!empty($_GET["dfrom"])?sanitize_text_field($_GET["dfrom"]):'')); ?>" >&nbsp;&nbsp;</nobr>
+		<nobr><label><?php esc_html_e('To','wp-time-slots-booking-form'); ?>:</label> <input autocomplete="off" type="text" id="dto" name="dto" value="<?php echo esc_attr((!empty($_GET["dto"])?sanitize_text_field($_GET["dto"]):'')); ?>" >&nbsp;&nbsp;</nobr>		
+		<nobr><label><?php esc_html_e('Item','wp-time-slots-booking-form'); ?>:</label> <select id="cal" name="cal">
+          <?php if ($current_user_access) { ?> <option value="0">[<?php esc_html_e('All Items','wp-time-slots-booking-form'); ?>]</option><?php } ?>
    <?php
     $myrows = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_items );
+	$saveditem = $this->item;
     foreach ($myrows as $item)
-         echo '<option value="'.esc_attr($item->id).'"'.(intval($item->id)==intval($this->item)?" selected":"").'>'.esc_html($item->form_name).'</option>';
+    {
+        $this->setId($item->id);
+        $options = unserialize($this->get_option('cp_user_access', serialize(array()))); 
+		$this->setId($saveditem);
+        if (!is_array($options))
+             $options = array();        
+        if ($current_user_access || @in_array($current_user->ID, $options))
+            echo '<option value="'.intval($item->id).'"'.(intval($item->id)==intval($this->item)?" selected":"").'>'.esc_html($item->form_name).'</option>';
+    }
    ?>
     </select></nobr>
 		<nobr>
-			<input type="submit" name="<?php echo esc_attr($this->prefix); ?>_csv" value="<?php _e('Export to CSV','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-left:10px;">
-			<input type="submit" name="ds" value="<?php _e('Filter','wp-time-slots-booking-form'); ?>" class="button-primary button" style="float:right;">
+			<input type="submit" name="<?php echo esc_attr($this->prefix); ?>_csv3" value="<?php esc_html_e('Export to CSV','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-left:10px;">
+			<input type="submit" name="ds" value="<?php esc_html_e('Filter','wp-time-slots-booking-form'); ?>" class="button-primary button" style="float:right;">
 		</nobr>
        </form>
+       <div style="clear:both"></div>
 	</div>
+</div> 
+<div class="container">  
+  <div class="col6">  
+    <div class="ahb-graphs" >
+	  <div class="ahb-statssection-header">
+	  	<h3><?php esc_html_e('Submissions per day in the selected date range.','wp-time-slots-booking-form'); ?></h3>
+	  	<span><?php esc_html_e('Days from','wp-time-slots-booking-form'); ?> <?php echo esc_html($date_start); ?> to <?php echo esc_html($date_end); ?></span>
+	  </div>
+	  <div class="ahb-statssection">
+          <canvas id="chartperday"  st="<?php echo esc_attr($date_start); ?>" et="<?php echo esc_attr($date_end); ?>" label="<?php esc_html_e('Submissions.','wp-time-slots-booking-form'); ?>" questions='[{"color":"#008ec2","values":[<?php echo esc_html($daily_messages); ?>]}]'></canvas>
+	  </div>
+    </div> 
+  </div>  
+  <div class="col6">  
+    <div class="ahb-graphs" >
+	  <div class="ahb-statssection-header">
+	  	<h3><?php esc_html_e('Total submissions per hour in the selected date range.','wp-time-slots-booking-form'); ?></h3>
+	  	<span><?php esc_html_e('Days from','wp-time-slots-booking-form'); ?> <?php echo esc_html($date_start); ?> to <?php echo esc_html($date_end); ?></span>
+	  </div>
+	  <div class="ahb-statssection">
+          <canvas id="chartperhour"  st="<?php echo esc_attr($date_start); ?>" et="<?php echo esc_attr($date_end); ?>" label="<?php esc_html_e('Submissions.','wp-time-slots-booking-form'); ?>" questions='[{"color":"#008ec2","values":[<?php echo esc_html($hourly_messages); ?>]}]''></canvas>
+	  </div>
+    </div> 
+  </div>
 </div>
 
+<br />
 
-<div class="ahb-statssection-container" style="background:#f6f6f6;float:left;width:48%;">
-	<div class="ahb-statssection-header">
-		<h3><?php _e('Submissions per day','wp-time-slots-booking-form'); ?></h3>
-	</div>
-	<div class="ahb-statssection">
-        <div class="canvas" id="cardiocontainer1" style="margin-left:10px;position:relative;">
-         <canvas id="cardio1"  width="300" height="<?php echo esc_attr($max_daily_messages); ?>" questions='[{"color":"#008ec2","values":[<?php echo esc_attr($daily_messages); ?>]}]'></canvas>
+<div class="container">
+  <div class="col12">
+    <div class="ahb-graphs">
+        <div class="ahb-statssection-header">
+            <h3><?php esc_html_e('Revenue per day','wp-time-slots-booking-form'); ?> (Total: <?php echo number_format($total_revenue, 2); ?>)</h3>
+            <span><?php esc_html_e('Days from','wp-time-slots-booking-form'); ?> <?php echo esc_html($date_start); ?> to <?php echo esc_html($date_end); ?></span>
         </div>
-        <div style="padding-right:5px;padding-left:5px;color:#888888;">* <?php _e('Submissions per day in the selected date range.','wp-time-slots-booking-form'); ?><br />&nbsp;&nbsp; <?php _e('Days from','wp-time-slots-booking-form'); ?> <?php echo esc_html($date_start); ?> to <?php echo esc_html($date_end); ?>.</div>
-        <div class="clear"></div>
-	</div>
-</div>
-
-<div class="ahb-statssection-container" style="background:#f6f6f6;float:right;width:48%;">
-	<div class="ahb-statssection-header">
-		<h3><?php _e('Submissions per hour','wp-time-slots-booking-form'); ?></h3>
-	</div>
-	<div class="ahb-statssection" >
-		<div class="canvas" id="cardiocontainer2" style="margin-left:10px;position:relative;">
-         <canvas id="cardio2"  width="312" height="<?php echo esc_attr($max_hourly_messages); ?>" questions='[{"color":"#008ec2","values":[<?php echo esc_attr($hourly_messages); ?>]}]'></canvas>
+        <div class="ahb-statssection">
+            <canvas id="chartrevenue" st="<?php echo esc_attr($date_start); ?>" et="<?php echo esc_attr($date_end); ?>" label="<?php esc_html_e('Revenue','wp-time-slots-booking-form'); ?>" questions='[{"color":"#4caf50","values":[<?php echo esc_html($daily_revenue_str); ?>]}]'></canvas>
         </div>
-        <div style="padding-right:5px;padding-left:5px;color:#888888;">* <?php _e('Total submissions per hour in the selected date range.','wp-time-slots-booking-form'); ?><br />&nbsp;&nbsp; <?php _e('Hours from 0 to 23','wp-time-slots-booking-form'); ?>.</div>
-        <div class="clear"></div>
-	</div>
+    </div>
+  </div>
 </div>
-<div class="clear"></div>
-
 <br />
 
 <div class="ahb-statssection-container" style="background:#f6f6f6;">
@@ -193,13 +277,13 @@ else
          <input type="hidden" name="page" value="<?php echo esc_attr($this->menu_parameter); ?>" />
          <input type="hidden" name="cal" value="<?php echo intval($this->item); ?>" />
          <input type="hidden" name="report" value="1" />
-         <input type="hidden" name="search" value="<?php if (!empty($_GET["search"])) echo esc_attr($_GET["search"]); ?>" />
-         <input type="hidden" name="dfrom" value="<?php if (!empty($_GET["dfrom"])) echo esc_attr($_GET["dfrom"]); ?>" />
-         <input type="hidden" name="dto" value="<?php if (!empty($_GET["dto"])) echo esc_attr($_GET["dto"]); ?>" />
-		 <h3><?php _e('Select field for the report','wp-time-slots-booking-form'); ?>: <select name="field" onchange="document.cfm_formrep.submit();">
+         <input type="hidden" name="search" value="<?php echo esc_attr((!empty($_GET["search"])?sanitize_text_field($_GET["search"]):'')); ?>" />
+         <input type="hidden" name="dfrom" value="<?php echo esc_attr((!empty($_GET["dfrom"])?sanitize_text_field($_GET["dfrom"]):'')); ?>" />
+         <input type="hidden" name="dto" value="<?php echo esc_attr((!empty($_GET["dto"])?sanitize_text_field($_GET["dto"]):'')); ?>" />
+		 <h3><?php esc_html_e('Select field for the report','wp-time-slots-booking-form'); ?>: <select name="field" onchange="document.cfm_formrep.submit();">
               <?php
                    foreach ($fields as $item => $value)
-                       echo '<option value="'.esc_attr($item).'"'.($_GET["field"]==$item?' selected':'').'>'.esc_html($this->get_form_field_label($item,$form)).'</option>';
+                       echo '<option value="'.esc_attr($item).'"'.($field_filter==$item?' selected':'').'>'.esc_html($this->get_form_field_label($item,$form)).'</option>';
               ?>
          </select></h3>
         </form>
@@ -209,33 +293,33 @@ else
 
         <div style="width:100%;padding:0;background:white;border:1px solid #e6e6e6;">
          <div style="padding:10px;background:#ECECEC;color:#21759B;font-weight: bold;">
-           <?php _e('Report of values for','wp-time-slots-booking-form'); ?>: <em><?php echo esc_html($this->get_form_field_label(sanitize_text_field($_GET["field"]),$form)); ?></em>
+           <?php esc_html_e('Report of values for','wp-time-slots-booking-form'); ?>: <em><?php echo esc_html($this->get_form_field_label(sanitize_text_field($field_filter),$form)); ?></em>
          </div>
 
         <div style="padding:10px;">
         <?php
-          $arr = $fields[sanitize_key($_GET["field"])];
-          if (is_array($arr)) {
-              arsort($arr, SORT_NUMERIC);
-              $total = 0;
-              /* $totalsize = 600; */
-              foreach ($arr as $item => $value)
-                  $total += $value;
-              /* $max = max($arr);
-              $totalsize = round(600 / ($max/$total) ); */
-              $count = 0;
-              foreach ($arr as $item => $value)
-              {
-                  echo esc_html($value).' times: '.esc_html(strlen($item)>50?substr($item,1,50).'...':substr($item,1));
-                  echo '<div style="width:'.round($value/$total*100).'%;border:1px solid white;margin-bottom:3px;font-size:9px;text-align:center;font-weight:bold;background-color:#'.esc_attr($color_array[$count]).'">'.round($value/$total*100,2).'%</div>';
-                  $count++;
-                  if ($count >= count($color_array)) $count = count($color_array)-1;
-              }
+          $arr = $fields[$field_filter];
+          if (!is_array($arr))
+              $arr = array();
+          arsort($arr, SORT_NUMERIC);
+          $total = 0;
+          /* $totalsize = 600; */
+          foreach ($arr as $item => $value)
+              $total += $value;
+          /* $max = max($arr);
+          $totalsize = round(600 / ($max/$total) ); */
+          $count = 0;
+          foreach ($arr as $item => $value)
+          {
+              echo esc_html($value.' times: '.(strlen($item)>50?substr($item,1,50).'...':substr($item,1)));
+              echo '<div style="width:'.esc_html(round($value/$total*100)).'%;border:1px solid white;margin-bottom:3px;font-size:9px;text-align:center;font-weight:bold;background-color:#'.esc_html($color_array[$count]).'">'.esc_html(round($value/$total*100,2)).'%</div>';
+              $count++;
+              if ($count >= count($color_array)) $count = count($color_array)-1;
           }
         ?>
         </div>
 
-         <div style="padding-right:5px;padding-left:5px;margin-bottom:20px;color:#888888;">&nbsp;&nbsp;* <?php _e('Number of times that appears each value. Percent in relation to the total of submissions.','wp-time-slots-booking-form'); ?><br />&nbsp;&nbsp;&nbsp;&nbsp; <?php _e('Date range from','wp-time-slots-booking-form'); ?> <?php echo esc_html($date_start); ?> <?php _e('to','wp-time-slots-booking-form'); ?> <?php echo esc_html($date_end); ?>.</div>
+         <div style="padding-right:5px;padding-left:5px;margin-bottom:20px;color:#888888;">&nbsp;&nbsp;* <?php esc_html_e('Number of times that appears each value. Percent in relation to the total of submissions.','wp-time-slots-booking-form'); ?><br />&nbsp;&nbsp;&nbsp;&nbsp; <?php esc_html_e('Date range from','wp-time-slots-booking-form'); ?> <?php echo esc_html($date_start); ?> <?php esc_html_e('to','wp-time-slots-booking-form'); ?> <?php echo esc_html($date_end); ?>.</div>
         </div>
 
         <div style="clear:both"></div>
@@ -246,8 +330,8 @@ else
 
 
 <div class="ahb-buttons-container">
-	<input type="button" value="<?php _e('Print Stats','wp-time-slots-booking-form'); ?>" onclick="do_dexapp_print();" class="button button-primary" />
-	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php _e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
+	<input type="button" value="<?php esc_html_e('Print Stats','wp-time-slots-booking-form'); ?>" onclick="do_dexapp_print();" class="button button-primary" />
+	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php esc_html_e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
 	<div class="clear"></div>
 </div>
 
@@ -277,92 +361,176 @@ else
 <script type="text/javascript">
 var $ = jQuery.noConflict();
 $j(document).ready(function(){
-		    /////////////////////////canvas//////////////////////////
-		    $(window).on('load',function(){
-                drawGraph($("#cardio1"), $("#cardiocontainer1"));
-                drawGraph($("#cardio2"), $("#cardiocontainer2"));
-                function drawGraph(canvas, canvasContainer)
-                {
-		            if( typeof(G_vmlCanvasManager) != 'undefined' ){ G_vmlCanvasManager.init(); G_vmlCanvasManager.initElement(canvas[0]); }
-		            ctx = canvas[0].getContext("2d");
-		            var data = jQuery.parseJSON(canvas.attr("questions"));
-		            var height = canvas.attr("height");
-		            var width = canvas.attr("width");
-		            var maxquestions = 0,maxpos = 0,minpos = 0,interval = 5;
+Chart.defaults.set({
+            elements: {
+                line: {
+                    borderWidth: 2, // Set global borderWidth for line charts,
+                    tension: 0.4
+                }
+            }
+        });
+Chart.defaults.set({
+    responsive: true, // Enable responsive behavior
+    maintainAspectRatio: false, // Set global maintainAspectRatio to false
+    scales: {
+        y: {
+            beginAtZero: true, // Start the Y-axis at zero
+            ticks: {
+                precision: 0
+            }
+        }
+    },
+    plugins: {
+        legend: {
+            display: false // Disable the legend
+        },
+    },    
+});
+drawChartDaily($("#chartDailyIncoming"));
+drawChartDaily($("#chartDaily"));
+drawChartWeekly($("#chartWeeklyIncoming"));
+drawChartWeekly($("#chartWeekly"));
+drawChartMonthly($("#chartMonthlyIncoming"));
+drawChartMonthly($("#chartMonthly"));
+function drawChartMonthly(obj)
+{
+    function getLabels(obj)
+    {       
+        for (var i = 0; i < obj.length; i++)
+            obj[i] = $.datepicker.formatDate( ((i==0 || (i==obj.length - 1))?"M yy":"M"),$.datepicker.parseDate("yymmdd", obj[i]+"01"));
+        return obj;
+    }
+    new Chart(obj, {
+        type: 'line',
+        data: {
+          labels: getLabels(obj.attr("x").split(',')),
+          datasets: [{
+            label: obj.attr("label"),
+            data: obj.attr("y").split(','),
+            startdate: obj.attr("x").split(',')
+          }]
+        },         
+        options: { 
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            return $.datepicker.formatDate( "M yy",$.datepicker.parseDate("yymmdd", context[0].dataset.startdate[context[0].parsed.x]+"01"));;
+                        }
+                    }
+                }
+            }
+        }   
+      });    
+}
+function drawChartWeekly(obj)
+{
+    function getLabels(obj)
+    {       
+        for (var i = 0; i < obj.length; i++)
+            obj[i] =((i==0 || (i==obj.length - 1))?obj[i].substring(0, 4)+ " Week ":"") + obj[i].substring(4, 6);
+        return obj;
+    }
+    new Chart(obj, {
+        type: 'line',
+        data: {
+          labels: getLabels(obj.attr("x").split(',')),
+          datasets: [{
+            label: obj.attr("label"),
+            data: obj.attr("y").split(','),
+            startdate: obj.attr("x").split(',')
+          }]
+        },         
+        options: { 
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            var s = context[0].dataset.startdate[context[0].parsed.x];
+                            return s.substring(0, 4)+ " Week #" + s.substring(4, 6);
+                        }
+                    }
+                }
+            }
+        }   
+      });    
+}
+function drawChartDaily(obj)
+{
+    function getLabels(obj)
+    {       
+        for (var i = 0; i < obj.length; i++)
+            obj[i] = $.datepicker.formatDate( ((i==0 || (i==obj.length - 1))?"M dd":"dd"),$.datepicker.parseDate("yymmdd", obj[i]));
+        return obj;
+    }
+    new Chart(obj, {
+        type: 'line',
+        data: {
+          labels: getLabels(obj.attr("x").split(',')),
+          datasets: [{
+            label: obj.attr("label"),
+            data: obj.attr("y").split(','),
+            startdate: obj.attr("x").split(',')
+          }]
+        },         
+        options: { 
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(context) {
+                            return $.datepicker.formatDate( "M d, yy",$.datepicker.parseDate("yymmdd", context[0].dataset.startdate[context[0].parsed.x]));;
+                        }
+                    }
+                }
+            }
+        }   
+      });    
+}           
+            
+chartperday($("#chartperday")); 
+chartperday($("#chartrevenue")); // --- MODIFICATION: Initialize Revenue Chart
 
-		            jQuery.each(data,function(index,v){
-		                maxquestions = (maxquestions<v.values.length)?v.values.length:maxquestions;
-		                postmp = 0;
-		                jQuery.each(v.values,function(index1,v1){
-		                    maxpos = (maxpos<v1)?v1:maxpos;
-		                    minpos = (minpos>v1)?v1:minpos;
-		                });
-
-		            });
-		            maxpos = maxpos;//Math.ceil(maxpos/interval)*interval;
-		            minpos = 0; //Math.floor(minpos/interval)*interval;
-		            interval = Math.ceil(maxpos / 10);
-		            total = maxpos - minpos + interval;
-		            h = Math.round(height/total);
-		            var start = 10;
-		            var radius = 2;
-		            if (maxquestions>1)
-		                w = Math.round((width-start-radius)/(maxquestions-1));
-		            else
-		                w =  width/2;
-
-		            if(ctx)
-		            {
-		                for (i=0;i<total/interval;i++)
-		                {
-		                    if ((maxpos-i*interval) >= 0) canvasContainer.append('<div class="legend" style="position:absolute;left:-10px;top:'+(parseInt((i*interval+interval/2)*h-5))+'px">'+(maxpos-i*interval)+'</div>');
-		                    ctx.beginPath();
-                            ctx.moveTo(start,Math.round((i*interval+interval/2)*h) );
-                            ctx.lineTo(width,Math.round((i*interval+interval/2)*h) );
-							ctx.lineWidth=1;
-                            ctx.strokeStyle='#d0d0d0';
-                            ctx.stroke();
-		                }
-		                jQuery.each(data,function(index,v){
-		                    ctx.beginPath();
-		                    ctx.strokeStyle = v.color;
-		                    ctx.fillStyle = v.color;
-
-		                    //ctx.moveTo(start,Math.round((maxpos+interval/2)*h) );
-		                    var i = 0,j = 0;
-		                    jQuery.each(v.values,function(index1,v1){
-		                        j=-v1;
-		                        if (i!=0)
-		                            ctx.lineTo(i*w+start,Math.round((maxpos+interval/2)*h+j*h));
-		                        else
-		                            ctx.moveTo(i*w+start,Math.round((maxpos+interval/2)*h+j*h));
-		                        i++;
-		                     });
-
-		                     ctx.stroke();
-		                     var i = 0,j = 0;
-		                     jQuery.each(v.values,function(index1,v1){
-		                         j=-v1;
-		                         ctx.beginPath();
-		                         ctx.arc(i*w+start,Math.round((maxpos+interval/2)*h+j*h), radius, 0, 2 * Math.PI, true);
-		                         ctx.fill();
-		                         i++;
-		                     });
-		                });
-		            }
-		        }
-            });
-
-		    ////////////////////////end canvas///////////////////////
+function chartperday(obj)
+{           
+    var data = jQuery.parseJSON(obj.attr("questions"));
+    var st = $.datepicker.parseDate("yy-mm-dd", obj.attr("st"));
+    var et = $.datepicker.parseDate("yy-mm-dd", obj.attr("et"));
+    var l = [];
+    while (st < et)
+    {
+        l[l.length] = $.datepicker.formatDate("yy-mm-dd", st);
+        st.setDate(st.getDate() + 1);
+    }        
+    new Chart(obj, {
+        type: 'line',
+        data: {
+          labels: l,
+          datasets: [{
+            label: obj.attr("label"),
+            data: data[0].values,
+            borderColor: data[0].color, // --- MODIFICATION: Allow custom color from data
+            backgroundColor: data[0].color // --- MODIFICATION: Allow custom color from data
+          }]
+        },
+      });    
+}    
+chartperhour($("#chartperhour"));
+function chartperhour(obj)
+{           
+    var data = jQuery.parseJSON(obj.attr("questions"));
+    var l = [];
+        for (var i = 0; i < 24; i++)
+            l[l.length] = i;
+    new Chart(obj, {
+        type: 'line',
+        data: {
+          labels: l,
+          datasets: [{
+            label: obj.attr("label"),
+            data: data[0].values
+          }]
+        },
+      });    
+}
 });
 </script>
-
-
-
-
-
-
-
-
-
-

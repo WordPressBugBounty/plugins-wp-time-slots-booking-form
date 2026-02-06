@@ -3,7 +3,7 @@
 Plugin Name: WP Time Slots Booking Form
 Plugin URI: https://wptimeslot.dwbooster.com/
 Description: Time Slots / Appointment Booking Plugin for WordPress
-Version: 1.2.33
+Version: 1.2.42
 Author: CodePeople
 Author URI: https://wptimeslot.dwbooster.com/
 License: GPLv2
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 define('CP_TSLOTSBOOK_DEFER_SCRIPTS_LOADING', (get_option('cp_tslotsb_LOAD_SCRIPTS',"1") == "1"?true:false));
 
-define('CP_TSLOTSBOOK_DEFAULT_form_structure', '[[{"form_identifier":"","name":"fieldname1","shortlabel":"","index":0,"ftype":"fslots","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Select Date and Time","slotsavail":{"d1":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d2":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d3":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d4":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d5":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d0":[{"h1":8,"m1":0,"c":"1","p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":"16","m1":"0","c":"1","p":"0","min":960},{"h1":"17","m1":"0","c":"1","p":"0","min":1020}],"d6":[{"h1":8,"m1":0,"c":"1","p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}]},"slots_special":[],"min_quantity":1,"max_quantity":"1","quantity1":1,"label1":"","quantity2":1,"label2":"","prices":[{"name":"default","price1":["25",0,0,0,0],"price2":[0,0,0,0,0]}],"dateFormat":"mm/dd/yy","showDropdown":false,"showTotalCost":true,"showTotalCostFormat":"$ {0}","dropdownRange":"-10:+10","working_dates":[false,true,true,true,true,true,false],"numberOfMonths":1,"maxNumberOfApp":0,"firstDay":0,"minDate":"0","maxDate":"","defaultDate":"","invalidDates":"","tmpinvalidDates":"","required":true,"fBuild":{},"tmpinvalidDatestime":[],"getD":{}},{"form_identifier":"","name":"email","shortlabel":"","index":1,"ftype":"femail","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Email","predefined":"","predefinedClick":false,"required":true,"size":"medium","equalTo":"","fBuild":{}}],[{"title":"","description":"","formlayout":"top_aligned","formtemplate":"","evalequations":1,"autocomplete":1}]]');
+define('CP_TSLOTSBOOK_DEFAULT_form_structure', '[[{"form_identifier":"","name":"fieldname1","shortlabel":"","index":0,"ftype":"fslots","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Select Date and Time","slotsavail":{"d1":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d2":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d3":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d4":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d5":[{"h1":8,"m1":0,"c":1,"p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}],"d0":[{"h1":8,"m1":0,"c":"1","p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":"16","m1":"0","c":"1","p":"0","min":960},{"h1":"17","m1":"0","c":"1","p":"0","min":1020}],"d6":[{"h1":8,"m1":0,"c":"1","p":0,"min":480},{"h1":9,"m1":0,"c":"1","p":0,"min":540},{"h1":10,"m1":0,"c":"1","p":0,"min":600},{"h1":11,"m1":0,"c":"1","p":0,"min":660},{"h1":12,"m1":0,"c":"1","p":0,"min":720},{"h1":13,"m1":0,"c":"1","p":0,"min":780},{"h1":14,"m1":0,"c":"1","p":0,"min":840},{"h1":15,"m1":0,"c":"1","p":0,"min":900},{"h1":16,"m1":0,"c":"1","p":0,"min":960},{"h1":17,"m1":0,"c":"1","p":0,"min":1020}]},"slots_special":[],"min_quantity":1,"max_quantity":"1","quantity1":1,"label1":"","quantity2":1,"label2":"","prices":[{"name":"default","price1":["25",0,0,0,0],"price2":[0,0,0,0,0]}],"dateFormat":"mm/dd/yy","showDropdown":false,"showTotalCost":true,"showTotalCostFormat":"$ {0}","dropdownRange":"-10:+10","working_dates":[false,true,true,true,true,true,false],"numberOfMonths":1,"maxNumberOfApp":0,"firstDay":0,"minDate":"0","maxDate":"","defaultDate":"","invalidDates":"","tmpinvalidDates":"","required":true,"fBuild":{},"tmpinvalidDatestime":[],"getD":{}},{"form_identifier":"","name":"email","shortlabel":"","index":1,"ftype":"femail","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Email","predefined":"","predefinedClick":false,"required":true,"size":"medium","equalTo":"","fBuild":{}}],[{"title":"","description":"","formlayout":"top_aligned","formtemplate":"ahb_m4","evalequations":1,"autocomplete":1}]]');
 
 
 define('CP_TSLOTSBOOK_DEFAULT_track_IP', true);
@@ -54,7 +54,7 @@ define('CP_TSLOTSBOOK_DEFAULT_cv_max_font_size', '35');
 define('CP_TSLOTSBOOK_DEFAULT_cv_noise', '200');
 define('CP_TSLOTSBOOK_DEFAULT_cv_noise_length', '4');
 define('CP_TSLOTSBOOK_DEFAULT_cv_background', 'ffffff');
-define('CP_TSLOTSBOOK_DEFAULT_cv_border', '000000');
+define('CP_TSLOTSBOOK_DEFAULT_cv_border', 'ffffff');
 define('CP_TSLOTSBOOK_DEFAULT_cv_text_enter_valid_captcha', 'Please enter a valid captcha code.');
 
 define('CP_TSLOTSBOOK_REP_ARR', '[+arr1237]');
@@ -318,3 +318,39 @@ add_action( 'init', function(){
         return $v;
     }, 10, 5 );
 } );
+
+
+
+// prevent non-admin users from using the list shortcode
+add_filter( 'content_save_pre', function ( $content ) {
+
+    if ( current_user_can( 'manage_options' ) ) {
+        return $content;
+    }
+
+    // Remove only NEW instances
+    $content = preg_replace(
+        '/\[CP_TIME_SLOTS_BOOKING_LIST[^\]]*\]/',
+        '',
+        $content
+    );
+
+    return $content;
+});
+
+
+// Exclude from SiteGround Speed Optimizer JS Combination
+add_filter( 'sgo_javascript_combine_exclude', 'cptimeslotsbk_exclude_js_from_combination' );
+function cptimeslotsbk_exclude_js_from_combination( $exclude_list ) {
+    $exclude_list[] = 'cp_tslotsbookingg_language_file';
+    $exclude_list[] = 'cp_tslotsbooking_builder_script';
+    return $exclude_list;
+}
+
+// Exclude from SiteGround Speed Optimizer JS Minification
+add_filter( 'sgo_js_minify_exclude', 'cptimeslotsbk_exclude_js_from_minification' );
+function cptimeslotsbk_exclude_js_from_minification( $exclude_list ) {
+    $exclude_list[] = 'cp_tslotsbookingg_language_file';
+    $exclude_list[] = 'cp_tslotsbooking_builder_script';
+    return $exclude_list;
+}

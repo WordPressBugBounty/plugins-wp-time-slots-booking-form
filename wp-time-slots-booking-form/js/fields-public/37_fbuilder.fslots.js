@@ -364,6 +364,7 @@ $.extend(
 			        $( '#field' + me.form_identifier + '-' + me.index + ' #totalcost'+me.name ).val(totalCost);
 			        
 			        $( '#field' + me.form_identifier + '-' + me.index + ' .slots a').off("click").on("click", function(){
+                        if ($(this).parents(".cp_csseditor").length > 0) return;
 			            if ($(this).parents("fieldset").hasClass("ahbgutenberg_editor"))
 			                return false;
 			            if ($(this).parent().hasClass("usedslot"))
@@ -406,6 +407,7 @@ $.extend(
 			            return false;
 			        }); 
 			        $( '#field' + me.form_identifier + '-' + me.index + ' .usedSlots'+me.name+ ' a').off("click").on("click", function(){
+			            if ($(this).parents(".cp_csseditor").length > 0) return;
 			            var d = $(this).parents(".sb_item").attr("d");
 			            var h = $(this).parents(".sb_item").attr("h");
 			            var m = $(this).parents(".sb_item").attr("m");

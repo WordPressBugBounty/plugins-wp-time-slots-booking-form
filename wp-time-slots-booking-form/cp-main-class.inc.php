@@ -417,48 +417,9 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
         $calendar_language = $this->get_option('calendar_language','');
         if ($calendar_language == '') $calendar_language = $this->autodetect_language();
-        if (true || CP_TSLOTSBOOK_DEFER_SCRIPTS_LOADING)
-        {
-            wp_enqueue_style('cptslots-calendarstyle', plugins_url('css/cupertino/calendar.css', __FILE__));
-            wp_enqueue_style('cptslots-publicstyle', plugins_url('css/stylepublic.css', __FILE__));
-            wp_enqueue_style('cptslots-custompublicstyle', $this->get_site_url( false ).'?cp_cptslotsb_resources=css');
-
-            if ( $calendar_language != '' && file_exists(dirname(  __FILE__  ) .'/js/languages/jquery.ui.datepicker-'.$calendar_language.'.js') )
-                wp_enqueue_script($this->prefix.'_language_file', plugins_url('js/languages/jquery.ui.datepicker-'.$calendar_language.'.js', __FILE__), array("jquery","jquery-ui-core","jquery-ui-datepicker","jquery-ui-widget","jquery-ui-position","jquery-ui-tooltip"));
-
-            wp_enqueue_script( $this->prefix.'_builder_script',
-               $this->get_site_url( false ).'?cp_cptslotsb_resources=public&nc=1',array("jquery","jquery-ui-core","jquery-ui-datepicker","jquery-ui-widget","jquery-ui-position","jquery-ui-tooltip"), false, true );
-
-            wp_localize_script($this->prefix.'_builder_script', $this->prefix.'_fbuilder_config'.('_'.$this->print_counter), array('obj' =>
-            '{"pub":true,"identifier":"'.('_'.$this->print_counter).'","messages": {
-            	                	"required": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_is_required', CP_TSLOTSBOOK_DEFAULT_vs_text_is_required))).'",
-                                    "minapp": "'.str_replace(array('"'),array('\\"'),__(CP_TSLOTSBOOK_DEFAULT_vs_text_minapp,'wp-time-slots-booking-form')).'",
-                                    "maxapp": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_maxapp', CP_TSLOTSBOOK_DEFAULT_vs_text_maxapp))).'",
-                                    "language": "'.str_replace(array('"'),array('\\"'),$calendar_language).'",
-                                    "date_format": "'.str_replace(array('"'),array('\\"'),$this->get_option('date_format', '')).'",
-            	                	"email": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_is_email', CP_TSLOTSBOOK_DEFAULT_vs_text_is_email))).'",
-            	                	"datemmddyyyy": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_datemmddyyyy', CP_TSLOTSBOOK_DEFAULT_vs_text_datemmddyyyy))).'",
-            	                	"dateddmmyyyy": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_dateddmmyyyy', CP_TSLOTSBOOK_DEFAULT_vs_text_dateddmmyyyy))).'",
-            	                	"number": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_number', CP_TSLOTSBOOK_DEFAULT_vs_text_number))).'",
-            	                	"digits": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_digits', CP_TSLOTSBOOK_DEFAULT_vs_text_digits))).'",
-            	                	"max": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_max', CP_TSLOTSBOOK_DEFAULT_vs_text_max))).'",
-            	                	"min": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_min', CP_TSLOTSBOOK_DEFAULT_vs_text_min))).'",
-                                    "maxlength": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic('Please enter no more than {0} characters.')).'",
-                                    "minlength": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic('Please enter at least {0} characters.')).'",                                    
-    	                    	    "previous": "'.str_replace(array('"'),array('\\"'),$previous_label).'",
-    	                    	    "next": "'.str_replace(array('"'),array('\\"'),$next_label).'",
-    	                    	    "pageof": "'.str_replace(array('"'),array('\\"'),$pageof_label).'"
-            	                }}'
-            ));
-        }
-        else
-        {
-            wp_enqueue_script( "jquery" );
-            wp_enqueue_script( "jquery-ui-core" );
-            wp_enqueue_script( "jquery-ui-datepicker" );
-        }
-        ?><!--noptimize-->
-        <script type="text/javascript">
+        
+        ob_start();  
+        ?>
          var cp_tslotsbk_cancel_label = '<?php echo esc_js(trim( __("cancel",'wp-time-slots-booking-form'))); ?>';
          var cp_tslotsbk_cost_label = '<?php echo esc_js(trim( __("Cost",'wp-time-slots-booking-form'))); ?>';
          var cp_tslotsbk_nomore_label = '<?php echo esc_js(trim( __("No more slots available.",'wp-time-slots-booking-form'))); ?>';
@@ -588,9 +549,56 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
              {
              }
          }
-         function <?php echo esc_js($this->prefix); ?>_cerror<?php echo '_'.esc_js($this->print_counter); ?>(){$dexQuery = jQuery.noConflict();$dexQuery("#hdcaptcha_error<?php echo '_'.esc_js($this->print_counter); ?>").css('top',$dexQuery("#hdcaptcha_<?php echo esc_js($this->prefix); ?>_post<?php echo '_'.esc_js($this->print_counter); ?>").outerHeight());$dexQuery("#hdcaptcha_error<?php echo '_'.esc_js($this->print_counter); ?>").css("display","inline");}
-        </script><!--/noptimize-->
+         function <?php echo esc_js($this->prefix); ?>_cerror<?php echo '_'.esc_js($this->print_counter); ?>(){$dexQuery = jQuery.noConflict();$dexQuery("#hdcaptcha_error<?php echo '_'.esc_js($this->print_counter); ?>").css('top',$dexQuery("#hdcaptcha_<?php echo esc_js($this->prefix); ?>_post<?php echo '_'.esc_js($this->print_counter); ?>").outerHeight());$dexQuery("#hdcaptcha_error<?php echo '_'.esc_js($this->print_counter); ?>").css("display","inline");}        
         <?php
+        $buffered_contents = ob_get_contents();
+        ob_end_clean();
+        
+        if (true || CP_TSLOTSBOOK_DEFER_SCRIPTS_LOADING)
+        {
+            wp_enqueue_style('cptslots-calendarstyle', plugins_url('css/cupertino/calendar.css', __FILE__));
+            wp_enqueue_style('cptslots-publicstyle', plugins_url('css/stylepublic.css', __FILE__));
+            wp_enqueue_style('cptslots-custompublicstyle', $this->get_site_url( false ).'?cp_cptslotsb_resources=css');
+
+            if ( $calendar_language != '' && file_exists(dirname(  __FILE__  ) .'/js/languages/jquery.ui.datepicker-'.$calendar_language.'.js') )
+                wp_enqueue_script($this->prefix.'_language_file', plugins_url('js/languages/jquery.ui.datepicker-'.$calendar_language.'.js', __FILE__), array("jquery","jquery-ui-core","jquery-ui-datepicker","jquery-ui-widget","jquery-ui-position","jquery-ui-tooltip"));
+
+            wp_enqueue_script( $this->prefix.'_builder_script',
+               $this->get_site_url( false ).'?cp_cptslotsb_resources=public&nc=1',array("jquery","jquery-ui-core","jquery-ui-datepicker","jquery-ui-widget","jquery-ui-position","jquery-ui-tooltip"), false, true );
+
+            wp_localize_script($this->prefix.'_builder_script', $this->prefix.'_fbuilder_config'.('_'.$this->print_counter), array('obj' =>
+            '{"pub":true,"identifier":"'.('_'.$this->print_counter).'","messages": {
+            	                	"required": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_is_required', CP_TSLOTSBOOK_DEFAULT_vs_text_is_required))).'",
+                                    "minapp": "'.str_replace(array('"'),array('\\"'),__(CP_TSLOTSBOOK_DEFAULT_vs_text_minapp,'wp-time-slots-booking-form')).'",
+                                    "maxapp": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_maxapp', CP_TSLOTSBOOK_DEFAULT_vs_text_maxapp))).'",
+                                    "language": "'.str_replace(array('"'),array('\\"'),$calendar_language).'",
+                                    "date_format": "'.str_replace(array('"'),array('\\"'),$this->get_option('date_format', '')).'",
+            	                	"email": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_is_email', CP_TSLOTSBOOK_DEFAULT_vs_text_is_email))).'",
+            	                	"datemmddyyyy": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_datemmddyyyy', CP_TSLOTSBOOK_DEFAULT_vs_text_datemmddyyyy))).'",
+            	                	"dateddmmyyyy": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_dateddmmyyyy', CP_TSLOTSBOOK_DEFAULT_vs_text_dateddmmyyyy))).'",
+            	                	"number": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_number', CP_TSLOTSBOOK_DEFAULT_vs_text_number))).'",
+            	                	"digits": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_digits', CP_TSLOTSBOOK_DEFAULT_vs_text_digits))).'",
+            	                	"max": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_max', CP_TSLOTSBOOK_DEFAULT_vs_text_max))).'",
+            	                	"min": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic($this->get_option('vs_text_min', CP_TSLOTSBOOK_DEFAULT_vs_text_min))).'",
+                                    "maxlength": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic('Please enter no more than {0} characters.')).'",
+                                    "minlength": "'.str_replace(array('"'),array('\\"'),$this->translate_dynamic('Please enter at least {0} characters.')).'",                                    
+    	                    	    "previous": "'.str_replace(array('"'),array('\\"'),$previous_label).'",
+    	                    	    "next": "'.str_replace(array('"'),array('\\"'),$next_label).'",
+    	                    	    "pageof": "'.str_replace(array('"'),array('\\"'),$pageof_label).'"
+            	                }}'
+            ));
+        }
+        else
+        {
+            wp_enqueue_script( "jquery" );
+            wp_enqueue_script( "jquery-ui-core" );
+            wp_enqueue_script( "jquery-ui-datepicker" );
+            echo '<!--noptimize--><script type="text/javascript">' . $this->clean_sanitize($buffered_contents) . '</script><!--/noptimize-->'; // phpcs:ignore WordPress.Security.EscapeOutput
+        }
+
+        // WordPress adds this AFTER the script tag, free of KSES interference
+        wp_add_inline_script( $this->prefix.'_builder_script', $buffered_contents, 'before' );
+
 
         $button_label = $this->translate_dynamic($this->get_option('vs_text_submitbtn', 'Submit'));
         $button_label = ($button_label==''?'Submit':$button_label);
@@ -639,12 +647,18 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         		}
         	}
 
+            $form_template = '';
         	if( isset( $form_data[ 1 ] ) && isset( $form_data[ 1 ][ 0 ] ) && isset( $form_data[ 1 ][ 0 ]->formtemplate ) )
         	{
         		$templatelist = $this->available_templates();
+                $form_template = substr(md5($form_data[ 1 ][ 0 ]->formtemplate),0,10);
         		if( isset( $templatelist[ $form_data[ 1 ][ 0 ]->formtemplate ] ) )
         		print '<link href="'.esc_attr( esc_url( $templatelist[ $form_data[ 1 ][ 0 ]->formtemplate ][ 'file' ] ) ).'" type="text/css" rel="stylesheet" />';
         	}
+            
+            if (get_option('WPTS_CUSTOM_CSS_'.$this->getId().$form_template) != '') {
+                echo '<style class="wpts_inlinecss_'.$this->getId().'">'.$this->clean_sanitize(get_option('WPTS_CUSTOM_CSS_'.$this->getId().$form_template)).'</style>'; // phpcs:ignore WordPress.Security.EscapeOutput
+            }                
         }
 
         $raw_form_str = str_replace('"','&quot;',esc_attr($raw_form_str));
@@ -678,6 +692,10 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         add_menu_page( $this->plugin_name.' '.__('Options','wp-time-slots-booking-form'), $this->plugin_name, 'read', $this->menu_parameter, array($this, 'settings_page') );
         add_submenu_page( $this->menu_parameter, __('General Settings','wp-time-slots-booking-form'), __('General Settings','wp-time-slots-booking-form'), 'edit_pages', $this->menu_parameter."_settings", array($this, 'settings_page') );
         add_submenu_page( $this->menu_parameter, __('Add Ons','wp-time-slots-booking-form'), __('Add Ons','wp-time-slots-booking-form'), 'edit_pages', $this->menu_parameter."_addons", array($this, 'settings_page') );
+        add_submenu_page( $this->menu_parameter, __('Styles Editor' ,'wp-time-slots-booking-form'), __('Styles Editor' ,'wp-time-slots-booking-form').
+         ' <span class="apphourbk-new-feature-label">'.
+         __('New' ,'wp-time-slots-booking-form').'</span>'
+        , 'edit_pages', $this->menu_parameter."_csseditor_page", array($this, 'settings_page') );
         add_submenu_page( $this->menu_parameter, __('Online Demo','wp-time-slots-booking-form'), __('Online Demo','wp-time-slots-booking-form'), 'edit_pages', $this->menu_parameter."_odemo", array($this, 'settings_page') );
         add_submenu_page( $this->menu_parameter, __('I Need Help','wp-time-slots-booking-form'), __('I Need Help','wp-time-slots-booking-form'), 'edit_pages', $this->menu_parameter."_support", array($this, 'settings_page') );
         add_submenu_page( $this->menu_parameter, __('Upgrade Plugin','wp-time-slots-booking-form'), __('Upgrade Plugin','wp-time-slots-booking-form'), 'edit_pages', $this->menu_parameter."_upgrade", array($this, 'settings_page') );
@@ -738,6 +756,8 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
             else
                 @include_once dirname( __FILE__ ) . '/cp-admin-int.inc.php';
         }
+        else if ($this->get_param("page") == $this->menu_parameter.'_csseditor_page')
+            @include_once dirname( __FILE__ ) . '/csseditor.inc.php';           
         else if ($this->get_param("page") == $this->menu_parameter.'_upgrade')
         {
             echo("Redirecting to upgrade page...<script type='text/javascript'>document.location='".esc_js($this->plugin_download_URL)."';</script>");
@@ -808,6 +828,9 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
 
     function insert_adminScripts($hook) {
+        
+        wp_enqueue_style('wpts-genstyle', plugins_url('/css/genstyle.css', __FILE__));
+        
         if ($this->get_param("page") == $this->menu_parameter && $this->get_param("addbk") != '1')
         {
             wp_deregister_script( 'bootstrap-datepicker-js' );
@@ -843,6 +866,11 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
             }
 
             wp_enqueue_style('jquery-style', plugins_url('/css/cupertino/jquery-ui-1.8.20.custom.css', __FILE__));
+            
+            if (isset($_GET["report"]) && $_GET["report"] == '1') 
+            {
+                wp_enqueue_script('ahbstatschart', plugins_url('js/chart.js', __FILE__), array('jquery'), null, true);
+            }            
            
             wp_enqueue_style('cptslots-style', plugins_url('/css/style.css', __FILE__));
             wp_enqueue_style('cptslots-newadminstyle', plugins_url('/css/newadminlayout.css', __FILE__));
@@ -2256,9 +2284,13 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
     public function setId($id)
     {
-        $this->item = $id;
+        $this->item = intval($id);
     }
     
+
+    public function getId() {
+        return intval($this->item);
+    }        
    
     public function check_max_capacity($form_data)
     {
@@ -2341,27 +2373,27 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         $form_data = json_decode($this->cleanJSON($str));
         if (is_array($form_data))
         {
-            $form_data[1][0]->title = $this->filter_allowed_tags(__($form_data[1][0]->title,'appointment-hour-booking'));
-            $form_data[1][0]->description = $this->filter_allowed_tags(__($form_data[1][0]->description,'appointment-hour-booking'));
+            $form_data[1][0]->title = $this->filter_allowed_tags(__($form_data[1][0]->title,'wp-time-slots-booking-form'));
+            $form_data[1][0]->description = $this->filter_allowed_tags(__($form_data[1][0]->description,'wp-time-slots-booking-form'));
 
             for ($i=0; $i < count($form_data[0]); $i++)
             {
                 if (property_exists($form_data[0][$i], 'title'))
-                    $form_data[0][$i]->title = $this->filter_allowed_tags(__($form_data[0][$i]->title,'appointment-hour-booking'));
-                $form_data[0][$i]->userhelpTooltip = $this->filter_allowed_tags(__($form_data[0][$i]->userhelpTooltip,'appointment-hour-booking'));
-                $form_data[0][$i]->userhelp = $this->filter_allowed_tags(__($form_data[0][$i]->userhelp,'appointment-hour-booking'));
+                    $form_data[0][$i]->title = $this->filter_allowed_tags(__($form_data[0][$i]->title,'wp-time-slots-booking-form'));
+                $form_data[0][$i]->userhelpTooltip = $this->filter_allowed_tags(__($form_data[0][$i]->userhelpTooltip,'wp-time-slots-booking-form'));
+                $form_data[0][$i]->userhelp = $this->filter_allowed_tags(__($form_data[0][$i]->userhelp,'wp-time-slots-booking-form'));
 
-                $form_data[0][$i]->csslayout = esc_attr(str_replace('"', ' ', sanitize_text_field(__($form_data[0][$i]->csslayout,'appointment-hour-booking'))));
+                $form_data[0][$i]->csslayout = esc_attr(str_replace('"', ' ', sanitize_text_field(__($form_data[0][$i]->csslayout,'wp-time-slots-booking-form'))));
 
                 if (property_exists($form_data[0][$i], 'predefined') && $form_data[0][$i]->predefined != '' && $form_data[0][$i]->ftype != 'fslots')
-                    $form_data[0][$i]->predefined = __($form_data[0][$i]->predefined,'appointment-hour-booking');
+                    $form_data[0][$i]->predefined = __($form_data[0][$i]->predefined,'wp-time-slots-booking-form');
 
                 if ($form_data[0][$i]->ftype == 'fCommentArea')
-                    $form_data[0][$i]->userhelp = $this->filter_allowed_tags(__($form_data[0][$i]->userhelp,'appointment-hour-booking'));
+                    $form_data[0][$i]->userhelp = $this->filter_allowed_tags(__($form_data[0][$i]->userhelp,'wp-time-slots-booking-form'));
                 else if ($form_data[0][$i]->ftype == 'fradio' || $form_data[0][$i]->ftype == 'fcheck' || $form_data[0][$i]->ftype == 'fdropdown')
                 {
                         for ($j=0; $j < count($form_data[0][$i]->choices); $j++)
-                            $form_data[0][$i]->choices[$j] = $this->filter_allowed_tags(__($form_data[0][$i]->choices[$j],'appointment-hour-booking'));
+                            $form_data[0][$i]->choices[$j] = $this->filter_allowed_tags(__($form_data[0][$i]->choices[$j],'wp-time-slots-booking-form'));
                 }
             }
             $str = json_encode($form_data);

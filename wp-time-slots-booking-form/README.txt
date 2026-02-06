@@ -3,8 +3,8 @@ Contributors: codepeople
 Donate link: https://wptimeslot.dwbooster.com/download
 Tags: booking,booking calendar,time,slot,reservation
 Requires at least: 3.0.5
-Tested up to: 6.8
-Stable tag: 1.2.33
+Tested up to: 6.9
+Stable tag: 1.2.42
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,7 @@ In the **booking calendar** you can setup:
 * Pricing options based on the number of adults and children (optional)
 * Number of months to display
 * Additional calendar features
+* 10+ calendar design templates includes, both classic and modern views
 
 In addition to these **calendar booking** functionalities, other important features of the plugin include:
  
@@ -39,7 +40,7 @@ In addition to these **calendar booking** functionalities, other important featu
 * A visual form builder for easy customization
 * Multi-language support for global accessibility
 * Notification emails to keep users informed
-* Anti-spam features to protect against unwanted submissions
+* Modern, customizable, good-looking, anti-spam features to protect against unwanted submissions
 * Email reports for tracking bookings
 * CSV reports for data analysis
 * A usage and stats area for insights
@@ -52,6 +53,8 @@ In addition to these **calendar booking** functionalities, other important featu
 The plugin effectively manages the availability of each time slot, allowing you to define a maximum capacity for each slot and set the maximum number of time slots that a customer can select for their booking.
 
 You can optionally enable multiple individuals to book the same time slots until the capacity is fully filled. The plugin also allows you to set different prices for two groups (for example, adults and children) and includes additional options that make it suitable for purchasing event tickets or other activities/items with varying capacities.
+
+New Feature: Use our Visual Styles Editor to fully customize 10+ calendar templates. Transform your booking forms with a sleek, modern aesthetic in just a few clicks.
 
 = Features in commercial versions =
 
@@ -199,7 +202,7 @@ You can also use this area to change the script load method if the booking calen
 
 1. Booking form with quantity fields.
 2. Simple booking form.
-3. Publish form location in the new Gutemberg editor.
+3. Schedule Calendar View
 4. Calendar configuration.
 5. Usage / Stats area
 6. Bookings list
@@ -880,10 +883,37 @@ You can also use this area to change the script load method if the booking calen
 = 1.2.32 =
 * Doc updates
 
-= 1.2.32 =
+= 1.2.33 =
 * Cloudflare Turnstile add-on
+
+= 1.2.34 =
+* New visual styles editor
+
+= 1.2.35 =
+* Improvements to visual styles editor
+
+= 1.2.36 =
+* Better CSS customization
+
+= 1.2.37 =
+* More CSS Editor feature
+
+= 1.2.38 =
+* Compatible WP 6.9
+
+= 1.2.39 =
+* Fixed script conflict
+
+= 1.2.40 =
+* List shortcode restrictions for non-admins
+
+= 1.2.41 =
+* Siteground Speed Optimizer compatibility
+
+= 1.2.42 =
+* New captcha and stats section
 
 == Upgrade Notice ==
 
-= 1.2.32 =
-* Cloudflare Turnstile add-on
+= 1.2.42 =
+* New captcha and stats section
