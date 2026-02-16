@@ -734,29 +734,8 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
     public function settings_page() {
         global $wpdb;
-        if ($this->get_param("cal") || $this->get_param("cal") == '0' || $this->get_param("pwizard") == '1')
-        {
-            $this->item = $this->get_param("cal");
-            if (isset($_GET["edit"]) && $_GET["edit"] == '1')
-                @include_once dirname( __FILE__ ) . '/cp_admin_int_edition.inc.php';
-            else if ($this->get_param("schedule") == '1')
-                @include_once dirname( __FILE__ ) . '/cp-admin-int-schedule.inc.php';
-            else if ($this->get_param("list") == '1')
-                @include_once dirname( __FILE__ ) . '/cp-admin-int-message-list.inc.php';
-            else if ($this->get_param("report") == '1')
-                @include_once dirname( __FILE__ ) . '/cp-admin-int-report.inc.php';
-            else if ($this->get_param("addbk") == '1')
-                @include_once dirname( __FILE__ ) . '/cp-admin-int-add-booking.inc.php';
-            else if ($this->get_param("pwizard") == '1')
-            {
-                if ($this->get_param("cal"))
-                    $this->item = intval($this->get_param("cal"));
-                @include_once dirname( __FILE__ ) . '/cp-publish-wizzard.inc.php';
-            }
-            else
-                @include_once dirname( __FILE__ ) . '/cp-admin-int.inc.php';
-        }
-        else if ($this->get_param("page") == $this->menu_parameter.'_csseditor_page')
+        
+        if ($this->get_param("page") == $this->menu_parameter.'_csseditor_page')
             @include_once dirname( __FILE__ ) . '/csseditor.inc.php';           
         else if ($this->get_param("page") == $this->menu_parameter.'_upgrade')
         {
@@ -780,6 +759,28 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         else if ($this->get_param("page") == $this->menu_parameter.'_addons')
         {
             @include_once dirname( __FILE__ ) . '/cp-addons.inc.php';
+        } 
+        else if ($this->get_param("cal") || $this->get_param("cal") == '0' || $this->get_param("pwizard") == '1')
+        {
+            $this->item = $this->get_param("cal");
+            if (isset($_GET["edit"]) && $_GET["edit"] == '1')
+                @include_once dirname( __FILE__ ) . '/cp_admin_int_edition.inc.php';
+            else if ($this->get_param("schedule") == '1')
+                @include_once dirname( __FILE__ ) . '/cp-admin-int-schedule.inc.php';
+            else if ($this->get_param("list") == '1')
+                @include_once dirname( __FILE__ ) . '/cp-admin-int-message-list.inc.php';
+            else if ($this->get_param("report") == '1')
+                @include_once dirname( __FILE__ ) . '/cp-admin-int-report.inc.php';
+            else if ($this->get_param("addbk") == '1')
+                @include_once dirname( __FILE__ ) . '/cp-admin-int-add-booking.inc.php';
+            else if ($this->get_param("pwizard") == '1')
+            {
+                if ($this->get_param("cal"))
+                    $this->item = intval($this->get_param("cal"));
+                @include_once dirname( __FILE__ ) . '/cp-publish-wizzard.inc.php';
+            }
+            else
+                @include_once dirname( __FILE__ ) . '/cp-admin-int.inc.php';
         }
         else
             @include_once dirname( __FILE__ ) . '/cp-admin-int-list.inc.php';
@@ -1172,14 +1173,6 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     	}
 
         $this->check_reports();
-
-        if ($this->get_param($this->prefix.'_encodingfix') == '1')
-        {
-            $wpdb->query('alter table '.$wpdb->prefix.$this->table_items.' convert to character set utf8 collate utf8_unicode_ci;');
-            $wpdb->query('alter table '.$wpdb->prefix.$this->table_messages.' convert to character set utf8 collate utf8_unicode_ci;');
-            echo 'Ok, encoding fixed.';
-            exit;
-        }
 
         if ($this->get_param($this->prefix.'_captcha') == 'captcha' )
         {

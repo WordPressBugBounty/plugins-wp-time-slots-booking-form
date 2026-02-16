@@ -161,8 +161,8 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
                qs += "&max_size="+f.cv_max_font_size.value;
                qs += "&noise="+f.cv_noise.value;
                qs += "&noiselength="+f.cv_noise_length.value;
-               qs += "&bcolor="+f.cv_background.value;
-               qs += "&border="+f.cv_border.value;
+               qs += "&bcolor="+f.cv_background.value.replace('#','');
+               qs += "&border="+f.cv_border.value.replace('#','');
                qs += "&font="+f.cv_font.options[f.cv_font.selectedIndex].value;
                qs += "&r="+(randcaptcha++);
                
