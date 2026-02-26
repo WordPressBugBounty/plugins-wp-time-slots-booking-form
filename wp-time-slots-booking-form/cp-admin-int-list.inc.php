@@ -192,21 +192,21 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_list' );
     
     <td>
 <?php if ($current_user_access) { ?>        
-                             <input style="margin-bottom:3px;" class="button" type="button" name="calupdate_<?php echo esc_attr($item->id); ?>" value="<?php _e('Rename','wp-time-slots-booking-form'); ?>" onclick="cp_updateItem(<?php echo esc_attr($item->id); ?>);" />
+                             <input  class="button" type="button" name="calupdate_<?php echo esc_attr($item->id); ?>" value="<?php _e('Rename','wp-time-slots-booking-form'); ?>" onclick="cp_updateItem(<?php echo esc_attr($item->id); ?>);" />
 <?php } ?> 
 <?php if ($current_user_access || @$item->cp_user_access_settings == 'true') { ?>                              
-                             <input style="margin-bottom:3px;" class="button-primary button" type="button" name="calmanage_<?php echo esc_attr($item->id); ?>" value="<?php _e('Edit','wp-time-slots-booking-form'); ?>" onclick="cp_manageSettings(<?php echo esc_attr($item->id); ?>);" />   
+                             <input  class="button-primary button" type="button" name="calmanage_<?php echo esc_attr($item->id); ?>" value="<?php _e('Edit','wp-time-slots-booking-form'); ?>" onclick="cp_manageSettings(<?php echo esc_attr($item->id); ?>);" />   
 <?php } ?>
 <?php if ($current_user_access) { ?>                               
-                             <input style="margin-bottom:3px;" class="button-primary button" type="button" name="calpublish_<?php echo esc_attr($item->id); ?>" value="<?php _e('Publish','wp-time-slots-booking-form'); ?>" onclick="cp_publish(<?php echo esc_attr($item->id); ?>);" />                            
+                             <input  class="button-primary button" type="button" name="calpublish_<?php echo esc_attr($item->id); ?>" value="<?php _e('Publish','wp-time-slots-booking-form'); ?>" onclick="cp_publish(<?php echo esc_attr($item->id); ?>);" />                            
 <?php } ?>                             
-                             <input style="margin-bottom:3px;" class="button-primary2 button" type="button" name="calmessages_<?php echo esc_attr($item->id); ?>" value="<?php _e('Booking Orders','wp-time-slots-booking-form'); ?>" onclick="cp_viewMessages(<?php echo esc_attr($item->id); ?>);" />                              
-                             <input style="margin-bottom:3px;" class="button-primary2 button" type="button" name="calschedule_<?php echo esc_attr($item->id); ?>" value="<?php _e('Schedule','wp-time-slots-booking-form'); ?>" onclick="cp_viewSchedule(<?php echo esc_attr($item->id); ?>);" /> 
-                             <input style="margin-bottom:5px;" class="button-primary3 button" type="button" name="caladdbk_<?php echo esc_attr($item->id); ?>" value="<?php _e('Add Booking','wp-time-slots-booking-form'); ?>" onclick="cp_addbk(<?php echo esc_attr($item->id); ?>);" />                             
-                             <input style="margin-bottom:3px;" class="button" type="button" name="calreport_<?php echo esc_attr($item->id); ?>" value="<?php _e('Stats','wp-time-slots-booking-form'); ?>" onclick="cp_viewReport(<?php echo esc_attr($item->id); ?>);" />                              
+                             <input  class="button-primary2 button" type="button" name="calmessages_<?php echo esc_attr($item->id); ?>" value="<?php _e('Booking Orders','wp-time-slots-booking-form'); ?>" onclick="cp_viewMessages(<?php echo esc_attr($item->id); ?>);" />                              
+                             <input  class="button-primary2 button" type="button" name="calschedule_<?php echo esc_attr($item->id); ?>" value="<?php _e('Schedule','wp-time-slots-booking-form'); ?>" onclick="cp_viewSchedule(<?php echo esc_attr($item->id); ?>);" /> 
+                             <input class="button-primary3 button" type="button" name="caladdbk_<?php echo esc_attr($item->id); ?>" value="<?php _e('Add Booking','wp-time-slots-booking-form'); ?>" onclick="cp_addbk(<?php echo esc_attr($item->id); ?>);" />                             
+                             <input  class="button" type="button" name="calreport_<?php echo esc_attr($item->id); ?>" value="<?php _e('Stats','wp-time-slots-booking-form'); ?>" onclick="cp_viewReport(<?php echo esc_attr($item->id); ?>);" />                              
 <?php if ($current_user_access) { ?>                             
-                             <input style="margin-bottom:3px;" class="button" type="button" name="calclone_<?php echo esc_attr($item->id); ?>" value="<?php _e('Clone','wp-time-slots-booking-form'); ?>" onclick="cp_cloneItem(<?php echo esc_attr($item->id); ?>);" />                              
-                             <input style="margin-bottom:3px;" class="button" type="button" name="caldelete_<?php echo esc_attr($item->id); ?>" value="<?php _e('Delete','wp-time-slots-booking-form'); ?>" onclick="cp_deleteItem(<?php echo esc_attr($item->id); ?>);" />                             
+                             <input  class="button" type="button" name="calclone_<?php echo esc_attr($item->id); ?>" value="<?php _e('Clone','wp-time-slots-booking-form'); ?>" onclick="cp_cloneItem(<?php echo esc_attr($item->id); ?>);" />                              
+                             <input  class="button" type="button" name="caldelete_<?php echo esc_attr($item->id); ?>" value="<?php _e('Delete','wp-time-slots-booking-form'); ?>" onclick="cp_deleteItem(<?php echo esc_attr($item->id); ?>);" />                             
 <?php } ?>
     </td>
     <?php if ($current_user_can_edit) {?><td><nobr>[<?php echo esc_html($this->shorttag); ?> id="<?php echo esc_attr($item->id); ?>"]</nobr></td><?php } ?>

@@ -182,11 +182,11 @@ font-weight: bold;
 background-color: #dcdcdc;
 }
 .cptslotsb_cancelled {
-     opacity: 0.8;
+     opacity: 0.6;
      color: #ff0000;
 }   
-.cptslotsb_cancelled input, .cpappb_cancelled select {
-     opacity: 1;
+.cptslotsb_cancelled input, .cpappb_cancelled select, div.row-actions {
+     opacity: 1 !important;
      color: #ff0000 !important;
 }   
 .cptslotsb_attended {
