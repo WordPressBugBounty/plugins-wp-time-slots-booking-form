@@ -38,7 +38,7 @@ else if (isset($_GET['resend']) && $_GET['resend'] != '')
     $this->verify_nonce ( sanitize_text_field($_GET["anonce"]), 'cptslotsb_actions_booking');
     // Assuming the base class supports ready_to_go_reservation like cpappb
     if (method_exists($this, 'ready_to_go_reservation')) {
-        $this->ready_to_go_reservation( intval($_GET['resend']), '', true);        
+        $this->ready_to_go_reservation( intval($_GET['resend']), '', array(), true);        
     }
     $message = __('Notification emails resent for the booking','wp-time-slots-booking-form');
 }

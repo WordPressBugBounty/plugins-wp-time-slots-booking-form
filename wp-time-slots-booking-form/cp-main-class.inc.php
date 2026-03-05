@@ -1593,13 +1593,16 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     }
 
 
-    function ready_to_go_reservation($itemnumber, $payer_email = "", $params = array())
+    function ready_to_go_reservation($itemnumber, $payer_email = "", $params = array(), $resendonly = false )
     {
 
         global $wpdb;
 
         $myrows = $wpdb->get_results( $wpdb->prepare("SELECT * FROM ".$wpdb->prefix.$this->table_messages." WHERE id=%d", $itemnumber) );
 
+        if (!count($params))
+            $params = unserialize($myrows[0]->posted_data);
+        
         $mycalendarrows = $wpdb->get_results( $wpdb->prepare('SELECT * FROM '.$wpdb->prefix.$this->table_items.' WHERE `id`=%d', $myrows[0]->formid) );
 
         $this->item = $myrows[0]->formid;
@@ -1695,7 +1698,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         }
 
         // if is_admin and not required emails end function here
-        if (is_admin() && !isset($_POST["sendemails_admin"]))
+        if (is_admin() && !isset($_POST["sendemails_admin"]) && !$resendonly)
             return;
 
         foreach ($to as $item)
