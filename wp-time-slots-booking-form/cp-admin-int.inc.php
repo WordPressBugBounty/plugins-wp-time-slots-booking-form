@@ -550,6 +550,54 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_admin' );
             </td>
             </tr>     
             
+<tr>
+         <td></td>
+         <td>
+            <button id="run-diagnostic-btn" class="button">Run Email Diagnostic & Send Test</button>
+            <span id="diag-loader" class="spinner" style="float:none;"></span>
+
+            <div id="diagnostic-results-container" style="margin-top: 20px;"></div>
+
+            <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                $('#run-diagnostic-btn').on('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Adjusted to target elements by name attribute
+                    var fromEmail = $('input[name="fp_from_email"]').val();
+                    var toEmail = $('input[name="fp_destination_emails"]').val();
+                    var $results = $('#diagnostic-results-container');
+                    var $loader = $('#diag-loader');
+
+                    if(!toEmail) { alert('Please enter a destination email.'); return; }
+
+                    $loader.addClass('is-active');
+                    $results.fadeOut();
+
+                    $.ajax({
+                        url: ajaxurl, // Standard WP global
+                        type: 'POST',
+                        data: {
+                            action: 'wpts_run_email_diagnostic',
+                            nonce: '<?php echo wp_create_nonce("email_diag_nonce"); ?>',
+                            from_email: fromEmail,
+                            to_email: toEmail
+                        },
+                        success: function(response) {
+                            $loader.removeClass('is-active');
+                            if(response.success) {
+                                $results.html(response.data.html).fadeIn();
+                            } else {
+                                $results.html('<div class="notice notice-error"><p>' + response.data + '</p></div>').fadeIn();
+                            }
+                        }
+                    });
+                });
+            });
+            </script>
+         </td>
+        </tr>            
+            
             
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Email subject','wp-time-slots-booking-form'); ?></th>

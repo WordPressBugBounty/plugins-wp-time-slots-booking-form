@@ -1110,7 +1110,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
         load_plugin_textdomain( 'wp-time-slots-booking-form', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );        
 
-        if(!empty($_REQUEST['cp_slots_action']))
+        if(!empty($_REQUEST['cp_slots_action']) && ($_REQUEST['cp_slots_action'] == 'get_slots' || $_REQUEST['cp_slots_action'] == 'mv') && isset($_SERVER['REQUEST_METHOD']) && 'POST' == $_SERVER['REQUEST_METHOD'])            
         {
             $formid = !empty($_REQUEST['formid']) ? intval( $_REQUEST['formid']) : 0;
             $field = (!empty($_REQUEST['formfield'])?sanitize_key($_REQUEST['formfield']):'');
@@ -2579,6 +2579,207 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         else
             return $text;
     }
+    
+    /**
+     * Advanced Email Deliverability Diagnostic
+     * * @param string|null $test_email Optional. If provided, attempts to send a test email.
+     * @return array Diagnostic report with status, severity, and actionable advice.
+     */
+    protected function diagnose_email_health( $from_email, $test_email = null ) {
+        $report = [];
+        $site_url = get_site_url();
+        $domain   = parse_url( $site_url, PHP_URL_HOST );
+
+        // --- CHECK 1: Environment & SMTP ---
+        // Does the site use an external SMTP provider?
+        $uses_smtp = has_action( 'phpmailer_init' );
+        $report['smtp_status'] = [
+            'title'    => 'SMTP Configuration',
+            'status'   => $uses_smtp ? 'PASS' : 'WARNING',
+            'severity' => $uses_smtp ? 'low' : 'high',
+            'message'  => $uses_smtp 
+                ? "External SMTP service detected." 
+                : "Using default PHP mail(). This is unreliable and often blocked by hosts.",
+            'fix'      => $uses_smtp ? '' : "Install an SMTP plugin (e.g., WP Mail SMTP, FluentSMTP)."
+        ];
+
+        // --- CHECK 2: 'From' Address Alignment ---
+        // Does the sending address match the website domain?
+        // We simulate a default email to see what headers WP generates.    
+        $mail_domain = substr( strrchr( $from_email, "@" ), 1 );
+        
+        // Check if the domain is strictly equal or a subdomain
+        $is_aligned = ( $mail_domain === $domain || strpos( $mail_domain, '.' . $domain ) !== false );
+        
+        $report['domain_alignment'] = [
+            'title'    => 'Domain Alignment',
+            'status'   => $is_aligned ? 'PASS' : 'CRITICAL',
+            'severity' => $is_aligned ? 'low' : 'critical',
+            'message'  => $is_aligned 
+                ? "Sending domain ($mail_domain) matches site domain." 
+                : "Sending domain ($mail_domain) does NOT match site domain ($domain).",
+            'fix'      => $is_aligned ? '' : "Change your 'From' email settings to use an address ending in @$domain."
+        ];
+
+        // --- CHECK 3: DNS Records (SPF, DMARC, MX) ---
+        // Note: dns_get_record() might fail on some restricted hosting environments.
+        if ( function_exists('dns_get_record') ) {
+            
+            // 3a. SPF Check
+            $spf_records = dns_get_record( $domain, DNS_TXT );
+            $has_spf = false;
+            foreach ( $spf_records as $rec ) {
+                if ( isset( $rec['txt'] ) && strpos( $rec['txt'], 'v=spf1' ) !== false ) {
+                    $has_spf = true; 
+                    break;
+                }
+            }
+            $report['spf'] = [
+                'title'    => 'SPF Record',
+                'status'   => $has_spf ? 'PASS' : 'FAIL',
+                'severity' => $has_spf ? 'low' : 'high',
+                'message'  => $has_spf ? "SPF record found." : "Missing SPF record.",
+                'fix'      => $has_spf ? '' : "Add a TXT record: v=spf1 include:_spf.google.com ~all (customize for your host)."
+            ];
+
+            // 3b. DMARC Check (Critical for Gmail/Yahoo)
+            $dmarc_records = dns_get_record( "_dmarc.$domain", DNS_TXT );
+            $has_dmarc = false;
+            if ( $dmarc_records ) {
+                foreach ( $dmarc_records as $rec ) {
+                    if ( isset( $rec['txt'] ) && strpos( $rec['txt'], 'v=DMARC1' ) !== false ) {
+                        $has_dmarc = true;
+                        break;
+                    }
+                }
+            }
+            $report['dmarc'] = [
+                'title'    => 'DMARC Record',
+                'status'   => $has_dmarc ? 'PASS' : 'WARNING',
+                'severity' => $has_dmarc ? 'low' : 'medium',
+                'message'  => $has_dmarc ? "DMARC record found." : "Missing DMARC record.",
+                'fix'      => $has_dmarc ? '' : "Add a basic DMARC TXT record: v=DMARC1; p=none;"
+            ];
+
+            // 3c. MX Check (Can the domain receive mail?)
+            $mx_records = dns_get_record( $domain, DNS_MX );
+            $has_mx = !empty( $mx_records );
+            $report['mx'] = [
+                'title'    => 'MX Records',
+                'status'   => $has_mx ? 'PASS' : 'FAIL',
+                'severity' => $has_mx ? 'low' : 'high',
+                'message'  => $has_mx ? "MX records valid." : "No MX records found. You cannot receive replies.",
+                'fix'      => $has_mx ? '' : "Configure your domain's MX records to point to your email provider."
+            ];
+        }
+
+        // --- CHECK 4: Actual Transmission Test (Optional) ---
+        if ( $test_email ) {
+            // Build the custom headers array to force the 'From' address
+            $site_name = get_bloginfo('name') ? get_bloginfo('name') : 'WordPress';
+            $custom_headers = array(
+                'From: ' . $site_name . ' Diagnostic <' . $from_email . '>'
+            );
+
+            // Pass the headers as the 4th parameter in wp_mail
+            $sent = wp_mail( $test_email, "Test Email from $domain", "If you see this, basic delivery is working.", $custom_headers );
+            
+            $report['send_test'] = [
+                'title'    => 'Transmission Test',
+                'status'   => $sent ? 'PASS' : 'FAIL',
+                'severity' => $sent ? 'low' : 'critical',
+                'message'  => $sent 
+                    ? "WordPress attempted to send the email successfully." 
+                    : "wp_mail() returned FALSE. The server refused to send the mail.",
+                'fix'      => $sent ? "Check your spam folder ($test_email)." : "Contact your hosting provider."
+            ];
+        }
+
+        return $report;
+    }
+
+    /**
+     * Renders the diagnostic report in a WordPress-friendly HTML format.
+     * * @param array $diagnostics The array returned from diagnose_email_health()
+     */
+    protected function render_email_diagnostic_report( $diagnostics ) {
+        ?>
+        <div class="wrap">
+            <h2>Email Deliverability Diagnostic</h2>
+            <p class="description">This tool checks if your server is properly configured to ensure contact form emails reach your inbox.</p>
+            
+            <table class="wp-list-table widefat fixed striped posts" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">&nbsp;&nbsp;Test</th>
+                        <th style="width: 15%;">&nbsp;&nbsp;Status</th>
+                        <th>&nbsp;&nbsp;Details & Recommendations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ( $diagnostics as $key => $data ) : 
+                        // Determine styling based on severity/status
+                        $status_color = ($data['status'] === 'PASS') ? '#46b450' : (($data['severity'] === 'critical') ? '#dc3232' : '#ffb900');
+                        $icon = ($data['status'] === 'PASS') ? 'dashicons-yes' : (($data['severity'] === 'critical') ? 'dashicons-dismiss' : 'dashicons-warning');
+                    ?>
+                        <tr>
+                            <td>
+                                <strong><?php echo esc_html( $data['title'] ); ?></strong>
+                            </td>
+                            <td>
+                                <span style="color: <?php echo $status_color; ?>; font-weight: 600;">
+                                    <span class="dashicons <?php echo $icon; ?>" style="vertical-align: middle;"></span>
+                                    <?php echo esc_html( $data['status'] ); ?>
+                                </span>
+                            </td>
+                            <td>
+                                <p style="margin: 0; font-weight: 500;"><?php echo esc_html( $data['message'] ); ?></p>
+                                <?php if ( ! empty( $data['fix'] ) ) : ?>
+                                    <div style="margin-top: 8px; padding: 10px; background: #fff8e5; border-left: 4px solid #ffb900;">
+                                        <strong><span class="dashicons dashicons-lightbulb" style="font-size: 18px;"></span> Next Step:</strong> 
+                                        <?php echo esc_html( $data['fix'] ); ?>
+                                    </div>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
+    
+    /**
+     * AJAX Handler for Email Diagnostic
+     */
+    function handle_email_diagnostic_ajax() {
+        // 1. Security Check
+        check_ajax_referer('email_diag_nonce', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Unauthorized access.');
+        }
+
+        $from_email = sanitize_email($_POST['from_email']);
+        $to_email   = sanitize_email($_POST['to_email']);
+
+        if (!is_email($to_email)) {
+            wp_send_json_error('Invalid destination email address.');
+        }
+
+        // 3. Run the Improved Diagnostic
+        // Note: Ensure your diagnose_email_health() function is accessible here
+        $results = $this->diagnose_email_health($from_email, $to_email);
+
+        // 5. Capture the HTML output
+        ob_start();
+        // Use the rendering function we built in the previous step
+        $this->render_email_diagnostic_report($results);
+        $html_output = ob_get_clean();
+
+        wp_send_json_success(['html' => $html_output]);
+    }    
+    
     
 	function codepeople_add_warning_banner($wp_admin_bar)
 	{

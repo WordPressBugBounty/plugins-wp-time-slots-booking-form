@@ -43,7 +43,11 @@ if( !class_exists( 'cptslotsb_DashboardWidget' ) )
 
 
         public function add_dashboard_widgets() {
-        	wp_add_dashboard_widget('dashboard_widget', 'WP Time Slots Booking Form: Upcoming appointments', array(&$this, 'pp_DashboardWidget'));
+            // Apply capability restriction
+            $required_cap = get_option('cpappb_dashboard_capability', 'manage_options');
+            if ( current_user_can( $required_cap ) ) {            
+                wp_add_dashboard_widget('dashboard_widget', 'WP Time Slots Booking Form: Upcoming appointments', array(&$this, 'pp_DashboardWidget'));
+            }
         }        
 
         /************************ PRIVATE METHODS *****************************/
