@@ -412,7 +412,7 @@ for($k=0; $k<count($posted_data["apps"]); $k++) {
     $app = $posted_data["apps"][$k];
     $appts .=   '<div class="ahb-appointment-badge">' .
                    '<span class="dashicons dashicons-clock"></span>' .
-                   '<span class="ahb-time">'.$this->format_date($posted_data["apps"][$k]["date"]).' '.$posted_data["apps"][$k]["slot"].'</span>' .
+                   '<span class="ahb-time">'.$this->format_date($posted_data["apps"][$k]["date"]).' '.esc_html($posted_data["apps"][$k]["slot"]).'</span>' .
                    '<span class="ahb-service">'.($app["quantity1"] + $app["quantity2"] + $app["quantity3"] + $app["quantity4"] + $app["quantity5"] > 1 || $app["quantity1"] == 0 ? 
 				      " (".(
                       $this->getQuantityLabel("quantity1",$app["field"],$formdata).$app["quantity1"]
