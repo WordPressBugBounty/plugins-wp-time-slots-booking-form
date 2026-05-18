@@ -14,6 +14,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     private $include_user_data_csv = false;
     public $CP_CFPP_global_templates;
     private $old_css_placeholder = '/* Styles definition here */';
+    private $postURL;
     
     protected $paid_statuses = array('Pending','Cancelled','Rejected');
     public $shorttag = 'CP_TIME_SLOTS_BOOKING';
@@ -762,7 +763,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         } 
         else if ($this->get_param("cal") || $this->get_param("cal") == '0' || $this->get_param("pwizard") == '1')
         {
-            $this->item = $this->get_param("cal");
+            $this->item = intval($this->get_param("cal"));
             if (isset($_GET["edit"]) && $_GET["edit"] == '1')
                 @include_once dirname( __FILE__ ) . '/cp_admin_int_edition.inc.php';
             else if ($this->get_param("schedule") == '1')
@@ -774,11 +775,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
             else if ($this->get_param("addbk") == '1')
                 @include_once dirname( __FILE__ ) . '/cp-admin-int-add-booking.inc.php';
             else if ($this->get_param("pwizard") == '1')
-            {
-                if ($this->get_param("cal"))
-                    $this->item = intval($this->get_param("cal"));
                 @include_once dirname( __FILE__ ) . '/cp-publish-wizzard.inc.php';
-            }
             else
                 @include_once dirname( __FILE__ ) . '/cp-admin-int.inc.php';
         }
@@ -955,7 +952,10 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         {
             $this->verify_nonce ( sanitize_text_field($_POST["anonce"]), 'cptslotsb_actions_wizard');
             $shortcode = '['.$this->shorttag.'  id="'.$this->item .'"]';
-            $this->postURL = $this->publish_on( sanitize_text_field($_POST["whereto"]), sanitize_text_field($_POST["publishpage"]), sanitize_text_field($_POST["publishpost"]), $shortcode, sanitize_text_field($_POST["posttitle"]));
+            $publishpage = '';
+            if (isset($_POST["publishpage"]))
+                $publishpage = sanitize_text_field($_POST["publishpage"]);
+            $this->postURL = $this->publish_on( sanitize_text_field($_POST["whereto"]), $publishpage, sanitize_text_field($_POST["publishpost"]), $shortcode, sanitize_text_field($_POST["posttitle"]));
             return;
         }
 

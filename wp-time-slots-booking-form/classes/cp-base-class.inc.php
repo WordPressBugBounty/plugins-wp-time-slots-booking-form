@@ -174,7 +174,7 @@ class CP_TSLOTSBOOK_BaseClass {
             $value = (property_exists($this->option_buffered_item, $field) && !empty(@$this->option_buffered_item->$field) ? @$this->option_buffered_item->$field : '');
         else
         {  
-           $myrows = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_items." WHERE id=".$this->item );
+           $myrows = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_items." WHERE id=".intval($this->item) );
            if (count($myrows))
            {
                $value = @$myrows[0]->$field;           
