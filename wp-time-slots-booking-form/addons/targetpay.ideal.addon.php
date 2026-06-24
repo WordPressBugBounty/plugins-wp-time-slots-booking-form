@@ -2,6 +2,9 @@
 /*
 Documentation: https://www.targetpay.com/docs/TargetPay_iDEAL_V3.0_en.pdf
 */
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 require_once dirname( __FILE__ ).'/base.addon.php';
 
 if( !class_exists( 'cptslotsb_iDealTargetPay' ) )

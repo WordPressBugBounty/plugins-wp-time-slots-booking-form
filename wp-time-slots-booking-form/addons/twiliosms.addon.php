@@ -2,6 +2,9 @@
 /*
     Reference: https://www.twilio.com/docs/quickstart/php/sms/sending-via-rest#send-sms-via-rest
 */
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 require_once dirname( __FILE__ ).'/base.addon.php';
 
 if( !class_exists( 'cptslotsb_TwilioSMS' ) )

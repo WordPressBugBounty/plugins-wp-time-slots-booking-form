@@ -2,6 +2,9 @@
 /*
 Documentation: https://goo.gl/w3kKoH
 */
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 require_once dirname( __FILE__ ).'/base.addon.php';
 
 if( !class_exists( 'cptslotsb_SabTPV' ) )

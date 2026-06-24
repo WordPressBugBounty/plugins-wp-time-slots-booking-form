@@ -34,16 +34,16 @@ $dto = ($rawto ? date("Y-m-d", strtotime($rawto)) : $default_to);
 ?>
 
 
-<h1><?php _e('Schedule','wp-time-slots-booking-form'); ?> - <?php if ($this->item != 0) echo esc_html($myform[0]->form_name); else echo 'All forms'; ?></h1>
+<h1><?php esc_html_e('Schedule','wp-time-slots-booking-form'); ?> - <?php if ($this->item != 0) echo esc_html($myform[0]->form_name); else echo 'All forms'; ?></h1>
 
 <div class="ahb-buttons-container">
 
     <?php if (!isset($_GET["calendarview"])) { ?>
-     <input type="button" value="<?php _e('Change to Schedule Calendar View','wp-time-slots-booking-form'); ?>" class="button button-primary" onclick="document.location='?page=<?php echo esc_js($this->menu_parameter); ?>&cal=<?php echo esc_js($this->item); ?>&schedule=1&calendarview=1';" />  
+     <input type="button" value="<?php esc_html_e('Change to Schedule Calendar View','wp-time-slots-booking-form'); ?>" class="button button-primary" onclick="document.location='?page=<?php echo esc_js($this->menu_parameter); ?>&cal=<?php echo esc_js($this->item); ?>&schedule=1&calendarview=1';" />  
     <?php } else { ?>
-     <input type="button" value="<?php _e('Change to Schedule List View','wp-time-slots-booking-form'); ?>" class="button button-primary" onclick="document.location='?page=<?php echo esc_js($this->menu_parameter); ?>&cal=<?php echo esc_js($this->item); ?>&schedule=1';" />
+     <input type="button" value="<?php esc_html_e('Change to Schedule List View','wp-time-slots-booking-form'); ?>" class="button button-primary" onclick="document.location='?page=<?php echo esc_js($this->menu_parameter); ?>&cal=<?php echo esc_js($this->item); ?>&schedule=1';" />
     <?php } ?>
-	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php _e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
+	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php esc_html_e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
 	<div class="clear"></div>
 </div>
 
@@ -55,16 +55,16 @@ $dto = ($rawto ? date("Y-m-d", strtotime($rawto)) : $default_to);
         <input type="hidden" name="page" value="<?php echo esc_attr($this->menu_parameter); ?>" />
         <input type="hidden" name="cal" value="<?php echo esc_attr($this->item); ?>" />
         <input type="hidden" name="schedule" value="1" />
-		<nobr><label><?php _e('From','wp-time-slots-booking-form'); ?>:</label> <input autocomplete="off" type="text" id="dfrom" name="dfrom" value="<?php if (!empty($_GET["dfrom"])) echo esc_attr(@$_GET["dfrom"]); ?>" >&nbsp;&nbsp;</nobr>
-		<nobr><label><?php _e('To','wp-time-slots-booking-form'); ?>:</label> <input autocomplete="off" type="text" id="dto" name="dto" value="<?php if (!empty($_GET["dto"])) echo esc_attr(@$_GET["dto"]); ?>" >&nbsp;&nbsp;</nobr>
-        <nobr><label><?php _e('Search for','wp-time-slots-booking-form'); ?>:</label> <input type="text" id="searchfor" name="searchfor" value="<?php if (!empty($_GET["searchfor"])) echo esc_attr(@$_GET["searchfor"]); ?>" >
-        <nobr><?php _e('Paid Status','wp-time-slots-booking-form'); ?>: <select id="paid" name="paid">
-         <option value=""><?php _e('All','wp-time-slots-booking-form'); ?></option>
-         <option value="1" <?php if (!empty($_GET["paid"]) && @$_GET["paid"]) echo ' selected'; ?>><?php _e('Paid only','wp-time-slots-booking-form'); ?></option>
+		<nobr><label><?php esc_html_e('From','wp-time-slots-booking-form'); ?>:</label> <input autocomplete="off" type="text" id="dfrom" name="dfrom" value="<?php if (!empty($_GET["dfrom"])) echo esc_attr(@$_GET["dfrom"]); ?>" >&nbsp;&nbsp;</nobr>
+		<nobr><label><?php esc_html_e('To','wp-time-slots-booking-form'); ?>:</label> <input autocomplete="off" type="text" id="dto" name="dto" value="<?php if (!empty($_GET["dto"])) echo esc_attr(@$_GET["dto"]); ?>" >&nbsp;&nbsp;</nobr>
+        <nobr><label><?php esc_html_e('Search for','wp-time-slots-booking-form'); ?>:</label> <input type="text" id="searchfor" name="searchfor" value="<?php if (!empty($_GET["searchfor"])) echo esc_attr(@$_GET["searchfor"]); ?>" >
+        <nobr><?php esc_html_e('Paid Status','wp-time-slots-booking-form'); ?>: <select id="paid" name="paid">
+         <option value=""><?php esc_html_e('All','wp-time-slots-booking-form'); ?></option>
+         <option value="1" <?php if (!empty($_GET["paid"]) && @$_GET["paid"]) echo ' selected'; ?>><?php esc_html_e('Paid only','wp-time-slots-booking-form'); ?></option>
       </select></nobr>
-      <nobr><?php _e('Status','wp-time-slots-booking-form'); ?>: <?php $this->render_status_box('status', (!isset($_GET["status"])?'-1':sanitize_text_field($_GET["status"])), true); ?></nobr>
-		<nobr><label><?php _e('Item','wp-time-slots-booking-form'); ?>:</label> <select id="cal" name="cal">
-          <option value="0"><?php _e('[All Items]','wp-time-slots-booking-form'); ?></option>
+      <nobr><?php esc_html_e('Status','wp-time-slots-booking-form'); ?>: <?php $this->render_status_box('status', (!isset($_GET["status"])?'-1':sanitize_text_field($_GET["status"])), true); ?></nobr>
+		<nobr><label><?php esc_html_e('Item','wp-time-slots-booking-form'); ?>:</label> <select id="cal" name="cal">
+          <option value="0"><?php esc_html_e('[All Items]','wp-time-slots-booking-form'); ?></option>
    <?php
     $myrows = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_items );                                                                     
     foreach ($myrows as $item)  
@@ -72,8 +72,8 @@ $dto = ($rawto ? date("Y-m-d", strtotime($rawto)) : $default_to);
    ?>
     </select></nobr>
 		<nobr>
-			<input type="submit" name="<?php echo esc_attr($this->prefix); ?>_csv2" value="<?php _e('Export to CSV','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-left:10px;">
-			<input type="submit" name="ds" value="<?php _e('Filter','wp-time-slots-booking-form'); ?>" class="button-primary button" style="float:right;">
+			<input type="submit" name="<?php echo esc_attr($this->prefix); ?>_csv2" value="<?php esc_html_e('Export to CSV','wp-time-slots-booking-form'); ?>" class="button" style="float:right;margin-left:10px;">
+			<input type="submit" name="ds" value="<?php esc_html_e('Filter','wp-time-slots-booking-form'); ?>" class="button-primary button" style="float:right;">
 		</nobr>
         <div style="clear:both"></div>
       </form>
@@ -86,13 +86,13 @@ $dto = ($rawto ? date("Y-m-d", strtotime($rawto)) : $default_to);
 <div id="dex_printable_contents">
 
  <div class="cpapp_no_wrap">
-  <div class="cptslotsb_field_0 cptslotsb_field_header"><?php _e('Date','wp-time-slots-booking-form'); ?></div>
-  <div class="cptslotsb_field_1 cptslotsb_field_header"><?php _e('Slot','wp-time-slots-booking-form'); ?></div>
-  <div class="cptslotsb_field_2 cptslotsb_field_header"><?php _e('Qty','wp-time-slots-booking-form'); ?></div>
-  <div class="cptslotsb_field_3 cptslotsb_field_header"><?php _e('Paid','wp-time-slots-booking-form'); ?></div>
-  <div class="cptslotsb_field_4 cptslotsb_field_header"><?php _e('Email','wp-time-slots-booking-form'); ?></div>
-  <div class="cptslotsb_field_5 cptslotsb_field_header"><?php _e('Data','wp-time-slots-booking-form'); ?></div>
-  <div class="cptslotsb_field_6 cptslotsb_field_header"><?php _e('Status','wp-time-slots-booking-form'); ?></div>
+  <div class="cptslotsb_field_0 cptslotsb_field_header"><?php esc_html_e('Date','wp-time-slots-booking-form'); ?></div>
+  <div class="cptslotsb_field_1 cptslotsb_field_header"><?php esc_html_e('Slot','wp-time-slots-booking-form'); ?></div>
+  <div class="cptslotsb_field_2 cptslotsb_field_header"><?php esc_html_e('Qty','wp-time-slots-booking-form'); ?></div>
+  <div class="cptslotsb_field_3 cptslotsb_field_header"><?php esc_html_e('Paid','wp-time-slots-booking-form'); ?></div>
+  <div class="cptslotsb_field_4 cptslotsb_field_header"><?php esc_html_e('Email','wp-time-slots-booking-form'); ?></div>
+  <div class="cptslotsb_field_5 cptslotsb_field_header"><?php esc_html_e('Data','wp-time-slots-booking-form'); ?></div>
+  <div class="cptslotsb_field_6 cptslotsb_field_header"><?php esc_html_e('Status','wp-time-slots-booking-form'); ?></div>
   <div class="cpapp_break"></div>
  </div> 
  <div class="cpapp_break"></div>
@@ -112,8 +112,8 @@ echo $this->clean_sanitize($this->filter_list( array(
 </div>
 
 <div class="ahb-buttons-container">
-    <input type="button" value="<?php _e('Print','wp-time-slots-booking-form'); ?>" class="button button-primary" onclick="do_dexapp_print();" />
-	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php _e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
+    <input type="button" value="<?php esc_html_e('Print','wp-time-slots-booking-form'); ?>" class="button button-primary" onclick="do_dexapp_print();" />
+	<a href="<?php print esc_attr(admin_url('admin.php?page='.$this->menu_parameter));?>" class="ahb-return-link">&larr;<?php esc_html_e('Return to the calendars list','wp-time-slots-booking-form'); ?></a>
 	<div class="clear"></div>
 </div>
 

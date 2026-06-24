@@ -3,6 +3,8 @@
 ....
 */
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 if( !class_exists( 'cptslotsb_BaseAddon' ) )
 {
     class cptslotsb_BaseAddon 

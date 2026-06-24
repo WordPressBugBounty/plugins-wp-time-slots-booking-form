@@ -3,6 +3,9 @@
 Documentation: http://support.worldpay.com/support/bg/index.php?page=development&sub=integration&subsub=examples
                http://support.worldpay.com/support/kb/bg/paymentresponse/pr0000.html
 */
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 require_once dirname( __FILE__ ).'/base.addon.php';
 
 if( !class_exists( 'cptslotsb_WorldPay' ) )
