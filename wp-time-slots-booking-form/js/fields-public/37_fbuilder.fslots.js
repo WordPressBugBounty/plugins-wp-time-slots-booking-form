@@ -657,24 +657,27 @@ $.extend(
                 {
                     e.datepicker("setDate", me.startdate);
                     $( '#field' + me.form_identifier + '-' + me.index + ' .slotsCalendar'+me.name ).html("<div class=\"slots\">"+cp_tslotsbk_nomore_label+"</div>");
-                    return;
-                }   
-                e.datepicker("setDate", nextdateAvailable);
-                me.getD = new Date(nextdateAvailable.getTime());
-                me.startdate = new Date(nextdateAvailable.getTime());
-                onChangeDateOrQuantity($.datepicker.formatDate("yy-mm-dd", me.getD)); 
-		        function ifLoadOk()
-                {
-                    if (!me.loadOK)
-		                setTimeout(ifLoadOk,100);
-		            else
-		            { 
-		                $( '#field' + me.form_identifier + '-' + me.index + ' .sbfieldCalendar'+me.name ).datepicker( "option", "beforeShowDay", renderCalendarCallback );
-		                onChangeDateOrQuantity($.datepicker.formatDate("yy-mm-dd", me.getD));
-		                $( '#field' + me.form_identifier + '-' + me.index + ' .sbfieldCalendar'+me.name ).datepicker( "option", "beforeShowDay", renderCalendarCallback );
-		            }    
-                } 
-                ifLoadOk();
+                    //return;
+                }
+                else
+                {   
+                    e.datepicker("setDate", nextdateAvailable);
+                    me.getD = new Date(nextdateAvailable.getTime());
+                    me.startdate = new Date(nextdateAvailable.getTime());
+                    onChangeDateOrQuantity($.datepicker.formatDate("yy-mm-dd", me.getD)); 
+		            function ifLoadOk()
+                    {
+                        if (!me.loadOK)
+		                    setTimeout(ifLoadOk,100);
+		                else
+		                { 
+		                    $( '#field' + me.form_identifier + '-' + me.index + ' .sbfieldCalendar'+me.name ).datepicker( "option", "beforeShowDay", renderCalendarCallback );
+		                    onChangeDateOrQuantity($.datepicker.formatDate("yy-mm-dd", me.getD));
+		                    $( '#field' + me.form_identifier + '-' + me.index + ' .sbfieldCalendar'+me.name ).datepicker( "option", "beforeShowDay", renderCalendarCallback );
+		                }    
+                    } 
+                    ifLoadOk();
+                }
 		    }
 		    if (me.initialapp!="" && dd!="")
 		    {
