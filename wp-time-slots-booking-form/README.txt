@@ -4,7 +4,7 @@ Donate link: https://wptimeslot.dwbooster.com/download
 Tags: booking,booking calendar,time,slot,reservation
 Requires at least: 3.0.5
 Tested up to: 7.1
-Stable tag: 1.2.54
+Stable tag: 1.2.55
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -949,7 +949,14 @@ You can also use this area to change the script load method if the booking calen
 = 1.2.54 =
 * Compatible with WordPress 7.1
 
+= 1.2.55 =
+* Support for Waiting List add-on
+* Support for Activity Logs add-on
+* Improved pusblishing wizard
+
 == Upgrade Notice ==
 
-= 1.2.54 =
-* Compatible with WordPress 7.1
+= 1.2.55 =
+* Support for Waiting List add-on
+* Support for Activity Logs add-on
+* Improved pusblishing wizard

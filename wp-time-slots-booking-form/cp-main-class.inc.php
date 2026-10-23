@@ -992,22 +992,25 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
    }
    
 
-   function data_management_loaded() {
+    function data_management_loaded() {
         global $wpdb;
 
         $action = $this->get_param('cp_timeslotsbooking_do_action_loaded');
-    	if (!$action) return; // go out if the call isn't for this one
+        if (!$action) return; // go out if the call isn't for this one
 
         if ($this->get_param('cptimeslotsbk_id')) $this->item = intval($this->get_param('cptimeslotsbk_id'));
 
         if ($action == "wizard" && current_user_can('manage_options') )
         {
-            $this->verify_nonce ( sanitize_text_field($_POST["anonce"]), 'cptslotsb_actions_wizard');
-            $shortcode = '['.$this->shorttag.'  id="'.$this->item .'"]';
-            $publishpage = '';
-            if (isset($_POST["publishpage"]))
-                $publishpage = sanitize_text_field($_POST["publishpage"]);
-            $this->postURL = $this->publish_on( sanitize_text_field($_POST["whereto"]), $publishpage, sanitize_text_field($_POST["publishpost"]), $shortcode, sanitize_text_field($_POST["posttitle"]));
+            $this->verify_nonce( sanitize_text_field($_POST["anonce"]), 'cptslotsb_actions_wizard' );
+            $shortcode = '[' . $this->shorttag . ' id="' . $this->item . '"]';
+            $publishpage = isset($_POST["publishpage"]) ? sanitize_text_field($_POST["publishpage"]) : '';
+            $publishpost = isset($_POST["publishpost"]) ? sanitize_text_field($_POST["publishpost"]) : '';
+            $whereto = isset($_POST["whereto"]) ? sanitize_text_field($_POST["whereto"]) : '0';
+            $posttitle = isset($_POST["posttitle"]) ? sanitize_text_field($_POST["posttitle"]) : 'Booking Form';
+            $publishstatus = (isset($_POST["publishstatus"]) && $_POST["publishstatus"] === 'publish') ? 'publish' : 'draft';
+
+            $this->postURL = $this->publish_on( $whereto, $publishpage, $publishpost, $shortcode, $posttitle, $publishstatus );
             return;
         }
 
@@ -1018,17 +1021,21 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     }
 
 
-    private function publish_on($whereto, $publishpage = '', $publishpost = '', $content = '', $posttitle = 'Booking Form')
+    private function publish_on($whereto, $publishpage = '', $publishpost = '', $content = '', $posttitle = 'Booking Form', $publishstatus = 'draft')
     {
         global $wpdb;
         $id = '';
-        if ($whereto == '0' || $whereto =='1') // new page
+        if ($whereto == '0' || $whereto == '1') // new page or post
         {
+            $post_content = ($publishstatus === 'draft')
+                ? 'This is a <b>preview</b> page, remember to publish it if needed. You can edit the full calendar and form settings into the admin settings page.<br /><br /> ' . $content
+                : $content;
+
             $my_post = array(
-              'post_title'    => $posttitle,
-              'post_type' => ($whereto == '0'?'page':'post'),
-              'post_content'  => 'This is a <b>preview</b> page, remember to publish it if needed. You can edit the full calendar and form settings into the admin settings page.<br /><br /> '.$content,
-              'post_status'   => 'draft'
+              'post_title'   => $posttitle,
+              'post_type'    => ($whereto == '0' ? 'page' : 'post'),
+              'post_content' => $post_content,
+              'post_status'  => $publishstatus
             );
 
             // Insert the post into the database
@@ -1036,19 +1043,19 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         }
         else
         {
-            $id = ($whereto == '2'?$publishpage:$publishpost);
+            $id = intval($whereto == '2' ? $publishpage : $publishpost);
             $post = get_post( $id );
-            if (strpos($post->post_content,$content) === false)
+            if ($post && strpos($post->post_content, $content) === false)
             {
                 $my_post = array(
                       'ID'           => $id,
-                      'post_content' => $content.$post->post_content,
+                      'post_content' => $content . $post->post_content,
                   );
                 // Update the post into the database
                 wp_update_post( $my_post );
             }
         }
-        return get_permalink($id);
+        return $id ? get_permalink($id) : admin_url('admin.php?page=' . $this->menu_parameter);
     }
 
 
