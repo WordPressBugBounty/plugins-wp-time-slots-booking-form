@@ -1167,7 +1167,10 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     function data_management() {
         global $wpdb;
 
-        load_plugin_textdomain( 'wp-time-slots-booking-form', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );        
+        load_plugin_textdomain( 'wp-time-slots-booking-form', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+
+        add_action( 'wp_ajax_cptslotsb_generate_ai_reply', array( $this, 'handle_generate_ai_reply_ajax' ) );
+        add_action( 'wp_ajax_cptslotsb_send_reply', array( $this, 'handle_send_reply_ajax' ) );        
 
         if(!empty($_REQUEST['cp_slots_action']) && ($_REQUEST['cp_slots_action'] == 'get_slots' || $_REQUEST['cp_slots_action'] == 'mv') && isset($_SERVER['REQUEST_METHOD']) && 'POST' == $_SERVER['REQUEST_METHOD'])            
         {
@@ -2894,6 +2897,137 @@ the styles in the "<a href="admin.php?page=cp_timeslotsbooking_settings">Edit St
         }
 				return;
 	}
+    
+/**
+     * AJAX Handler: Generate Reply with Free Keyless AI (Pollinations.ai)
+     */
+    public function handle_generate_ai_reply_ajax() {
+        check_ajax_referer( 'cptslotsb_reply_nonce', 'nonce' );
+
+        $cal_id = isset( $_POST['cal_id'] ) ? intval( $_POST['cal_id'] ) : 0;
+        $has_access = current_user_can( 'edit_pages' ) || ( method_exists( $this, 'check_current_user_access' ) && $this->check_current_user_access( $cal_id ) );
+        if ( ! $has_access ) {
+            wp_send_json_error( __( 'Unauthorized access.', 'wp-time-slots-booking-form' ) );
+        }
+
+        $original_message = isset( $_POST['original_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['original_message'] ) ) : '';
+        $instructions     = isset( $_POST['instructions'] ) && trim( $_POST['instructions'] ) !== ''
+            ? sanitize_text_field( wp_unslash( $_POST['instructions'] ) )
+            : 'Write a polite, helpful, and professional reply regarding their appointment booking.';
+
+        if ( empty( $original_message ) ) {
+            wp_send_json_error( __( 'Original booking message is empty.', 'wp-time-slots-booking-form' ) );
+        }
+
+        $site_name     = get_bloginfo( 'name' );
+        $system_prompt = "You are a helpful customer support and booking assistant for '{$site_name}'. "
+                       . "Draft a direct email reply to the customer's booking submission below. "
+                       . "Follow the same language used by the customer unless instructed otherwise. "
+                       . "Output ONLY the email body text without a 'Subject:' line.";
+
+        $user_prompt = "Customer Booking Submission:\n{$original_message}\n\nAdmin Instructions for Reply:\n{$instructions}";
+
+        $url = 'https://text.pollinations.ai/' . rawurlencode( $system_prompt . "\n\n" . $user_prompt );
+
+        $response = wp_remote_get( $url, array(
+            'timeout' => 30,
+            'headers' => array(
+                'User-Agent' => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . get_site_url(),
+            ),
+        ) );
+
+        if ( is_wp_error( $response ) ) {
+            wp_send_json_error( 'Error connecting to AI service: ' . $response->get_error_message() );
+        }
+
+        $status_code = wp_remote_retrieve_response_code( $response );
+        $body        = wp_remote_retrieve_body( $response );
+
+        if ( $status_code !== 200 || empty( trim( $body ) ) ) {
+            wp_send_json_error( 'AI service is temporarily busy (HTTP ' . $status_code . '). Please try again.' );
+        }
+
+        wp_send_json_success( array( 'reply' => trim( $body ) ) );
+    }
+
+
+
+    /**
+     * AJAX Handler: Send Email Reply & Log it in the Database
+     */
+    public function handle_send_reply_ajax() {
+        global $wpdb;
+        check_ajax_referer( 'cptslotsb_reply_nonce', 'nonce' );
+
+        $message_id = isset( $_POST['message_id'] ) ? intval( $_POST['message_id'] ) : 0;
+        $to_email   = isset( $_POST['to_email'] ) ? sanitize_email( wp_unslash( $_POST['to_email'] ) ) : '';
+        $subject    = isset( $_POST['subject'] ) ? sanitize_text_field( wp_unslash( $_POST['subject'] ) ) : '';
+        $reply_body = isset( $_POST['reply_body'] ) ? sanitize_textarea_field( wp_unslash( $_POST['reply_body'] ) ) : '';
+
+        $msg_row = null;
+        $form_id = 0;
+        if ( $message_id > 0 ) {
+            $msg_row = $wpdb->get_row( $wpdb->prepare(
+                "SELECT * FROM {$wpdb->prefix}{$this->table_messages} WHERE id = %d",
+                $message_id
+            ) );
+            if ( $msg_row ) {
+                $form_id = intval( $msg_row->formid );
+            }
+        }
+
+        $has_access = current_user_can( 'edit_pages' ) || ( method_exists( $this, 'check_current_user_access' ) && $this->check_current_user_access( $form_id ) );
+        if ( ! $has_access ) {
+            wp_send_json_error( __( 'Unauthorized access.', 'wp-time-slots-booking-form' ) );
+        }
+
+        if ( ! is_email( $to_email ) ) {
+            wp_send_json_error( __( 'Invalid recipient email address.', 'wp-time-slots-booking-form' ) );
+        }
+        if ( empty( $subject ) || empty( $reply_body ) ) {
+            wp_send_json_error( __( 'Subject and message body are required.', 'wp-time-slots-booking-form' ) );
+        }
+
+        $from_email = get_option( 'admin_email' );
+        $from_name  = get_bloginfo( 'name' );
+
+        if ( $form_id > 0 ) {
+            $this->setId( $form_id );
+            $configured_from = trim( $this->get_option( 'fp_from_email', '' ) );
+            if ( is_email( $configured_from ) ) {
+                $from_email = $configured_from;
+            }
+            $configured_name = trim( $this->get_option( 'fp_from_name', '' ) );
+            if ( ! empty( $configured_name ) ) {
+                $from_name = $configured_name;
+            }
+        }
+
+        $headers = array(
+            'Content-Type: text/plain; charset=UTF-8',
+            'From: "' . $from_name . '" <' . $from_email . '>',
+        );
+
+        $sent = wp_mail( $to_email, $subject, $reply_body, $headers );
+
+        if ( ! $sent ) {
+            wp_send_json_error( __( 'wp_mail() failed to send the email. Please check your SMTP settings.', 'wp-time-slots-booking-form' ) );
+        }
+
+        // Append reply log to the booking record
+        if ( ! empty( $msg_row ) ) {
+            $updated_data = $msg_row->data . "\n--- Replied on " . current_time( 'Y-m-d H:i' ) . " ---\n" . $reply_body . "\n";
+            $wpdb->update(
+                $wpdb->prefix . $this->table_messages,
+                array( 'data' => $updated_data ),
+                array( 'id' => $message_id ),
+                array( '%s' ),
+                array( '%d' )
+            );
+        }
+
+        wp_send_json_success( __( 'Reply sent successfully!', 'wp-time-slots-booking-form' ) );
+    }    
     
 
 } // end class

@@ -124,6 +124,7 @@ $form_data = json_decode($this->cleanJSON($this->get_option('form_structure', CP
 $formdata = $form_data[0];
 
 $nonce = wp_create_nonce( 'cptslotsb_actions_booking' );
+$reply_nonce = wp_create_nonce( 'cptslotsb_reply_nonce' );
 
 ?>
 <div class="wrap">
@@ -285,6 +286,35 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_booking' );
         </form>
 
         <style>
+            /* Clean WordPress Row Actions styling */
+            .ahb-orders-list td.cpnopr .row-actions {
+                padding: 4px 0 0 0;
+                font-size: 12px;
+                line-height: 1.6;
+                color: #646970;
+            }
+            .ahb-orders-list td.cpnopr .row-actions span {
+                display: inline-block;
+                white-space: nowrap;
+                margin-right: 2px;
+            }
+            .ahb-orders-list td.cpnopr .row-actions a {
+                color: #2271b1;
+                text-decoration: none;
+            }
+            .ahb-orders-list td.cpnopr .row-actions a:hover {
+                color: #0a4b78;
+                text-decoration: underline;
+            }
+            .ahb-orders-list td.cpnopr .row-actions .trash a,
+            .ahb-orders-list td.cpnopr .row-actions a.submitdelete {
+                color: #d63638;
+            }
+            .ahb-orders-list td.cpnopr .row-actions .trash a:hover,
+            .ahb-orders-list td.cpnopr .row-actions a.submitdelete:hover {
+                color: #b32d2e;
+            }
+
             /* Force exact standard WordPress List Table pagination styling */
             .ahb-wp-pagination { float: right; display: flex; align-items: center; margin-top: 3px; color: #3c434a; font-size: 13px; }
             .ahb-wp-pagination .displaying-num { margin-right: 7px; }
@@ -383,6 +413,13 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_booking' );
                                   }
                               }
                           }
+
+                          $raw_data = $events[$i]->data;
+                          $blocked_indicator = isset($this->blocked_by_admin_indicator) ? $this->blocked_by_admin_indicator : 'BLOCKED@BY.ADMIN';
+                          $display_email = ($events[$i]->notifyto != $blocked_indicator) ? sanitize_email($events[$i]->notifyto) : '';
+                          if (empty($display_email) && $events[$i]->notifyto != $blocked_indicator && preg_match('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', $raw_data, $matches)) {
+                              $display_email = sanitize_email($matches[0]);
+                          }
                  ?>
                   <tr class="<?php if ($cancelled && $status != 'Attended') { echo 'cptslotsb_cancelled '; } ?>" valign="top">
                     <th scope="row" class="check-column"><input type="checkbox" name="c<?php echo intval($i); ?>" value="<?php echo intval($events[$i]->id); ?>" /></th>
@@ -448,6 +485,13 @@ for($k=0; $k<count($posted_data["apps"]); $k++) {
                           <?php $this->render_status_box('sb'.intval($events[$i]->id), $status); ?>
                       </div>
                       <div class="row-actions visible">
+                          <?php if ($events[$i]->notifyto != $blocked_indicator) { ?>
+                              <span class="reply"><a href="javascript:void(0);"
+                                  data-id="<?php echo intval($events[$i]->id); ?>"
+                                  data-email="<?php echo esc_attr($display_email); ?>"
+                                  data-message="<?php echo esc_attr(trim($raw_data)); ?>"
+                                  onclick="cp_openReplyModal(this);"><?php esc_html_e('Reply','wp-time-slots-booking-form'); ?></a> | </span>
+                          <?php } ?>
                           <span class="edit"><a href="javascript:void(0);" onclick="cp_updateMessageItem(<?php echo intval($events[$i]->id); ?>,<?php echo ($is_paid ? '0' : '1'); ?>, this);"><?php esc_html_e('Toggle Payment','wp-time-slots-booking-form'); ?></a> | </span>
                           <span class="inline"><a href="javascript:void(0);" onclick="cp_resendMessageItem(<?php echo intval($events[$i]->id); ?>, this);"><?php esc_html_e('Resend Email','wp-time-slots-booking-form'); ?></a> | </span>
                           <span class="trash"><a href="javascript:void(0);" onclick="cp_deleteMessageItem(<?php echo intval($events[$i]->id); ?>, this);" class="submitdelete"><?php esc_html_e('Delete','wp-time-slots-booking-form'); ?></a></span>
@@ -489,7 +533,243 @@ for($k=0; $k<count($posted_data["apps"]); $k++) {
             });
         }
     });
-
-
  });
+</script>
+
+<style>
+/* Modal Overlay & Box */
+#cptslotsb-reply-modal {
+    display: none;
+    position: fixed;
+    z-index: 99999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    overflow-y: auto;
+}
+.cptslotsb-modal-content {
+    background: #fff;
+    width: 90%;
+    max-width: 620px;
+    margin: 4% auto;
+    padding: 24px 28px;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    box-sizing: border-box;
+}
+.cptslotsb-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dcdcde;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+}
+.cptslotsb-modal-header h2 {
+    margin: 0 !important;
+    font-size: 18px;
+    color: #1d2327;
+}
+.cptslotsb-modal-close {
+    background: none;
+    border: none;
+    font-size: 22px;
+    line-height: 1;
+    color: #646970;
+    cursor: pointer;
+    padding: 0 4px;
+}
+.cptslotsb-modal-close:hover {
+    color: #d63638;
+}
+.cptslotsb-modal-field {
+    margin-bottom: 14px;
+}
+.cptslotsb-modal-field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #1d2327;
+}
+.cptslotsb-modal-field input[type="email"],
+.cptslotsb-modal-field input[type="text"],
+.cptslotsb-modal-field textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+.cptslotsb-ai-box {
+    background: #f0f6fc;
+    padding: 14px 16px;
+    border-left: 4px solid #2271b1;
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
+.cptslotsb-ai-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 8px;
+}
+.cptslotsb-ai-row input[type="text"] {
+    flex: 1;
+    margin: 0 !important;
+    padding: 8px 10px;
+}
+#cptslotsb-reply-modal .button {
+    float: none !important;
+    margin: 0 !important;
+    padding: 8px 18px !important;
+    height: auto !important;
+    line-height: 1.4 !important;
+    font-size: 13px !important;
+    border-radius: 4px !important;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.cptslotsb-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #dcdcde;
+    clear: both;
+}
+#cptslotsb-reply-status {
+    margin-right: auto;
+    font-weight: 600;
+}
+</style>
+
+<!-- AI-Assisted Reply Modal -->
+<div id="cptslotsb-reply-modal">
+    <div class="cptslotsb-modal-content">
+        <div class="cptslotsb-modal-header">
+            <h2><?php esc_html_e('Reply to Booking','wp-time-slots-booking-form'); ?></h2>
+            <button type="button" class="cptslotsb-modal-close" onclick="document.getElementById('cptslotsb-reply-modal').style.display='none';">&times;</button>
+        </div>
+
+        <input type="hidden" id="cptslotsb-reply-msg-id" value="" />
+        
+        <div class="cptslotsb-modal-field">
+            <label for="cptslotsb-reply-to"><?php esc_html_e('To:','wp-time-slots-booking-form'); ?></label>
+            <input type="email" id="cptslotsb-reply-to" />
+        </div>
+
+        <div class="cptslotsb-modal-field">
+            <label for="cptslotsb-reply-original"><?php esc_html_e('Original Booking Details:','wp-time-slots-booking-form'); ?></label>
+            <textarea id="cptslotsb-reply-original" rows="4" style="background:#f6f7f7;" readonly></textarea>
+        </div>
+
+        <div class="cptslotsb-ai-box">
+            <label for="cptslotsb-ai-instructions" style="font-weight:600; color:#1d2327;">✨ <?php esc_html_e('AI Assistant Instructions (optional):','wp-time-slots-booking-form'); ?></label>
+            <div class="cptslotsb-ai-row">
+                <input type="text" id="cptslotsb-ai-instructions" placeholder="<?php esc_attr_e('e.g., Confirm the booking for Tuesday at 10 AM and thank them','wp-time-slots-booking-form'); ?>" />
+                <button type="button" class="button" id="cptslotsb-btn-ai" onclick="cp_generateAiReply();">✨ <?php esc_html_e('Generate with AI','wp-time-slots-booking-form'); ?></button>
+            </div>
+        </div>
+
+        <div class="cptslotsb-modal-field">
+            <label for="cptslotsb-reply-subject"><?php esc_html_e('Subject:','wp-time-slots-booking-form'); ?></label>
+            <input type="text" id="cptslotsb-reply-subject" value="Re: <?php echo esc_attr($this->get_option('fp_subject', (defined('CP_TSLOTSBOOK_DEFAULT_fp_subject') ? CP_TSLOTSBOOK_DEFAULT_fp_subject : 'Booking'))); ?>" />
+        </div>
+
+        <div class="cptslotsb-modal-field">
+            <label for="cptslotsb-reply-body"><?php esc_html_e('Your Reply:','wp-time-slots-booking-form'); ?></label>
+            <textarea id="cptslotsb-reply-body" rows="6"></textarea>
+        </div>
+
+        <div class="cptslotsb-modal-footer">
+            <span id="cptslotsb-reply-status"></span>
+            <button type="button" class="button" onclick="document.getElementById('cptslotsb-reply-modal').style.display='none';"><?php esc_html_e('Cancel','wp-time-slots-booking-form'); ?></button>
+            <button type="button" class="button button-primary" id="cptslotsb-btn-send" onclick="cp_sendReplyEmail();"><?php esc_html_e('Send Reply','wp-time-slots-booking-form'); ?></button>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+function cp_openReplyModal(link) {
+    document.getElementById('cptslotsb-reply-msg-id').value = link.getAttribute('data-id');
+    document.getElementById('cptslotsb-reply-to').value = link.getAttribute('data-email');
+    document.getElementById('cptslotsb-reply-original').value = link.getAttribute('data-message');
+    document.getElementById('cptslotsb-reply-body').value = '';
+    document.getElementById('cptslotsb-reply-status').innerText = '';
+    document.getElementById('cptslotsb-reply-modal').style.display = 'block';
+}
+
+function cp_generateAiReply() {
+    var original = document.getElementById('cptslotsb-reply-original').value;
+    var instructions = document.getElementById('cptslotsb-ai-instructions').value;
+    var btn = document.getElementById('cptslotsb-btn-ai');
+    var status = document.getElementById('cptslotsb-reply-status');
+
+    btn.disabled = true;
+    btn.innerText = '<?php echo esc_js(__('Generating...','wp-time-slots-booking-form')); ?>';
+    status.style.color = '#2271b1';
+    status.innerText = '<?php echo esc_js(__('Contacting AI...','wp-time-slots-booking-form')); ?>';
+
+    $j.post(ajaxurl, {
+        action: 'cptslotsb_generate_ai_reply',
+        nonce: '<?php echo esc_js($reply_nonce); ?>',
+        cal_id: '<?php echo intval($this->item); ?>',
+        original_message: original,
+        instructions: instructions
+    }, function(response) {
+        btn.disabled = false;
+        btn.innerText = '✨ <?php echo esc_js(__('Generate with AI','wp-time-slots-booking-form')); ?>';
+        if (response.success) {
+            document.getElementById('cptslotsb-reply-body').value = response.data.reply;
+            status.style.color = '#00a32a';
+            status.innerText = '<?php echo esc_js(__('Draft generated!','wp-time-slots-booking-form')); ?>';
+        } else {
+            status.style.color = '#d63638';
+            status.innerText = response.data || '<?php echo esc_js(__('Failed to generate reply.','wp-time-slots-booking-form')); ?>';
+        }
+    }).fail(function() {
+        btn.disabled = false;
+        btn.innerText = '✨ <?php echo esc_js(__('Generate with AI','wp-time-slots-booking-form')); ?>';
+        status.style.color = '#d63638';
+        status.innerText = '<?php echo esc_js(__('Request failed.','wp-time-slots-booking-form')); ?>';
+    });
+}
+
+function cp_sendReplyEmail() {
+    var btn = document.getElementById('cptslotsb-btn-send');
+    var status = document.getElementById('cptslotsb-reply-status');
+
+    btn.disabled = true;
+    status.style.color = '#2271b1';
+    status.innerText = '<?php echo esc_js(__('Sending...','wp-time-slots-booking-form')); ?>';
+
+    $j.post(ajaxurl, {
+        action: 'cptslotsb_send_reply',
+        nonce: '<?php echo esc_js($reply_nonce); ?>',
+        message_id: document.getElementById('cptslotsb-reply-msg-id').value,
+        to_email: document.getElementById('cptslotsb-reply-to').value,
+        subject: document.getElementById('cptslotsb-reply-subject').value,
+        reply_body: document.getElementById('cptslotsb-reply-body').value
+    }, function(response) {
+        btn.disabled = false;
+        if (response.success) {
+            status.style.color = '#00a32a';
+            status.innerText = response.data;
+            setTimeout(function() {
+                location.reload();
+            }, 1000);
+        } else {
+            status.style.color = '#d63638';
+            status.innerText = response.data || '<?php echo esc_js(__('Error sending email.','wp-time-slots-booking-form')); ?>';
+        }
+    }).fail(function() {
+        btn.disabled = false;
+        status.style.color = '#d63638';
+        status.innerText = '<?php echo esc_js(__('Server error while sending.','wp-time-slots-booking-form')); ?>';
+    });
+}
 </script>

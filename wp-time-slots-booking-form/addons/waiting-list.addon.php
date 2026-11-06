@@ -26,10 +26,7 @@ if ( ! class_exists( 'cptslotsb_WaitingListAddon' ) ) {
         public function __construct() {
             global $wpdb;
             $this->table_name = $wpdb->prefix . 'cptslotsb_waiting_list';
-            $this->description = __(
-                "Manages a waiting list for booked time slots on the frontend and backend, and sends automatic or manual email notifications when a spot opens up.",
-                'wp-time-slots-booking-form'
-            );
+            $this->description = "Manages a waiting list for booked time slots on the frontend and backend, and sends automatic or manual email notifications when a spot opens up.";
 
             
         }

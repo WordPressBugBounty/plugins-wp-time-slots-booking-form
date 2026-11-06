@@ -1,214 +1,230 @@
 === WP Time Slots Booking Form ===
 Contributors: codepeople
 Donate link: https://wptimeslot.dwbooster.com/download
-Tags: booking,booking calendar,time,slot,reservation
+Tags: booking, booking calendar, appointment booking, time slots, reservation
 Requires at least: 3.0.5
 Tested up to: 7.1
-Stable tag: 1.2.55
+Stable tag: 1.2.56
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-WP Time Slots Booking Form is a booking calendar that allows users to reserve time slots on specific dates.
+Booking calendar and appointment booking form to reserve time slots on specific dates—now with a free, keyless AI email reply assistant.
 
 == Description ==
 
-**WP Time Slots Booking Form** is a powerful **booking calendar** solution that enables users to create customized **booking forms** for **appointment booking** on specific calendar dates. With this intuitive tool, you can design a user-friendly form featuring a calendar where end-users can easily select available time slots and complete their bookings.
+**WP Time Slots Booking Form** is a powerful, easy-to-use **booking calendar** solution that enables you to create customized **booking forms** for **appointment booking** and **time slot reservations** on specific calendar dates. With its intuitive visual builder, you can design a responsive form featuring an interactive calendar where customers can easily select available time slots and complete their bookings.
 
-Upon booking completion, notification emails are automatically sent to the admin, ensuring they are informed of every **calendar booking**. Additionally, a confirmation email can be dispatched to the user who made the booking, enhancing the overall user experience.
+Upon booking completion, notification emails are automatically sent to the administrator, ensuring you stay informed of every **calendar booking**. Additionally, a customizable confirmation email can be dispatched to the customer, enhancing their overall booking experience.
 
-This versatile **booking calendar** system is ideal for a variety of applications, including reserving classrooms, purchasing event tickets, scheduling medical appointments, booking times in escape rooms, arranging personal coaching or professional assistance, and securing cleaning services. It is perfect for any service that requires customers to select specific date-times or groups of date-times (time slots) from a set of available options, making it an essential tool for effective **appointment booking**.
+= ✨ NEW: Free AI-Assisted Booking Replies (No API Key Required!) =
 
-In the **booking calendar** you can setup:
+Save hours on customer communication! You can now reply directly to any booking from the **Booking Orders** list using our built-in **AI Reply Assistant**—completely free, with **no API key or external account setup required**. Simply enter optional instructions (e.g., *"Confirm the booking for Tuesday at 10 AM and remind them to arrive 10 minutes early"*), click **Generate with AI**, review the automatically drafted reply in your customer's language, and send it with one click. Every sent reply is automatically logged inside the booking record for easy tracking.
 
-* **Available time slots** for each weekday
-* **Available time slots** on specific dates
-* Capacity (number of persons that can book) for each time slot
-* The number of different time slots that can be selected in a single booking
-* Minimum and maximum available dates
-* Holiday or closed dates
-* Price for each time slot
-* Pricing for different numbers of selected slots
-* Pricing options based on the number of adults and children (optional)
-* Number of months to display
-* Additional calendar features
-* 10+ calendar design templates includes, both classic and modern views
+= Who Is This Booking Calendar For? =
 
-In addition to these **calendar booking** functionalities, other important features of the plugin include:
- 
-* A modern, mobile-friendly design
-* A responsive calendar and booking form
-* A visual form builder for easy customization
+This versatile **booking calendar** system is ideal for a wide variety of businesses and services, including:
+
+* **Medical & Healthcare**: Doctor consultations, dental visits, therapy sessions, and clinic scheduling
+* **Education & Coaching**: Classroom reservations, tutoring, driving lessons, and personal coaching
+* **Events & Entertainment**: Escape rooms, event ticket sales, tours, and studio rentals
+* **Fitness & Wellness**: Gym classes, personal training, yoga studios, and spa appointments
+* **Home & Professional Services**: Cleaning services, equipment rentals, legal consultations, and maintenance
+
+It is perfect for any business that requires customers to select specific date-times or multiple time slots from a set of available options, making it an essential tool for streamlined **appointment booking**.
+
+= Key Calendar & Availability Settings =
+
+In the **booking calendar**, you can easily set up:
+
+* **Available time slots** for each day of the week
+* **Special time slots** on specific dates
+* **Slot capacity** (the number of people who can book each time slot)
+* **Multiple slot selection** (how many different time slots a customer can select in a single booking)
+* Minimum and maximum available booking dates
+* Holidays, blackout dates, or closed dates
+* Custom price for each time slot
+* Tiered pricing based on the number of selected slots
+* Flexible group pricing (e.g., separate quantities and prices for Adults, Children, and Infants)
+* Number of calendar months to display at once
+* 10+ pre-built calendar design templates included, featuring both classic and modern views
+
+= Core Plugin Features =
+
+In addition to these **calendar booking** capabilities, the plugin includes:
+
+* **NEW! AI-Assisted Email Replies**: Draft and send personalized replies to customer bookings directly from the dashboard using free, keyless AI
+* **Visual Styles Editor**: Customize 10+ calendar templates with a sleek, modern aesthetic in just a few clicks
+* A modern, mobile-friendly, and fully responsive booking form design
+* A drag-and-drop visual form builder for effortless customization
 * Multi-language support for global accessibility
-* Notification emails to keep users informed
-* Modern, customizable, good-looking, anti-spam features to protect against unwanted submissions
-* Email reports for tracking bookings
-* CSV reports for data analysis
-* A usage and stats area for insights
-* A bookings list for easy management
+* Automated notification and confirmation emails
+* Built-in anti-spam protection (Captcha) to block unwanted submissions
+* Automated email reports and CSV exports for data analysis
+* A usage and statistics dashboard for booking insights
+* A centralized **Booking Orders** management list with one-click status updates, email resending, and direct replies
 * A printable schedule list for offline reference
-* A multi-view calendar for displaying schedules
-* Integration with Elementor, Gutenberg, and other page builders
-* Support for add-ons, including the iCal add-on
- 
-The plugin effectively manages the availability of each time slot, allowing you to define a maximum capacity for each slot and set the maximum number of time slots that a customer can select for their booking.
+* A visual multi-view schedule calendar for viewing daily, weekly, and monthly bookings
+* Native integration with **Gutenberg**, **Elementor**, and classic WordPress editors
+* Support for add-ons, including the free iCal Export add-on
 
-You can optionally enable multiple individuals to book the same time slots until the capacity is fully filled. The plugin also allows you to set different prices for two groups (for example, adults and children) and includes additional options that make it suitable for purchasing event tickets or other activities/items with varying capacities.
+The plugin automatically manages the real-time availability of each time slot, allowing you to define a maximum capacity per slot and limit the maximum number of time slots a customer can select per booking.
 
-New Feature: Use our Visual Styles Editor to fully customize 10+ calendar templates. Transform your booking forms with a sleek, modern aesthetic in just a few clicks.
+You can optionally allow multiple customers to book the same time slot until its capacity is reached. Combined with multi-quantity pricing (such as Adults and Children), it works seamlessly for both 1-on-1 appointments and group ticket reservations.
 
-= Features in commercial versions =
+= Features in Commercial Versions =
 
-While the free version of the plugin is fully functional, the commercial versions offer premium features that enhance its capabilities, including:
+While the free version of the plugin is fully functional, the commercial versions offer advanced features and integrations, including:
 
-* **Payment Integration**: Support for various payment gateways such as PayPal, Stripe, Skrill, Authorize.net, iDEAL, SagePay, and Redsys.
-* **SCA Ready Payments**: Payments are compliant with Strong Customer Authentication (SCA) and compatible with the new Payment Services Directive (PSD2) in the EU.
-* **iCal Synchronization**: Easily import and export calendar events with [iCal import](https://wptimeslot.dwbooster.com/blog/2018/12/20/ical-import/) and [iCal export](https://wptimeslot.dwbooster.com/blog/2018/12/19/adding-google-iphone-outlook/).
-* **Integration with External Services**: Seamless integration with services like reCaptcha, MailChimp, Salesforce, WooCommerce, and more.
-* **SMS Notifications**: Integration with SMS services via Twilio or Clickatell for booking confirmations and reminders.
-* **Booking Reminders**: Automated reminders to keep users informed about their bookings.
-* **Rich Form Builder**: Create advanced forms with conditional fields, multi-page forms, file uploads, and more.
-* [**Additional Items Fields**](https://wptimeslot.dwbooster.com/blog/2018/12/15/additional-services/): Customize your forms with additional fields for specific requirements.
-* [**Email Notifications**](https://wptimeslot.dwbooster.com/blog/2018/11/28/status-update-emails/): Stay updated with email notifications on booking status changes.
+* **Online Payment Integration**: Support for PayPal, Stripe, Skrill, Authorize.net, iDEAL (Mollie / TargetPay), SagePay, WorldPay, and Redsys.
+* **SCA-Ready Payments**: Fully compliant with Strong Customer Authentication (SCA) and PSD2 regulations in the EU.
+* **Two-Way iCal Synchronization**: Easily sync calendar events with [iCal Import](https://wptimeslot.dwbooster.com/blog/2018/12/20/ical-import/) and [iCal Export](https://wptimeslot.dwbooster.com/blog/2018/12/19/adding-google-iphone-outlook/).
+* **Third-Party Integrations**: Seamless integration with Google Calendar API, Zoom.us Meetings, WooCommerce, Mailchimp, Salesforce, reCAPTCHA, Cloudflare Turnstile, and WebHooks/Zapier.
+* **SMS Notifications & Reminders**: Automated SMS confirmations and appointment reminders via Twilio or Clickatell.
+* **Automated Email Reminders**: Reduce no-shows with scheduled email reminders before appointments and follow-up messages afterward.
+* **Advanced Form Builder**: Create rich forms with conditional logic, multi-page steps, file uploads, signature fields, and coupon codes.
+* [**Additional Services & Items Fields**](https://wptimeslot.dwbooster.com/blog/2018/12/15/additional-services/): Let customers select extra add-on services that dynamically update the booking price.
+* [**Status Update Emails**](https://wptimeslot.dwbooster.com/blog/2018/11/28/status-update-emails/): Automatically notify customers by email when their booking status is updated (e.g., Approved, Cancelled).
 
 For a complete list of commercial features, please visit the [plugin download page](https://wptimeslot.dwbooster.com/download).
-
 
 
 == Installation ==
 
 To install **WP Time Slots Booking Form**, follow these steps:
 
-1.	Download and unzip the WP Time Slots Booking Form calendar plugin
-2.	Upload the entire appointment-hour-booking/ directory to the /wp-content/plugins/ directory
-3.	Activate the WP Time Slots Booking Form plugin through the Plugins menu in WordPress
-4.	Configure the settings at the administration menu >> Settings >> WP Time Slots Booking Form. 
-5.	To insert the WP Time Slots Booking Form calendar form into some content or post use the icon that will appear when editing contents
+1. Download and unzip the **WP Time Slots Booking Form** plugin.
+2. Upload the entire `wp-time-slots-booking-form/` directory to the `/wp-content/plugins/` directory.
+3. Activate the **WP Time Slots Booking Form** plugin through the **Plugins** menu in WordPress.
+4. Configure your calendar and form settings under **WP Time Slots Booking Form** in your WordPress admin menu.
+5. Publish the booking form on any page or post using the built-in **Publish Wizard**, the Gutenberg block, the Elementor widget, or the shortcode `[CP_TIME_SLOTS_BOOKING id="1"]`.
 
 
 == Frequently Asked Questions ==
 
+= Q: How does the new AI-assisted reply feature work? Do I need an OpenAI API key? =
+
+A: No API key or paid account is required! In the **Booking Orders** list, click the **Reply** link next to any booking to open the reply modal. You can type a manual message or enter brief instructions (for example, *"Confirm the appointment and ask them to bring their ID"*) and click **Generate with AI**. The assistant will draft a polite, context-aware email reply in the customer's language that you can edit and send immediately.
+
 = Q: Where can I find the complete WP Time Slots Booking Form plugin documentation? =
 
-A: The product's page contains detailed documentation and support: [https://wptimeslot.dwbooster.com/support](https://wptimeslot.dwbooster.com/support)
+A: The product page contains detailed documentation and support: [https://wptimeslot.dwbooster.com/support](https://wptimeslot.dwbooster.com/support)
 
-= Q: How can I customize the styles? =
+= Q: How can I customize the calendar styles? =
 
-A: Please check the complete instructions on this page: [Customizing Styles](https://wptimeslot.dwbooster.com/blog/2018/11/02/customizing-styles/)
+A: You can use the built-in **Styles Editor** menu in the plugin settings, or check the complete custom CSS instructions on this page: [Customizing Styles](https://wptimeslot.dwbooster.com/blog/2018/11/02/customizing-styles/)
 
-= Q: Can I display a list of appointments? =
+= Q: Can I display a frontend list of appointments? =
 
-A: You can display a list of appointments set on the calendar by using the following shortcode on the page where you want to show the list:
+A: Yes, you can display a list of appointments on the frontend by placing the following shortcode on any page or post:
 
-[CP_TIME_SLOTS_BOOKING_LIST]
+`[CP_TIME_SLOTS_BOOKING_LIST]`
 
-For additional details, refer to this FAQ entry: [FAQ Entry](https://wptimeslot.dwbooster.com/faq#q511) and more information at this page: [Grouped Frontend Lists](https://wptimeslot.dwbooster.com/blog/2018/11/21/grouped-frontend-lists/)
+For additional details, refer to this [FAQ Entry](https://wptimeslot.dwbooster.com/faq#q511) and our guide on [Grouped Frontend Lists](https://wptimeslot.dwbooster.com/blog/2018/11/21/grouped-frontend-lists/).
 
 = Q: I'm not receiving the emails with the appointment data. =
 
-A: First, try using a "from" email address that belongs to your website domain, as this is the most common restriction applied by hosting services. 
+A: First, make sure you are using a "From" email address that belongs to your website's domain (e.g., `info@yourdomain.com`), as this is the most common requirement enforced by web hosting providers.
 
-If that doesn't work, please check if your hosting service requires specific configurations to send emails from PHP/WordPress websites. The plugin uses the settings specified in your WordPress site to deliver emails. If your hosting has specific requirements, such as a fixed "from" address or a custom "SMTP" server, those settings must be configured in your WordPress site.
+If that doesn't resolve the issue, check whether your hosting provider requires custom SMTP authentication to send emails from WordPress. The plugin uses the standard WordPress mail delivery system (`wp_mail`), so any SMTP plugin configured on your WordPress site will work seamlessly with WP Time Slots Booking Form.
 
 = Q: How can I change the styles of the dates based on the number of booked/available slots? =
 
-A: You can set different colors/styles for the dates depending on the number of booked or available slots, allowing users to see the availability at a glance. This feature is useful for indicating dates with limited slots, prompting customers to act quickly.
+A: You can set different colors or styles for calendar dates depending on the number of booked or remaining slots, allowing customers to see availability at a glance. This is especially useful for highlighting dates with limited availability.
 
 Detailed instructions are available on this page: [Booked Date Colors](https://wptimeslot.dwbooster.com/blog/2019/05/10/booked-date-colors/)
 
-= Q: Can I export the bookings to external calendars? =
+= Q: Can I export the bookings to external calendars like Google Calendar, Apple Calendar, or Outlook? =
 
-A: Yes, you can export bookings using the iCal export add-on included in all versions of the plugin. The process is described in detail on this page: [Adding Google, iPhone, Outlook](https://wptimeslot.dwbooster.com/blog/2018/12/19/adding-google-iphone-outlook/)
+A: Yes, you can export bookings using the iCal Export add-on included in all versions of the plugin. The setup process is described in detail on this page: [Adding Google, iPhone, Outlook](https://wptimeslot.dwbooster.com/blog/2018/12/19/adding-google-iphone-outlook/)
 
 = Q: I'm getting API errors while using the Zoom integration. =
 
-A: If you encounter API errors while creating a Zoom meeting via API, please refer to the Zoom developer documentation regarding changes during COVID-19: [Developer Impacting Changes](https://devforum.zoom.us/t/developer-impacting-changes-during-covid-19/8930)
+A: Zoom retired legacy JWT apps in favor of OAuth apps. Please ensure that your Zoom integration is set to **OAuth** in the add-on settings, that you have entered your Zoom OAuth Client ID and Client Secret, and that you have clicked the authorization button to connect your account.
 
-= Q: How can I align the form using various columns? =
+= Q: How can I align the form fields into multiple columns? =
 
-A: The solution is described in the following FAQ entry: [FAQ Entry](https://wptimeslot.dwbooster.com/faq#q66)
+A: The solution is described in the following FAQ entry: [Multi-Column Form Alignment](https://wptimeslot.dwbooster.com/faq#q66)
 
-= Q: How can I add specific fields to the email message? =
+= Q: How can I add specific form fields to the notification email message? =
 
-A: Please refer to this FAQ entry for available tags to customize the emails: [FAQ Entry](https://wptimeslot.dwbooster.com/faq#q81)
+A: Please refer to this FAQ entry for the available field tags to customize your emails: [Email Customization Tags](https://wptimeslot.dwbooster.com/faq#q81)
 
-= Q: How do I make the calendar 100% width / responsive? =
+= Q: How do I make the calendar 100% width / full-width responsive? =
 
-A: Use the following CSS style to make the WP Time Slots Booking Form 100% width and responsive on the page:
+A: Add the following CSS rule to make the WP Time Slots Booking Form calendar span 100% of its container width:
 
     #fbuilder .ui-datepicker-inline { max-width: none !important; }
 
-Add the styles in the "WP Time Slots Booking Form >> General Settings >> Edit Styles" area.
+You can paste this rule in the **WP Time Slots Booking Form >> General Settings >> Edit Styles** area.
 
 = Q: What additional add-ons are available for this booking calendar plugin? =
 
-The following is a sample of add-ons available for the WP Time Slots Booking Form plugin. Some of these add-ons are included in the free version, while others are part of the commercial versions:
+The following is a list of add-ons available for the WP Time Slots Booking Form plugin. Some add-ons are included in the free version, while others are part of the commercial versions:
 
-* **reCAPTCHA**: Protect your **booking forms** with Google's reCAPTCHA service to prevent spam submissions.
-* **Set Order of Payment Options**: Control the order in which payment options appear in the **booking calendar** when multiple payment methods are enabled.
-* **Email Blacklist**: Prevent bookings from blacklisted email addresses to enhance security.
-* **Dashboard Widget - Upcoming Appointments**: Add a widget to the dashboard welcome page that displays a list of upcoming appointments for easy access.
-* **Follow-Up Notifications for Bookings**: Enable support for follow-up notifications to keep users informed about their **appointment bookings**.
-* **Clickatell**: Send SMS notification messages via Clickatell after form submission to ensure timely communication.
-* **Additional Booking Statuses**: Add new statuses to your bookings for better management and tracking.
-* **Import Raw Bookings (CSV Format)**: Import bookings in raw CSV format for seamless data integration.
-* **Signature Fields**: Replace standard form fields with "Signature" fields for enhanced user verification.
-* **Uploads**: Allow users to upload files, which will be added to the Media Library, with support for new MIME types.
-* **WebHook**: Send submitted information to a webhook URL, integrating your **booking calendar** with services like Zapier.
-* **Authorize.net Server Integration Method**: Support for Authorize.net Server Integration Method payments for secure transactions.
-* **Automatically Cancel Pending Bookings**: Automatically cancel pending bookings after a specified expiration time.
-* **Cancellation Link for Bookings**: Provide cancellation links for bookings to enhance user flexibility.
-* **Coupons**: Add support for coupon and discount codes to incentivize bookings.
-* **Deposit Payments**: Accept payment deposits as a fixed amount or a percentage of the total booking cost.
-* **Double Opt-In Email Verification**: Implement double opt-in email verification to mark bookings as approved.
-* **Frontend List - Grouped by Date Add-on**: Display a list of bookings grouped by date on the frontend for better organization.
-* **Google Calendar API**: Integrate with Google Calendar API for seamless calendar synchronization.
-* **iCal Export Addon**: Export bookings as iCal files for easy integration with other calendar applications.
-* **iCal Automatic Import**: Automatically import iCal files from external websites or services to keep your **calendar booking** up to date.
-* **MailChimp**: Create MailChimp list members with the submitted information for effective email marketing.
-* **iDeal Mollie**: Support for iDeal payments via Mollie for convenient transactions.
-* **PayPal Standard Payments Integration**: Integrate PayPal Standard payments for secure online transactions.
-* **PayPal Pro**: Accept credit card payments directly on your website with PayPal Payment Pro.
-* **QRCode Image - Barcode**: Generate a QRCode image for each booking for easy access and verification.
-* **RedSys TPV**: Support for RedSys TPV payments, popular in Spain, for local transactions.
-* **Reminder Notifications for Bookings**: Enable reminder notifications to keep users informed about their upcoming appointments.
-* **Remove or Ignore Old Bookings**: Automatically remove or ignore old bookings to improve the speed of your **booking form**.
-* **SagePay Payment Gateway**: Support for SagePay payments for secure online transactions.
-* **SagePayments Payment Gateway**: Add support for SagePayments for flexible payment options.
-* **SalesForce**: Create SalesForce leads with the submitted information for effective customer relationship management.
-* **Checks Price on the Server Side**: Implement server-side verification of the booking price for added security.
-* **Shared Availability Between Calendars**: Share booked times between calendars to prevent double bookings.
-* **Skrill Payments Integration**: Support for Skrill payments for additional payment flexibility.
-* **Status Modification Emails**: Define emails to be sent when the booking status changes, keeping users informed.
-* **Schedule & Status Contents Customization**: Customize the contents displayed on the schedule calendar and the status colors for each form.
-* **Stripe**: Add support for Stripe payments for secure online transactions.
-* **iDeal TargetPay**: Support for iDeal payments via TargetPay for convenient transactions.
-* **Twilio SMS Notifications for Bookings**: Enable Twilio SMS notifications to keep users updated on their bookings.
-* **Zoom.us Meetings Integration**: Automatically create a Zoom.us meeting for the booked time, enhancing virtual appointment booking.
-* **User Calendar Creation**: Create and assign a calendar for each new registered user for personalized scheduling.
-* **WorldPay Payment Gateway**: Support for WorldPay payments for secure online transactions.
-* **WooCommerce**: Integrate your **booking forms** with WooCommerce products for seamless e-commerce functionality.
-* **Limit the Number of Appointments per User**: Set limits on the number of appointments
+* **reCAPTCHA & Cloudflare Turnstile**: Protect your **booking forms** against spam bots.
+* **Set Order of Payment Options**: Control the order in which payment options appear when multiple payment gateways are enabled.
+* **Email Blacklist**: Prevent bookings from specific blacklisted email addresses or domains.
+* **Dashboard Widget - Upcoming Appointments**: Add a widget to the WordPress dashboard displaying upcoming appointments for quick access.
+* **Follow-Up Notifications for Bookings**: Automatically send follow-up emails after completed **appointment bookings**.
+* **Clickatell & Twilio SMS**: Send SMS notifications and reminders to customers and admins after form submission.
+* **Additional Booking Statuses**: Define custom statuses for your bookings for better workflow management.
+* **Import Raw Bookings (CSV Format)**: Bulk import bookings in raw CSV format.
+* **Signature Fields**: Convert form fields into digital "Signature" pads for customer sign-off.
+* **File Uploads**: Allow users to upload files with their booking, automatically stored in the WordPress Media Library.
+* **WebHook**: Send submitted booking data to external webhook URLs to connect with Zapier, Make, or custom APIs.
+* **Authorize.net Server Integration Method**: Accept secure credit card payments via Authorize.net.
+* **Automatically Cancel Pending Bookings**: Automatically cancel unpaid or pending bookings after a specified expiration time to free up slots.
+* **Cancellation Link for Bookings**: Include a self-service cancellation link in customer confirmation emails.
+* **Coupons / Discount Codes**: Offer promotional discount codes on bookings.
+* **Deposit Payments**: Accept partial deposit payments as a fixed amount or a percentage of the total booking cost.
+* **Double Opt-In Email Verification**: Require customers to verify their email address via a confirmation link to approve their booking.
+* **Frontend List - Grouped by Date Add-on**: Display a public or private list of bookings grouped by date on the frontend.
+* **Google Calendar API**: Two-way synchronization with Google Calendar.
+* **iCal Export Add-on**: Export bookings as iCal feeds for external calendar applications.
+* **iCal Automatic Import**: Automatically import iCal feeds from external calendars to block busy times.
+* **Mailchimp**: Automatically subscribe customers to a Mailchimp mailing list upon booking.
+* **iDEAL Mollie & TargetPay**: Accept iDEAL payments via Mollie or TargetPay.
+* **PayPal Standard & PayPal Pro**: Accept PayPal and direct credit card payments on your website.
+* **QRCode Image - Barcode**: Generate a unique QR code for each booking for fast check-in and ticket verification.
+* **Redsys TPV**: Support for Redsys bank card payments (popular in Spain).
+* **Reminder Notifications for Bookings**: Send automated email and SMS reminders prior to scheduled appointments.
+* **Remove or Ignore Old Bookings**: Automatically clean up or ignore past bookings to keep your **booking form** fast.
+* **SagePay & SagePayments Gateways**: Accept secure online payments via SagePay or SagePayments.
+* **Salesforce**: Automatically create Salesforce leads from submitted booking forms.
+* **Server-Side Price Verification**: Verify calculated booking prices on the server side for enhanced security.
+* **Shared Availability Between Calendars**: Share time slot availability across multiple calendars to prevent double bookings.
+* **Skrill Payments Integration**: Accept online payments via Skrill.
+* **Status Modification Emails**: Automatically send customized emails whenever a booking status changes.
+* **Schedule & Status Contents Customization**: Customize the details and status colors displayed on the admin schedule calendar.
+* **Stripe**: Accept credit cards, Apple Pay, and Google Pay securely via Stripe.
+* **Zoom.us Meetings Integration**: Automatically generate a unique Zoom meeting link and ID for booked time slots.
+* **User Calendar Creation**: Automatically create and assign a dedicated booking calendar for each newly registered WordPress user.
+* **WorldPay Payment Gateway**: Accept secure online payments via WorldPay.
+* **WooCommerce Integration**: Connect your **booking forms** with WooCommerce products and checkout.
+* **Waiting List**: Allow customers to join a waiting list when a time slot is fully booked.
+* **Activity Logs**: Track administrative actions and changes made to bookings and settings.
+* **Limit the Number of Appointments per User**: Set limits on the number of appointments a single user or email address can book within a given period.
 
 
 == Other Notes ==
 
-= The Troubleshoot Area =
+= The Troubleshooting Area =
 
-Use the troubleshot if you are having problems with special or non-latin characters. In most cases changing the charset to UTF-8 through the option available for that in the troubleshot area will solve the problem.
+Use the **General Settings >> Troubleshoot Area** if you encounter issues with special or non-Latin characters. In most cases, changing the character encoding to UTF-8 using the built-in option in the troubleshooting area will resolve the issue immediately.
 
-You can also use this area to change the script load method if the booking calendar isn't appearing in the public website.
- 
+You can also use this area to change the JavaScript loading method if a third-party caching or script-optimization plugin prevents the booking calendar from appearing on the public website.
+
 == Screenshots ==
 
 1. Booking form with quantity fields.
 2. Simple booking form.
-3. Schedule Calendar View
+3. Schedule Calendar View.
 4. Calendar configuration.
-5. Usage / Stats area
-6. Bookings list
-7. Email reports
-8. Managing forms
-9. Publishing the form with the new editor Gutemberg block
+5. Usage / Stats area.
+6. Bookings list.
+7. Email reports.
+8. Managing forms.
+9. Publishing the form with the Gutenberg block editor.
 
 == Changelog ==
 
@@ -216,30 +232,30 @@ You can also use this area to change the script load method if the booking calen
 * First version published
 
 = 1.0.04 =
-* Improved CSV exports character encoding
+* Improved CSV export character encoding
 
 = 1.0.05 =
 * Fixed issue in quantity management
 
 = 1.0.06 =
-* Fixed special dates edition bug
+* Fixed special dates editing bug
 * Improved bookings schedule
 * Redirect / confirmation page now supports booking parameters
 
 = 1.0.07 =
-* Fixed bug in availability edition
+* Fixed bug in availability editing
 
 = 1.0.08 =
-* Fixed bug in special dates edition
+* Fixed bug in special dates editing
 
 = 1.0.09 =
 * Improved translations
 
 = 1.0.10 =
-* Fixed bug in form edition
+* Fixed bug in form editing
 
 = 1.0.11 =
-* Support to booking status
+* Support for booking statuses
 
 = 1.0.12 =
 * Better CSS customization options
@@ -248,7 +264,7 @@ You can also use this area to change the script load method if the booking calen
 * Clone calendar feature
 
 = 1.0.15 =
-* Removed use of CURL
+* Removed use of cURL
 
 = 1.0.16 =
 * Integration with Elementor
@@ -296,7 +312,7 @@ You can also use this area to change the script load method if the booking calen
 * Compatible with WordPress 5.2
 
 = 1.0.29 =
-* Added features for adding custom colors to slots depending of booked spaces
+* Added feature for adding custom colors to slots depending on booked spaces
 
 = 1.0.30 =
 * Language support improvements
@@ -338,10 +354,10 @@ You can also use this area to change the script load method if the booking calen
 * Fixed bug in date filters
 
 = 1.0.43 =
-* Fixed bug max date filter
+* Fixed bug in max date filter
 
 = 1.0.44 =
-* Fixed conflict with autoptimize
+* Fixed conflict with Autoptimize
 
 = 1.0.45 =
 * Fixed conflict with Elementor add-ons
@@ -350,25 +366,25 @@ You can also use this area to change the script load method if the booking calen
 * New dashboard list add-on
 
 = 1.0.47 =
-* New feature for using 12/24 hour format (military / non-military time)
+* New feature for using 12/24-hour format (military / non-military time)
 
 = 1.0.48 =
-* Fix to 12 hours time format
+* Fix to 12-hour time format
 
 = 1.0.49 =
-* Feature for highligthing specific dates
+* Feature for highlighting specific dates
 
 = 1.0.50 =
 * Compatible with WordPress 5.3
 
 = 1.0.53 =
-* Fixed conflict with javascript minify plugins
+* Fixed conflict with JavaScript minify plugins
 
 = 1.0.54 =
 * Fixed bug in exported CSV filenames
 
 = 1.0.55 =
-* New feature for dealing capacity in booking form
+* New feature for handling capacity in booking form
 
 = 1.0.56 =
 * Fixed bug in reply-to email header
@@ -383,7 +399,7 @@ You can also use this area to change the script load method if the booking calen
 * New tags for emails
 
 = 1.0.60 =
-* Fixed conflict with bootstrap datepicker
+* Fixed conflict with Bootstrap datepicker
 
 = 1.0.61 =
 * Improved translations
@@ -393,7 +409,7 @@ You can also use this area to change the script load method if the booking calen
 * Better price number formatting for selected times
 
 = 1.0.63 =
-* Support for multiple list in same page
+* Support for multiple lists on the same page
 
 = 1.0.64 =
 * Multiple improvements and bug fixes
@@ -402,7 +418,7 @@ You can also use this area to change the script load method if the booking calen
 * Interface improvements
 
 = 1.0.66 =
-* iCal export and ics files improvements
+* iCal export and .ics files improvements
 
 = 1.0.67 =
 * Fixed bug in invalid dates
@@ -430,10 +446,10 @@ You can also use this area to change the script load method if the booking calen
 * Fixed optimization / cache conflicts
 
 = 1.0.75 =
-* Improvement to avoid conflicts with third party themes
+* Improvement to avoid conflicts with third-party themes
 
 = 1.0.76 =
-* Update for Gutemberg integration
+* Update for Gutenberg integration
 
 = 1.0.77 =
 * Fixed bug in max-date restriction
@@ -455,13 +471,13 @@ You can also use this area to change the script load method if the booking calen
 * Fixed bug in min-date settings
 
 = 1.0.83 =
-* Added support for up to 4 different quantity fields, example, for selecting different number of "Adults", "Children" and "Infants" for the booking
+* Added support for up to 4 different quantity fields, for example, for selecting different numbers of "Adults", "Children", and "Infants" for the booking
 
 = 1.0.84 =
 * Fixed bug in special dates
 
 = 1.0.85 =
-* Interface improvements, translations and new quantity feature
+* Interface improvements, translations, and new quantity feature
 
 = 1.0.86 =
 * Multiple interface improvements
@@ -473,7 +489,7 @@ You can also use this area to change the script load method if the booking calen
 * Fixed bug in slots selection
 
 = 1.0.89 =
-* New feature for supporting quantity 0 in first quantity fields
+* New feature for supporting quantity 0 in first quantity field
 * Improved multi-language support
 
 = 1.0.90 =
@@ -483,10 +499,10 @@ You can also use this area to change the script load method if the booking calen
 * Fixed calendar initialization bug
 
 = 1.0.92 =
-* Optional 0 quantity for first qty fields
+* Optional 0 quantity for first quantity fields
 
 = 1.0.93 =
-* Fixed to the schedule CSV export
+* Fix to the schedule CSV export
 
 = 1.0.94 =
 * Add multiple appointment times w/ price structure
@@ -522,10 +538,10 @@ You can also use this area to change the script load method if the booking calen
 * Add-ons update
 
 = 1.1.10 =
-* Fix issue with mutliple forms in same page
+* Fixed issue with multiple forms on the same page
 
 = 1.1.11 =
-* Improvemets to min and max date settings
+* Improvements to min and max date settings
 
 = 1.1.12 =
 * Enhanced Max-date rule
@@ -535,7 +551,7 @@ You can also use this area to change the script load method if the booking calen
 * New tag %final_price_short% for the emails
 
 = 1.1.15 =
-* Improved timeslot price calculation
+* Improved time slot price calculation
 
 = 1.1.16 =
 * New design theme: Modern responsive with times aligned to the right side of the calendar
@@ -547,7 +563,7 @@ You can also use this area to change the script load method if the booking calen
 * Fixed bug related to the min date and max date features
 
 = 1.1.19 =
-* Non-military time settings: 12 / 24 hours formating for %app_slot_N% tags
+* Non-military time settings: 12 / 24-hour formatting for %app_slot_N% tags
 
 = 1.1.20 =
 * Improvement for multiple calendars in the same booking form
@@ -562,7 +578,7 @@ You can also use this area to change the script load method if the booking calen
 * Modern theme update
 
 = 1.1.24 =
-* Improver time slot selection behavior
+* Improved time slot selection behavior
 
 = 1.1.25 =
 * Better responsive layout for iPhone
@@ -571,7 +587,7 @@ You can also use this area to change the script load method if the booking calen
 * Calendar visualization improvements
 
 = 1.1.27 =
-* CVS Export update for special chars
+* CSV Export update for special chars
 
 = 1.1.28 =
 * New calendar design theme
@@ -580,7 +596,7 @@ You can also use this area to change the script load method if the booking calen
 * Event management improved
 
 = 1.1.30 =
-* Improve to the cost calculations
+* Improvement to the cost calculations
 
 = 1.1.31 =
 * Improved styles
@@ -601,7 +617,7 @@ You can also use this area to change the script load method if the booking calen
 * New translations
 
 = 1.1.37 =
-* Fixed validation issue 
+* Fixed validation issue
 
 = 1.1.38 =
 * CSS fixes
@@ -616,7 +632,7 @@ You can also use this area to change the script load method if the booking calen
 * PHP 8.x compatibility fix
 
 = 1.1.42 =
-* CSS Improvements
+* CSS improvements
 
 = 1.1.43 =
 * Corrected styles
@@ -679,13 +695,13 @@ You can also use this area to change the script load method if the booking calen
 * Compatible with WordPress 5.9
 
 = 1.1.63 =
-* Multiple data sanitization
+* Multiple data sanitizations
 
 = 1.1.64 =
 * Code improvements
 
 = 1.1.65 =
-* Removal of code blocks not longer used
+* Removal of code blocks no longer used
 
 = 1.1.66 =
 * CSV Export fix
@@ -709,7 +725,7 @@ You can also use this area to change the script load method if the booking calen
 * Fixed status update action
 
 = 1.1.73 =
-* Avoid conflict with 3rd party calendar scripts
+* Avoid conflict with 3rd-party calendar scripts
 
 = 1.1.74 =
 * Improved admin area
@@ -760,7 +776,7 @@ You can also use this area to change the script load method if the booking calen
 * Fix to app field tags
 
 = 1.1.90 =
-* Price calculation update1
+* Price calculation update
 
 = 1.1.91 =
 * WP 6.2 update
@@ -802,14 +818,14 @@ You can also use this area to change the script load method if the booking calen
 * Reports update
 
 = 1.2.05 =
-* Tags removed: form,meeting,appointment,schedule,scheduling,event,
+* Tags updated
 
 = 1.2.06 =
-* Server side price calculation
+* Server-side price calculation
 
 = 1.2.07 =
 * Compatible with WP 6.5
-* Updated server side price calculation
+* Updated server-side price calculation
 
 = 1.2.08 =
 * CSV Export fix
@@ -833,22 +849,22 @@ You can also use this area to change the script load method if the booking calen
 * PHP 8 update
 
 = 1.2.16 =
-* Best add-ons interface
+* Improved add-ons interface
 
 = 1.2.17 =
 * Improved messages list
 
 = 1.2.18 =
-* Internationalization 
+* Internationalization
 
 = 1.2.19 =
-* Language updates 
+* Language updates
 
 = 1.2.20 =
 * Price calculation fix
 
 = 1.2.21 =
-* Typos / translation
+* Typos / translation fixes
 
 = 1.2.22 =
 * Captcha update
@@ -875,13 +891,13 @@ You can also use this area to change the script load method if the booking calen
 * WP 6.8 fix
 
 = 1.2.30 =
-* Closing / previous output
+* Closing / previous output fix
 
 = 1.2.31 =
 * Admin actions improvements
 
 = 1.2.32 =
-* Doc updates
+* Documentation updates
 
 = 1.2.33 =
 * Cloudflare Turnstile add-on
@@ -896,10 +912,10 @@ You can also use this area to change the script load method if the booking calen
 * Better CSS customization
 
 = 1.2.37 =
-* More CSS Editor feature
+* Additional CSS Editor features
 
 = 1.2.38 =
-* Compatible WP 6.9
+* Compatible with WP 6.9
 
 = 1.2.39 =
 * Fixed script conflict
@@ -908,7 +924,7 @@ You can also use this area to change the script load method if the booking calen
 * List shortcode restrictions for non-admins
 
 = 1.2.41 =
-* Siteground Speed Optimizer compatibility
+* SiteGround Speed Optimizer compatibility
 
 = 1.2.42 =
 * New captcha and stats section
@@ -935,7 +951,7 @@ You can also use this area to change the script load method if the booking calen
 * Form builder improvements
 
 = 1.2.50 =
-* Compatible with WordPress 7
+* Compatible with WordPress 7.0
 
 = 1.2.51 =
 * Additional sanitization
@@ -952,11 +968,13 @@ You can also use this area to change the script load method if the booking calen
 = 1.2.55 =
 * Support for Waiting List add-on
 * Support for Activity Logs add-on
-* Improved pusblishing wizard
+* Improved publishing wizard
+
+= 1.2.56 =
+* New AI-assisted email reply feature in the Booking Orders list (free, no API key required)
+* Interface and booking list action improvements
 
 == Upgrade Notice ==
 
-= 1.2.55 =
-* Support for Waiting List add-on
-* Support for Activity Logs add-on
-* Improved pusblishing wizard
+= 1.2.56 =
+* New AI-assisted email reply feature in the Booking Orders list (free, no API key required) and admin interface improvements.
