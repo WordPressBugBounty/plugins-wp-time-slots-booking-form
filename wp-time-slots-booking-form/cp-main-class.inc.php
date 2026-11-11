@@ -1169,8 +1169,9 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
         load_plugin_textdomain( 'wp-time-slots-booking-form', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
+        add_action( 'wp_ajax_cptslotsb_toggle_ai_reply', array( $this, 'handle_toggle_ai_reply_ajax' ) );
         add_action( 'wp_ajax_cptslotsb_generate_ai_reply', array( $this, 'handle_generate_ai_reply_ajax' ) );
-        add_action( 'wp_ajax_cptslotsb_send_reply', array( $this, 'handle_send_reply_ajax' ) );        
+        add_action( 'wp_ajax_cptslotsb_send_reply', array( $this, 'handle_send_reply_ajax' ) );      
 
         if(!empty($_REQUEST['cp_slots_action']) && ($_REQUEST['cp_slots_action'] == 'get_slots' || $_REQUEST['cp_slots_action'] == 'mv') && isset($_SERVER['REQUEST_METHOD']) && 'POST' == $_SERVER['REQUEST_METHOD'])            
         {
@@ -1250,7 +1251,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         }
 
         
-        if ($this->get_param($this->prefix.'_csv2') && is_admin() && $this->check_current_user_access(intval($this->get_param("cal"))))
+        if (($this->get_param($this->prefix.'_csv2') || $this->get_param($this->prefix.'_csv3')) && is_admin() && $this->check_current_user_access(intval($this->get_param("cal"))))
         {
             $this->export_csv_schedule(array());
             return;
@@ -2759,47 +2760,50 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
         return $report;
     }
+    
 
     /**
-     * Renders the diagnostic report in a WordPress-friendly HTML format.
-     * * @param array $diagnostics The array returned from diagnose_email_health()
+     * Renders the diagnostic report in a modern Teal/Slate SaaS card format.
+     * @param array $diagnostics The array returned from diagnose_email_health()
      */
     protected function render_email_diagnostic_report( $diagnostics ) {
         ?>
-        <div class="wrap">
-            <h2>Email Deliverability Diagnostic</h2>
-            <p class="description">This tool checks if your server is properly configured to ensure contact form emails reach your inbox.</p>
-            
-            <table class="wp-list-table widefat fixed striped posts" style="margin-top: 20px;">
+        <div style="background:#ffffff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-top:10px;">
+            <div style="padding:12px 16px;background:#f0fdfa;border-bottom:1px solid #99f6e4;display:flex;align-items:center;justify-content:space-between;">
+                <strong style="font-size:13px;color:#0f766e;">🩺 <?php esc_html_e('Email Deliverability Diagnostic Results', 'wp-time-slots-booking-form'); ?></strong>
+                <span style="font-size:12px;color:#64748b;"><?php esc_html_e('Server & DNS configuration check', 'wp-time-slots-booking-form'); ?></span>
+            </div>
+            <table style="width:100%;border-collapse:collapse;text-align:left;font-size:13px;">
                 <thead>
-                    <tr>
-                        <th style="width: 20%;">&nbsp;&nbsp;Test</th>
-                        <th style="width: 15%;">&nbsp;&nbsp;Status</th>
-                        <th>&nbsp;&nbsp;Details & Recommendations</th>
+                    <tr style="border-bottom:1px solid #e2e8f0;background:#f8fafc;color:#64748b;font-size:11px;text-transform:uppercase;">
+                        <th style="padding:10px 16px;width:22%;"><?php esc_html_e('Test', 'wp-time-slots-booking-form'); ?></th>
+                        <th style="padding:10px 16px;width:14%;"><?php esc_html_e('Status', 'wp-time-slots-booking-form'); ?></th>
+                        <th style="padding:10px 16px;"><?php esc_html_e('Details & Recommendations', 'wp-time-slots-booking-form'); ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ( $diagnostics as $key => $data ) : 
-                        // Determine styling based on severity/status
-                        $status_color = ($data['status'] === 'PASS') ? '#46b450' : (($data['severity'] === 'critical') ? '#dc3232' : '#ffb900');
-                        $icon = ($data['status'] === 'PASS') ? 'dashicons-yes' : (($data['severity'] === 'critical') ? 'dashicons-dismiss' : 'dashicons-warning');
+                        $is_pass = ($data['status'] === 'PASS');
+                        $is_crit = ($data['severity'] === 'critical');
+                        $badge_bg  = $is_pass ? '#ecfdf5' : ($is_crit ? '#fef2f2' : '#fffbeb');
+                        $badge_col = $is_pass ? '#065f46' : ($is_crit ? '#991b1b' : '#92400e');
+                        $badge_bdr = $is_pass ? '#a7f3d0' : ($is_crit ? '#fecaca' : '#fde68a');
+                        $icon      = $is_pass ? '✅' : ($is_crit ? '❌' : '⚠️');
                     ?>
-                        <tr>
-                            <td>
-                                <strong><?php echo esc_html( $data['title'] ); ?></strong>
+                        <tr style="border-bottom:1px solid #f1f5f9;">
+                            <td style="padding:12px 16px;font-weight:600;color:#0f172a;">
+                                <?php echo esc_html( $data['title'] ); ?>
                             </td>
-                            <td>
-                                <span style="color: <?php echo $status_color; ?>; font-weight: 600;">
-                                    <span class="dashicons <?php echo $icon; ?>" style="vertical-align: middle;"></span>
-                                    <?php echo esc_html( $data['status'] ); ?>
+                            <td style="padding:12px 16px;">
+                                <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:999px;font-size:11.5px;font-weight:700;background:<?php echo $badge_bg; ?>;color:<?php echo $badge_col; ?>;border:1px solid <?php echo $badge_bdr; ?>;">
+                                    <?php echo $icon . ' ' . esc_html( $data['status'] ); ?>
                                 </span>
                             </td>
-                            <td>
-                                <p style="margin: 0; font-weight: 500;"><?php echo esc_html( $data['message'] ); ?></p>
+                            <td style="padding:12px 16px;color:#334155;">
+                                <div style="font-weight:500;"><?php echo esc_html( $data['message'] ); ?></div>
                                 <?php if ( ! empty( $data['fix'] ) ) : ?>
-                                    <div style="margin-top: 8px; padding: 10px; background: #fff8e5; border-left: 4px solid #ffb900;">
-                                        <strong><span class="dashicons dashicons-lightbulb" style="font-size: 18px;"></span> Next Step:</strong> 
-                                        <?php echo esc_html( $data['fix'] ); ?>
+                                    <div style="margin-top:6px;padding:8px 12px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;color:#92400e;font-size:12px;">
+                                        <strong>💡 <?php esc_html_e('Next Step:', 'wp-time-slots-booking-form'); ?></strong> <?php echo esc_html( $data['fix'] ); ?>
                                     </div>
                                 <?php endif; ?>
                             </td>
@@ -2810,6 +2814,61 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         </div>
         <?php
     }
+
+
+    function codepeople_add_warning_banner($wp_admin_bar)
+    {
+        if (!empty($_GET["page"]) && in_array($_GET["page"], array('cp_timeslotsbooking_settings','cp_timeslotsbooking')))
+        {
+            if (isset($_POST['codepeople_warning_nonce']) && wp_verify_nonce($_POST['codepeople_warning_nonce'], __FILE__))
+            {         
+                set_transient('codepeople_wpts_warning_css', -2, 0);        
+            }
+            $former_CSS_feature = get_option('CP_WPTSLOTSBK_CSS', '');
+            $value = get_transient('codepeople_wpts_warning_css');
+            if (intval($value) != -2 && $former_CSS_feature != '' && $former_CSS_feature != $this->old_css_placeholder)
+            {
+                ?>
+                <div id="codepeople-warning-banner" style="max-width:1340px;margin:16px 20px 0 2px;padding:14px 20px;background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #f59e0b;border-radius:10px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#92400e;box-sizing:border-box;">
+                    <div style="font-size:13.5px;line-height:1.5;">
+                        ⚠️ <strong><?php esc_html_e('Warning:', 'wp-time-slots-booking-form'); ?></strong>
+                        <?php esc_html_e('This plugin has legacy custom styles stored in an older format. Please review the updated method in the', 'wp-time-slots-booking-form'); ?>
+                        <a href="admin.php?page=cp_timeslotsbooking_settings" style="color:#b45309;font-weight:700;text-decoration:underline;"><?php esc_html_e('General Settings / Edit Styles', 'wp-time-slots-booking-form'); ?></a>
+                        <?php esc_html_e('area.', 'wp-time-slots-booking-form'); ?>
+                    </div>
+                    <form method="post" style="margin:0;">
+                        <button type="submit" style="background:#ffffff;border:1px solid #fcd34d;border-radius:6px;padding:6px 12px;font-size:12px;font-weight:600;color:#92400e;cursor:pointer;">
+                            <?php esc_html_e('OK, understood — dismiss notice', 'wp-time-slots-booking-form'); ?>
+                        </button>
+                        <input type="hidden" name="codepeople_warning_action" value="not-thanks" />
+                        <input type="hidden" name="codepeople_warning_nonce" value="<?php echo esc_attr(wp_create_nonce(__FILE__)); ?>" />
+                    </form>
+                </div>
+                <?php
+            }
+        }
+        return;
+    }
+    
+    
+    /**
+     * AJAX Handler: Persist AI Reply Assistant Opt-In State (Off / On)
+     */
+    public function handle_toggle_ai_reply_ajax() {
+        check_ajax_referer( 'cptslotsb_reply_nonce', 'nonce' );
+
+        $cal_id = isset( $_POST['cal_id'] ) ? intval( $_POST['cal_id'] ) : 0;
+        $has_access = current_user_can( 'edit_pages' ) || ( method_exists( $this, 'check_current_user_access' ) && $this->check_current_user_access( $cal_id ) );
+        if ( ! $has_access ) {
+            wp_send_json_error( __( 'Unauthorized access.', 'wp-time-slots-booking-form' ) );
+        }
+
+        $enabled = ( isset( $_POST['enabled'] ) && intval( $_POST['enabled'] ) === 1 ) ? '1' : '0';
+        update_option( 'cptslotsb_ai_reply_enabled', $enabled );
+
+        wp_send_json_success( array( 'enabled' => ( $enabled === '1' ) ) );
+    }    
+    
     
     /**
      * AJAX Handler for Email Diagnostic
@@ -2843,62 +2902,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     }    
     
     
-	function codepeople_add_warning_banner($wp_admin_bar)
-	{
-		if (!empty($_GET["page"]) &&  in_array ($_GET["page"], array('cp_timeslotsbooking_settings','cp_timeslotsbooking')))
-        {
-		    if(isset($_POST['codepeople_warning_nonce']) && wp_verify_nonce($_POST['codepeople_warning_nonce'], __FILE__))
-		    {         
-                 set_transient( 'codepeople_wpts_warning_css', -2, 0);        
-            }
-            $former_CSS_feature = get_option('CP_WPTSLOTSBK_CSS', '');
-            $value = get_transient( 'codepeople_wpts_warning_css' );
-            if (intval($value) != -2 && $former_CSS_feature != '' && $former_CSS_feature != $this->old_css_placeholder)
-            {
-				?>
-				<style>
-					#codepeople-warning-banner{width:calc( 100% - 20px );width:-webkit-calc( 100% - 20px );width:-moz-calc( 100% - 20px );width:-o-calc( 100% - 20px );border:2px solid #1582AB;background:#FFF;display:table;margin-top:10px;}
-					#codepeople-warning-banner form{float:left; padding:0 5px;}
-					#codepeople-warning-banner .codepeople-warning-banner-picture{width:120px;padding:10px 10px 10px 10px;float:left;text-align:center;}
-					#codepeople-warning-banner .codepeople-warning-banner-content{float: left;padding:10px;width: calc( 100% - 160px );width: -webkit-calc( 100% - 160px );width: -moz-calc( 100% - 160px );width: -o-calc( 100% - 160px );}
-					#codepeople-warning-banner  .codepeople-warning-banner-buttons{padding-top:20px;}
-					#codepeople-warning-banner  .no-thank-button,
-					#codepeople-warning-banner  .main-button{height: 28px;border-width:1px;border-style:solid;border-radius:5px;text-decoration: none;}
-					#codepeople-warning-banner  .main-button{background: #0085ba;border-color: #0073aa #006799 #006799;-webkit-box-shadow: 0 1px 0 #006799;box-shadow: 0 1px 0 #006799;color: #fff;text-decoration: none;text-shadow: 0 -1px 1px #006799,1px 0 1px #006799,0 1px 1px #006799,-1px 0 1px #006799;}
-					#codepeople-warning-banner  .no-thank-button {color: #555;border-color: #cccccc;background: #f7f7f7;-webkit-box-shadow: 0 1px 0 #cccccc;box-shadow: 0 1px 0 #cccccc;vertical-align: top;}
-					#codepeople-warning-banner  .main-button:hover,#codepeople-warning-banner  .main-button:focus{background: #008ec2;border-color: #006799;color: #fff;}
-					#codepeople-warning-banner  .no-thank-button:hover,
-					#codepeople-warning-banner  .no-thank-button:focus{background: #fafafa;border-color: #999;color: #23282d;}
-					@media screen AND (max-width:760px)
-					{
-						#codepeople-warning-banner{position:relative;top:50px;}
-						#codepeople-warning-banner .codepeople-warning-banner-picture{display:none;}
-						#codepeople-warning-banner .codepeople-warning-banner-content{width:calc( 100% - 20px );width:-webkit-calc( 100% - 20px );width:-moz-calc( 100% - 20px );width:-o-calc( 100% - 20px );}
-					}
-				</style>
-				<div id="codepeople-warning-banner">
-					
-					<div class="codepeople-warning-banner-content">
-						<div class="codepeople-warning-banner-text">
-							<p><strong>Warning:</strong> This plugin has some styles added through a way not longer supported as it is considered a possible security risk. Please check the new way of inserting
-the styles in the "<a href="admin.php?page=cp_timeslotsbooking_settings">Edit Styles</a>" tab.</p> 
-                           	<form method="post">
-								<button class="no-thank-button">OK, understood and close this notice</button>
-								<input type="hidden" name="codepeople_warning_action" value="not-thanks" />
-								<input type="hidden" name="codepeople_warning_nonce" value="<?php echo esc_attr(wp_create_nonce(__FILE__)); ?>" />
-							</form>
-						</div>
-						<div style="clear:both;"></div>
-					</div>
-					<div style="clear:both;"></div>
-				</div>
-				<?php
-            }
-        }
-				return;
-	}
-    
-/**
+    /**
      * AJAX Handler: Generate Reply with Free Keyless AI (Pollinations.ai)
      */
     public function handle_generate_ai_reply_ajax() {
@@ -2908,6 +2912,10 @@ the styles in the "<a href="admin.php?page=cp_timeslotsbooking_settings">Edit St
         $has_access = current_user_can( 'edit_pages' ) || ( method_exists( $this, 'check_current_user_access' ) && $this->check_current_user_access( $cal_id ) );
         if ( ! $has_access ) {
             wp_send_json_error( __( 'Unauthorized access.', 'wp-time-slots-booking-form' ) );
+        }
+        
+        if ( get_option( 'cptslotsb_ai_reply_enabled', '0' ) !== '1' ) {
+            wp_send_json_error( __( 'AI Reply Assistant is disabled. Please turn it on first.', 'wp-time-slots-booking-form' ) );
         }
 
         $original_message = isset( $_POST['original_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['original_message'] ) ) : '';

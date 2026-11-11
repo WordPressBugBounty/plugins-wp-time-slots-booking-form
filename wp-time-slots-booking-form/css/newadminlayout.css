@@ -148,7 +148,7 @@ label {font-weight:600;}
 	box-shadow:         0px 2px 2px 0px rgba(100, 100, 100, 0.1);
 }
 .ahb-step{display:inline-block; cursor:pointer;}
-.ahb-step:not(:last-child){margin-right:50px;}
+.ahb-step:not(:last-child){margin-right:0px;}
 .ahb-step *{
 	color:#8c8c8c;
 	line-height:28px;

@@ -12,325 +12,873 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_adminsettings' );
 
 $cpid = 'CP_WPTSLOTSBK';
 
-$gotab = '';
+$gotab   = '';
+$message = '';
 if (isset($_POST["gotab"]))
 {
     $gotab = sanitize_text_field($_POST["gotab"]);
     if ($gotab == '')
-        $message = 'Email report settings updated.';
+        $message = __('Email report settings updated.', 'wp-time-slots-booking-form');
     else if ($gotab == 'fixarea')
-        $message = 'Troubleshoot settings updated.';
+        $message = __('Troubleshoot settings updated.', 'wp-time-slots-booking-form');
     else if ($gotab == 'css')
-        $message = 'Custom CSS updated.';
+        $message = __('Custom CSS updated.', 'wp-time-slots-booking-form');
     else if ($gotab == 'js')
-        $message = 'Custom javascript updated.';
+        $message = __('Custom JavaScript updated.', 'wp-time-slots-booking-form');
 } 
-else 
-    if (isset($_GET["gotab"]))
-        $gotab = sanitize_text_field($_GET["gotab"]);
-    
-
-?>
-<style>
-	.ahb-tab{display:none;}
-	.ahb-tab label{font-weight:600;}
-	.tab-active{display:block;}
-	.ahb-code-editor-container{border:1px solid #DDDDDD;margin-bottom:20px;}
-    
-.ahb-csssample { margin-top: 15px; margin-left:20px;  margin-right:20px;}
-.ahb-csssampleheader { 
-  font-weight: bold; 
-  background: #dddddd;
-	padding:10px 20px;-webkit-box-shadow: 0px 2px 2px 0px rgba(100, 100, 100, 0.1);-moz-box-shadow:    0px 2px 2px 0px rgba(100, 100, 100, 0.1);box-shadow:         0px 2px 2px 0px rgba(100, 100, 100, 0.1);
+else if (isset($_GET["gotab"]))
+{
+    $gotab = sanitize_text_field($_GET["gotab"]);
 }
-.ahb-csssamplecode {     background: #f4f4f4;
-    border: 1px solid #ddd;
-    border-left: 3px solid #f36d33;
-    color: #666;
-    page-break-inside: avoid;
-    font-family: monospace;
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 1.6em;
-    max-width: 100%;
-    overflow: auto;
-    padding: 1em 1.5em;
-    display: block;
-    word-wrap: break-word; 
-}       
+?>
+
+<style type="text/css">
+    :root {
+        --wpts-primary: #0d9488;
+        --wpts-primary-hover: #0f766e;
+        --wpts-primary-light: #f0fdfa;
+        --wpts-primary-border: #99f6e4;
+        --wpts-accent: #0284c7;
+        --wpts-accent-light: #f0f9ff;
+        --wpts-accent-border: #bae6fd;
+        --wpts-success: #10b981;
+        --wpts-success-bg: #ecfdf5;
+        --wpts-warning: #f59e0b;
+        --wpts-warning-bg: #fffbeb;
+        --wpts-danger: #ef4444;
+        --wpts-danger-bg: #fef2f2;
+        --wpts-surface: #ffffff;
+        --wpts-bg: #f8fafc;
+        --wpts-border: #e2e8f0;
+        --wpts-text: #0f172a;
+        --wpts-text-muted: #64748b;
+        --wpts-radius: 14px;
+        --wpts-radius-sm: 8px;
+        --wpts-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
+    }
+
+    .wpts-admin-wrap {
+        max-width: 1280px;
+        margin: 20px auto 40px;
+        padding-right: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+        color: var(--wpts-text);
+        box-sizing: border-box;
+    }
+    .wpts-admin-wrap *, .wpts-admin-wrap *::before, .wpts-admin-wrap *::after {
+        box-sizing: border-box;
+    }
+
+    /* Toast Notification */
+    .wpts-toast {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--wpts-success-bg);
+        border: 1px solid #a7f3d0;
+        border-left: 4px solid var(--wpts-success);
+        color: #065f46;
+        padding: 14px 20px;
+        border-radius: var(--wpts-radius-sm);
+        margin-bottom: 20px;
+        font-size: 13.5px;
+        font-weight: 500;
+        box-shadow: var(--wpts-shadow);
+        animation: wptsSlideDown 0.25s ease-out;
+    }
+    @keyframes wptsSlideDown {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top Hero & Sub-Navigation Hub */
+    .wpts-hero-shell {
+        background: var(--wpts-surface);
+        border: 1px solid var(--wpts-border);
+        border-radius: var(--wpts-radius);
+        box-shadow: var(--wpts-shadow);
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    .wpts-hero-top {
+        padding: 20px 26px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 65%);
+    }
+    .wpts-brand-group {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .wpts-brand-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--wpts-primary);
+        color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
+        flex-shrink: 0;
+    }
+    .wpts-title-group h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--wpts-text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0;
+        line-height: 1.3;
+    }
+    .wpts-subtitle {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: var(--wpts-text-muted);
+    }
+
+    .wpts-subnav {
+        padding: 10px 26px;
+        background: var(--wpts-bg);
+        border-top: 1px solid var(--wpts-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .wpts-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .wpts-nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 13px;
+        border-radius: var(--wpts-radius-sm);
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--wpts-text-muted);
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+    .wpts-nav-link:hover {
+        background: #ffffff;
+        color: var(--wpts-primary);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+    .wpts-nav-link.active {
+        background: #ffffff;
+        color: var(--wpts-primary);
+        border: 1px solid var(--wpts-border);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    /* Pill Tabs Bar */
+    .ahb-tab-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        background: var(--wpts-surface);
+        border: 1px solid var(--wpts-border) !important;
+        padding: 8px !important;
+        border-radius: var(--wpts-radius);
+        margin: 0 0 24px 0 !important;
+        box-shadow: var(--wpts-shadow);
+        flex-wrap: wrap;
+    }
+    .ahb-tab-wrapper .nav-tab {
+        float: none !important;
+        margin: 0 !important;
+        padding: 9px 16px !important;
+        border: none !important;
+        border-radius: var(--wpts-radius-sm) !important;
+        background: transparent !important;
+        color: var(--wpts-text-muted) !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        line-height: 1.3 !important;
+        transition: all 0.15s ease;
+        text-decoration: none;
+    }
+    .ahb-tab-wrapper .nav-tab:hover {
+        background: var(--wpts-bg) !important;
+        color: var(--wpts-text) !important;
+    }
+    .ahb-tab-wrapper .nav-tab.nav-tab-active {
+        background: var(--wpts-primary) !important;
+        color: #ffffff !important;
+        box-shadow: 0 2px 4px rgba(13, 148, 136, 0.22);
+    }
+
+    .ahb-tab {
+        display: none;
+    }
+    .ahb-tab.tab-active {
+        display: block;
+        animation: wptsFadeIn 0.2s ease-out;
+    }
+    @keyframes wptsFadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards & Grids */
+    .wpts-card {
+        background: var(--wpts-surface);
+        border: 1px solid var(--wpts-border);
+        border-radius: var(--wpts-radius);
+        box-shadow: var(--wpts-shadow);
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+    .wpts-card-header {
+        padding: 18px 24px;
+        border-bottom: 1px solid var(--wpts-border);
+        background: #fcfcfd;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .wpts-card-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--wpts-text);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .wpts-card-desc {
+        margin: 3px 0 0;
+        font-size: 13px;
+        color: var(--wpts-text-muted);
+    }
+    .wpts-card-body {
+        padding: 24px;
+    }
+
+    .wpts-grid {
+        display: grid;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    .wpts-cols-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .wpts-cols-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+    .wpts-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+    .wpts-field label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--wpts-text);
+    }
+    .wpts-help {
+        font-size: 12px;
+        color: var(--wpts-text-muted);
+        line-height: 1.45;
+    }
+
+    .wpts-admin-wrap input[type="text"],
+    .wpts-admin-wrap input[type="email"],
+    .wpts-admin-wrap input[type="number"],
+    .wpts-admin-wrap select,
+    .wpts-admin-wrap textarea {
+        width: 100%;
+        max-width: 100%;
+        padding: 8px 12px;
+        font-size: 13.5px;
+        line-height: 1.4;
+        color: var(--wpts-text);
+        background-color: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: var(--wpts-radius-sm);
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        box-shadow: none;
+        min-height: 38px;
+    }
+    .wpts-admin-wrap select {
+        padding-right: 32px !important;
+        background-position: right 8px center;
+    }
+    .wpts-admin-wrap input:focus,
+    .wpts-admin-wrap select:focus,
+    .wpts-admin-wrap textarea:focus {
+        border-color: var(--wpts-primary);
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.14);
+        outline: none;
+    }
+
+    /* Buttons */
+    .wpts-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 9px 16px;
+        border-radius: var(--wpts-radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        border: 1px solid transparent;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+    .wpts-btn-primary {
+        background: var(--wpts-primary);
+        color: #ffffff;
+        box-shadow: 0 1px 2px rgba(13, 148, 136, 0.25);
+    }
+    .wpts-btn-primary:hover {
+        background: var(--wpts-primary-hover);
+        color: #ffffff;
+        transform: translateY(-1px);
+    }
+    .wpts-btn-soft {
+        background: var(--wpts-primary-light);
+        color: var(--wpts-primary-hover);
+        border-color: var(--wpts-primary-border);
+    }
+    .wpts-btn-soft:hover {
+        background: var(--wpts-primary);
+        color: #ffffff;
+        border-color: var(--wpts-primary);
+    }
+    .wpts-btn-secondary {
+        background: #ffffff;
+        border-color: var(--wpts-border);
+        color: var(--wpts-text);
+    }
+    .wpts-btn-secondary:hover {
+        background: var(--wpts-bg);
+        border-color: #cbd5e1;
+        color: var(--wpts-primary);
+    }
+    .wpts-mini-btn {
+        background: #ffffff;
+        border: 1px solid var(--wpts-border);
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--wpts-primary-hover);
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .wpts-mini-btn:hover {
+        background: var(--wpts-primary);
+        border-color: var(--wpts-primary);
+        color: #ffffff;
+    }
+
+    /* Callouts */
+    .wpts-alert {
+        padding: 14px 18px;
+        border-radius: var(--wpts-radius-sm);
+        font-size: 13.5px;
+        line-height: 1.55;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    .wpts-alert-info {
+        background: var(--wpts-accent-light);
+        border: 1px solid var(--wpts-accent-border);
+        color: #0369a1;
+    }
+    .wpts-alert-warning {
+        background: var(--wpts-warning-bg);
+        border: 1px solid #fde68a;
+        border-left: 4px solid var(--wpts-warning);
+        color: #92400e;
+    }
+
+    /* CSS Snippets Grid */
+    .wpts-snippets-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 16px;
+    }
+    .wpts-snippet-card {
+        border: 1px solid var(--wpts-border);
+        border-radius: var(--wpts-radius-sm);
+        background: var(--wpts-bg);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+    .wpts-snippet-header {
+        padding: 10px 14px;
+        background: #ffffff;
+        border-bottom: 1px solid var(--wpts-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--wpts-text);
+    }
+    .wpts-snippet-code {
+        margin: 0;
+        padding: 14px 16px;
+        background: #0f172a;
+        color: #e2e8f0;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 12.5px;
+        line-height: 1.55;
+        overflow-x: auto;
+        flex: 1;
+        white-space: pre;
+    }
 </style>
-<script>
-// Move to an external file
+
+<script type="text/javascript">
 jQuery(function(){
-	var $ = jQuery,
-		flag_css_editor = true,
-		flag_js_editor = true;
+    var $ = jQuery,
+        flag_css_editor = true,
+        flag_js_editor = true;
     <?php 
-          if ($gotab == 'css' || $gotab == 'js') 
-          { 
-			if(function_exists('wp_enqueue_code_editor'))
-			{
-				$settings_js = wp_enqueue_code_editor(array('type' => 'application/javascript'));
-				$settings_css = wp_enqueue_code_editor(array('type' => 'text/css'));
+    if ($gotab == 'css' || $gotab == 'js') 
+    { 
+        if (function_exists('wp_enqueue_code_editor'))
+        {
+            $settings_js = wp_enqueue_code_editor(array('type' => 'application/javascript'));
+            $settings_css = wp_enqueue_code_editor(array('type' => 'text/css'));
 
-				// Bail if user disabled CodeMirror.
-				if(!(false === $settings_js && false === $settings_css))
-				{
-					if ($gotab == 'css') print sprintf('{flag_css_editor = false; wp.codeEditor.initialize( "ahb_styles_container", %s );}',wp_json_encode( $settings_css ));
-
-					if ($gotab == 'js') print sprintf('{flag_js_editor = false; wp.codeEditor.initialize( "ahb_javascript_container", %s );}',wp_json_encode( $settings_js ));
-				}
-			}      
-          }    
+            if (!(false === $settings_js && false === $settings_css))
+            {
+                if ($gotab == 'css') print sprintf('{flag_css_editor = false; if(document.getElementById("ahb_styles_container")) wp.codeEditor.initialize( "ahb_styles_container", %s );}', wp_json_encode( $settings_css ));
+                if ($gotab == 'js') print sprintf('{flag_js_editor = false; if(document.getElementById("ahb_javascript_container")) wp.codeEditor.initialize( "ahb_javascript_container", %s );}', wp_json_encode( $settings_js ));
+            }
+        }      
+    }    
     ?>    
     
-	$('.ahb-tab-wrapper .nav-tab').click(
-		function(){
-			$('.ahb-tab-wrapper .nav-tab.nav-tab-active').removeClass('nav-tab-active');
-			$(this).addClass('nav-tab-active');
+    $('.ahb-tab-wrapper .nav-tab').click(
+        function(){
+            $('.ahb-tab-wrapper .nav-tab.nav-tab-active').removeClass('nav-tab-active');
+            $(this).addClass('nav-tab-active');
 
-			var tab = $(this).data('tab');
-			$('.ahb-tab.tab-active').removeClass('tab-active');
-			$('.ahb-tab[data-tab="'+tab+'"]').addClass('tab-active');
+            var tab = $(this).data('tab');
+            $('.ahb-tab.tab-active').removeClass('tab-active');
+            $('.ahb-tab[data-tab="'+tab+'"]').addClass('tab-active');
 
-			<?php
-			// This function is used to load the code editor of WordPress
-			if(function_exists('wp_enqueue_code_editor'))
-			{
-				$settings_js = wp_enqueue_code_editor(array('type' => 'application/javascript'));
-				$settings_css = wp_enqueue_code_editor(array('type' => 'text/css'));
+            <?php
+            if (function_exists('wp_enqueue_code_editor'))
+            {
+                $settings_js = wp_enqueue_code_editor(array('type' => 'application/javascript'));
+                $settings_css = wp_enqueue_code_editor(array('type' => 'text/css'));
 
-				// Bail if user disabled CodeMirror.
-				if(!(false === $settings_js && false === $settings_css))
-				{
-					print sprintf('if(tab == 3 && flag_css_editor){flag_css_editor = false; wp.codeEditor.initialize( "ahb_styles_container", %s );}',wp_json_encode( $settings_css ));
-
-					print sprintf('if(tab == 4 && flag_js_editor){flag_js_editor = false; wp.codeEditor.initialize( "ahb_javascript_container", %s );}',wp_json_encode( $settings_js ));
-				}
-			}
-			?>
-		}
-	);
+                if (!(false === $settings_js && false === $settings_css))
+                {
+                    print sprintf('if(tab == 3 && flag_css_editor){flag_css_editor = false; if(document.getElementById("ahb_styles_container")) wp.codeEditor.initialize( "ahb_styles_container", %s );}', wp_json_encode( $settings_css ));
+                    print sprintf('if(tab == 4 && flag_js_editor){flag_js_editor = false; if(document.getElementById("ahb_javascript_container")) wp.codeEditor.initialize( "ahb_javascript_container", %s );}', wp_json_encode( $settings_js ));
+                }
+            }
+            ?>
+        }
+    );
 });
+
+function wptsCopyCssSnippet(btn, elementId) {
+    var el = document.getElementById(elementId);
+    if (!el) return;
+    var code = (el.textContent || el.innerText).trim();
+
+    function feedback() {
+        var orig = btn.getAttribute('data-orig') || btn.textContent;
+        btn.setAttribute('data-orig', orig);
+        btn.textContent = '✓ Copied!';
+        setTimeout(function() { btn.textContent = orig; }, 1600);
+    }
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(feedback);
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = code;
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); feedback(); } catch (e) {}
+        document.body.removeChild(ta);
+    }
+}
 </script>
-<h1>WP Time Slots Booking Form - <?php esc_html_e('General Settings','wp-time-slots-booking-form'); ?></h1>
 
-<?php
-    if (isset($message) && $message) echo "<div id='setting-error-settings_updated' class='updated'><h2>".esc_html($message)."</h2></div>";
-?>
-<nav class="nav-tab-wrapper ahb-tab-wrapper">
-	<a href="javascript:void(0);" class="nav-tab<?php if ($gotab == '') echo ' nav-tab-active'; ?>" data-tab="1"><?php esc_html_e('Email Report Settings','wp-time-slots-booking-form'); ?></a>
-	<a href="javascript:void(0);" class="nav-tab<?php if ($gotab == 'fixarea') echo ' nav-tab-active'; ?>"  data-tab="2"><?php esc_html_e('Troubleshoot Area','wp-time-slots-booking-form'); ?></a>
-	<a href="javascript:void(0);" class="nav-tab<?php if ($gotab == 'css') echo ' nav-tab-active'; ?>"  data-tab="3"><?php esc_html_e('Edit Styles','wp-time-slots-booking-form'); ?></a>
-	<a href="javascript:void(0);" class="nav-tab<?php if ($gotab == 'js') echo ' nav-tab-active'; ?>"  data-tab="4"><?php esc_html_e('Edit Scripts','wp-time-slots-booking-form'); ?></a>
-</nav>
+<div class="wrap wpts-admin-wrap">
 
-<!-- TAB 1 -->
-<div class="ahb-tab<?php if ($gotab == '') echo ' tab-active'; ?>" data-tab="1">
-	<h2><?php esc_html_e('Automatic Email Reports','wp-time-slots-booking-form'); ?></h2>
-	<p><?php esc_html_e('Automatic email reports for','wp-time-slots-booking-form'); ?> <b><?php esc_html_e('ALL forms','wp-time-slots-booking-form'); ?></b>: <?php esc_html_e('Send submissions in CSV format via email','wp-time-slots-booking-form'); ?>.</p>    
-	<form name="updatereportsettings" action="" method="post">
-     <input name="nonce" type="hidden" value="<?php echo esc_attr($nonce); ?>" />
-     <input name="<?php echo esc_attr($cpid); ?>_post_edition" type="hidden" value="1" />
-     <input name="gotab" type="hidden" value="" />
-     <table class="form-table">    
-        <tr valign="top">
-        <td scope="row" colspan="2"><strong><?php esc_html_e('Enable Reports?','wp-time-slots-booking-form'); ?></strong>
-          <?php $option = get_option('cp_cptslotsb_rep_enable', 'no'); ?>
-          <select name="cp_cptslotsb_rep_enable">
-           <option value="no"<?php if ($option == 'no' || $option == '') echo ' selected'; ?>><?php esc_html_e('No','wp-time-slots-booking-form'); ?></option>
-           <option value="yes"<?php if ($option == 'yes') echo ' selected'; ?>><?php esc_html_e('Yes','wp-time-slots-booking-form'); ?></option>
-          </select>     
-          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-          <strong><?php esc_html_e('Send report every','wp-time-slots-booking-form'); ?>:</strong> <input type="text" name="cp_cptslotsb_rep_days" size="1" value="<?php echo esc_attr(get_option('cp_cptslotsb_rep_days', '1')); ?>" /> <?php esc_html_e('days','wp-time-slots-booking-form'); ?>
-          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
-          <strong><?php esc_html_e('Send after this hour (server time)','wp-time-slots-booking-form'); ?>:</strong>
-          <select name="cp_cptslotsb_rep_hour">
-           <?php
-             $hour = get_option('cp_cptslotsb_rep_hour', '0');
-             for ($k=0;$k<24;$k++)
-                 echo '<option value="'.esc_attr($k).'"'.($hour==$k?' selected':'').'>'.($k<10?'0':'').esc_html($k).'</option>';
-           ?>
-          </select>
-        </td>
-        <tr valign="top">
-        <th scope="row"><?php esc_html_e('Send email from','wp-time-slots-booking-form'); ?></th>
-        <td><input type="text" name="cp_cptslotsb_fp_from_email" size="70" value="<?php echo esc_attr(get_option('cp_cptslotsb_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) )); ?>" /></td>
-        </tr>       
-        <tr valign="top">
-        <th scope="row"><?php esc_html_e('Send to email(s)','wp-time-slots-booking-form'); ?></th>
-        <td><input type="text" name="cp_cptslotsb_rep_emails" size="70" value="<?php echo esc_attr(get_option('cp_cptslotsb_rep_emails', '')); ?>" /></td>
-        </tr>
-        <tr valign="top">
-        <th scope="row"><?php esc_html_e('Email subject','wp-time-slots-booking-form'); ?></th>
-        <td><input type="text" name="cp_cptslotsb_rep_subject" size="70" value="<?php echo esc_attr(get_option('cp_cptslotsb_rep_subject', 'Submissions report...')); ?>" /></td>
-        </tr>
-        <tr valign="top">
-        <th scope="row"><?php esc_html_e('Email format?','wp-time-slots-booking-form'); ?></th>
-        <td>
-          <?php $option = get_option('cp_cptslotsb_rep_emailformat', 'text'); ?>
-          <select name="cp_cptslotsb_rep_emailformat">
-           <option value="text"<?php if ($option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','wp-time-slots-booking-form'); ?></option>
-           <option value="html"<?php if ($option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','wp-time-slots-booking-form'); ?></option>
-          </select>
-        </td>
-        </tr>  
-        <tr valign="top">
-        <th scope="row"><?php esc_html_e('Email Text (CSV file will be attached','wp-time-slots-booking-form'); ?>)</th>
-        <td><textarea type="text" name="cp_cptslotsb_rep_message" rows="3" cols="80"><?php echo esc_textarea(get_option('cp_cptslotsb_rep_message', 'Attached you will find the data from the form submissions.')); ?></textarea></td>
-        </tr>      
-     </table>            
-     <input type="submit" value="<?php esc_html_e("Update Report Settings",'wp-time-slots-booking-form'); ?>" class="button button-primary" />
-     </form>
-     <div class="clear"></div>
-     <p><?php esc_html_e('Note: For setting up a report only for a specific form use the setting area available for that when editing each form settings','wp-time-slots-booking-form'); ?>.</p>
-	
-</div>
-
-<!-- TAB 2 -->
-<div class="ahb-tab<?php if ($gotab == 'fixarea') echo ' tab-active'; ?>" data-tab="2">
-	<h2><?php esc_html_e('Troubleshoot Area','wp-time-slots-booking-form'); ?></h2>
-	<p><b><?php esc_html_e('Important!','wp-time-slots-booking-form'); ?>:</b> <?php esc_html_e('Use this area only if you are experiencing conflicts with third party plugins, with the theme scripts or with the character encoding','wp-time-slots-booking-form'); ?>.</p>
-    <form  method="post" action="" name="cpformconf2">
-        <input name="nonce" type="hidden" value="<?php echo esc_attr($nonce); ?>" />
-        <input name="<?php echo esc_attr($cpid); ?>_post_edition" type="hidden" value="1" />
-        <input name="gotab" type="hidden" value="fixarea" />
-	    <table class="form-table">
-            <tbody>
-	    		<tr valign="top">
-	    			<th scope="row">
-	    				<label><?php esc_html_e('Script load method','wp-time-slots-booking-form'); ?></label>
-	    			</th>
-	    			<td>
-	    				<select id="ccscriptload" name="ccscriptload">
-        <option value="0" <?php if (get_option('cp_tslotsb_LOAD_SCRIPTS',"1") == "1") echo 'selected'; ?>><?php esc_html_e('Classic (Recommended)','wp-time-slots-booking-form'); ?></option>
-        <option value="1" <?php if (get_option('cp_tslotsb_LOAD_SCRIPTS',"1") != "1") echo 'selected'; ?>><?php esc_html_e('Direct','wp-time-slots-booking-form'); ?></option>
-       </select><br>
-	    				<em><?php esc_html_e('Change the script load method if the form doesn\'t appear in the public website.','wp-time-slots-booking-form'); ?></em>
-	    			</td>
-	    		</tr>
-	    		<tr valign="top">
-	    			<th scope="row">
-	    				<label><?php esc_html_e('Character encoding','wp-time-slots-booking-form'); ?></label>
-	    			</th>
-	    			<td>
-	    				<select id="cccharsets" name="cccharsets">
-	    					<option value=""><?php esc_html_e('Keep current charset (Recommended)','wp-time-slots-booking-form'); ?></option>
-                            <option value="utf8_general_ci">UTF-8 (<?php esc_html_e('try this first','wp-time-slots-booking-form'); ?>)</option>
-                            <option value="latin1_swedish_ci">latin1_swedish_ci</option>
-	    				</select><br>
-	    				<em><?php esc_html_e('Update the charset if you are getting problems displaying special/non-latin characters. After updated you need to edit the special characters again.','wp-time-slots-booking-form'); ?></em>
-	    			</td>
-	    		</tr>
-	    	</tbody>
-	    </table>
-	    <input type="submit" value="<?php esc_html_e('Update Changes','wp-time-slots-booking-form'); ?>" class="button button-primary" />
-    </form>    
-</div>
-
-<!-- TAB 3 -->
-<div class="ahb-tab<?php if ($gotab == 'css') echo ' tab-active'; ?>" data-tab="3">
-	<h2><?php esc_html_e('Edit Styles','wp-time-slots-booking-form'); ?></h2>
-	<h3><?php esc_html_e("Important Note: Inserting CSS styles directly in this area of the plugin isn't longer allowed. Please insert the custom styles in the theme using for example the",'wp-time-slots-booking-form'); ?> <a href="customize.php"><?php esc_html_e("following way",'wp-time-slots-booking-form'); ?></a>:</h3>
-    <a href="customize.php"><img src="<?php echo plugins_url('/images/edit-styles.png', __FILE__)?>" style="width:80%;padding:10px;max-width:900px;border:3px dotted gray"></a>
-    <h3><?php esc_html_e("For commonly used CSS styles please check the following FAQ section",'wp-time-slots-booking-form'); ?>: <a href="https://wptimeslot.dwbooster.com/faq#design">https://wptimeslot.dwbooster.com/faq#design</a></h3>
-     
-    <br /><hr /><br />
-   
-   <div class="ahb-statssection-container" style="background:#f6f6f6;">
-	<div class="ahb-statssection-header" style="background:white;
-	padding:10px 20px;-webkit-box-shadow: 0px 2px 2px 0px rgba(100, 100, 100, 0.1);-moz-box-shadow:    0px 2px 2px 0px rgba(100, 100, 100, 0.1);box-shadow:         0px 2px 2px 0px rgba(100, 100, 100, 0.1);">
-    <h3><?php esc_html_e('Sample Styles','wp-time-slots-booking-form'); ?>:</h3>
-	</div>
-	<div class="ahb-statssection">
-      
-        <div class="ahb-csssample">
-         <div class="ahb-csssampleheader">
-           <?php esc_html_e("Make the calendar 100% width / responsive",'wp-time-slots-booking-form'); ?>:
-         </div>
-         <div class="ahb-csssamplecode">
-           #fbuilder .ui-datepicker-inline { max-width:none !important; }       
-         </div>
-        </div>
-        
-        <div class="ahb-csssample">
-         <div class="ahb-csssampleheader">
-           <?php esc_html_e("Make the send button in a hover format",'wp-time-slots-booking-form'); ?>:
-         </div>
-         <div class="ahb-csssamplecode">
-           .pbSubmit:hover {
-               background-color: #4CAF50;
-               color: white;
-           }         
-         </div>
-        </div> 
-        
-        <div class="ahb-csssample">
-         <div class="ahb-csssampleheader">
-           <?php esc_html_e("Change the color of all form field labels",'wp-time-slots-booking-form'); ?>:
-         </div>
-         <div class="ahb-csssamplecode">
-           #fbuilder, #fbuilder label, #fbuilder span { color: #00f; }     
-         </div>
-        </div> 
-
-        <div class="ahb-csssample">
-         <div class="ahb-csssampleheader">
-           <?php esc_html_e("Change color of fonts into all fields",'wp-time-slots-booking-form'); ?>:
-         </div>
-         <div class="ahb-csssamplecode">
-           #fbuilder input[type=text], 
-           #fbuilder textarea, 
-           #fbuilder select { 
-             color: #00f; 
-           }     
-         </div>
-        </div> 
-        
-        <div class="ahb-csssample">
-         <div class="ahb-csssampleheader">
-           <?php esc_html_e("Add a text before the selected date-time",'wp-time-slots-booking-form'); ?>:
-         </div>
-         <div class="ahb-csssamplecode">
-           .sb_item:before { content: "Selected date: "}
-         </div>
-        </div> 
-        
-        <div class="ahb-csssample">
-         <div class="ahb-csssampleheader">
-           <?php esc_html_e("Change the calendar header color",'wp-time-slots-booking-form'); ?>:
-         </div>
-         <div class="ahb-csssamplecode">
-           #fbuilder .ui-datepicker-header { background:#6cc72b ; color:#444; text-shadow:none; }
-         </div>
-        </div>          
-                
-        <div class="ahb-csssample">
-         <div class="ahb-csssampleheader">
-           <?php esc_html_e("Change styles of the selected date-times",'wp-time-slots-booking-form'); ?>:
-         </div>
-         <div class="ahb-csssamplecode">
-           .sb_item { color: red; }
-         </div>
-        </div>         
-        
-        
-        <div class="ahb-csssample">
-         <div class="ahb-csssampleheader">
-           <?php esc_html_e("Other styles",'wp-time-slots-booking-form'); ?>:
-         </div>
-         <div class="ahb-csssamplecode">
-           <?php esc_html_e("For other styles check the design section in the FAQ",'wp-time-slots-booking-form'); ?>: <a href="https://wptimeslot.dwbooster.com/faq#design">https://wptimeslot.dwbooster.com/faq#design</a>     
-         </div>
-        </div>         
-       
+    <?php if (!empty($message)) : ?>
+    <div id="setting-error-settings_updated" class="wpts-toast">
+        <span>✅ <strong><?php echo esc_html($message); ?></strong></span>
+        <button type="button" class="wpts-mini-btn" onclick="this.parentElement.style.display='none'">Dismiss</button>
     </div>
-   </div>  
-   
-</div>
+    <?php endif; ?>
 
-<!-- TAB 4 -->
-<div class="ahb-tab<?php if ($gotab == 'js') echo ' tab-active'; ?>" data-tab="4">
-	<h2><?php esc_html_e('Edit Scripts','wp-time-slots-booking-form'); ?></h2>
-    <h3><?php esc_html_e("Important Note: This way of inserting JavaScript in the plugin isn't longer allowed. For this version of the plugin please insert the custom scripts in your own scripts or theme.",'wp-time-slots-booking-form'); ?></h3>
+    <!-- Top Hero & Sub-Navigation Hub -->
+    <div class="wpts-hero-shell">
+        <div class="wpts-hero-top">
+            <div class="wpts-brand-group">
+                <div class="wpts-brand-icon">⚙️</div>
+                <div class="wpts-title-group">
+                    <h1><?php echo esc_html($this->plugin_name); ?> &mdash; <?php esc_html_e('General Settings', 'wp-time-slots-booking-form'); ?></h1>
+                    <p class="wpts-subtitle"><?php esc_html_e('Configure global CSV email reports across all calendars, script loading & encoding options, and custom styling.', 'wp-time-slots-booking-form'); ?></p>
+                </div>
+            </div>
+
+            <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter)); ?>" class="wpts-btn wpts-btn-secondary">
+                &larr; <?php esc_html_e('Return to Calendars List', 'wp-time-slots-booking-form'); ?>
+            </a>
+        </div>
+
+        <div class="wpts-subnav">
+            <div class="wpts-nav-links">
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter)); ?>" class="wpts-nav-link">
+                    🗓️ <?php esc_html_e('Calendars List', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'&cal=0&list=1')); ?>" class="wpts-nav-link">
+                    📋 <?php esc_html_e('All Booking Orders', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'&cal=0&schedule=1&calendarview=1')); ?>" class="wpts-nav-link">
+                    🕒 <?php esc_html_e('Master Schedule', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_settings')); ?>" class="wpts-nav-link active">
+                    ⚙️ <?php esc_html_e('General Settings', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_addons')); ?>" class="wpts-nav-link">
+                    🧩 <?php esc_html_e('Add-Ons', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_csseditor_page')); ?>" class="wpts-nav-link">
+                    🎨 <?php esc_html_e('Styles Editor', 'wp-time-slots-booking-form'); ?>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Tabs Navigation -->
+    <nav class="nav-tab-wrapper ahb-tab-wrapper">
+        <a href="javascript:void(0);" class="nav-tab<?php if ($gotab == '') echo ' nav-tab-active'; ?>" data-tab="1">
+            📊 <?php esc_html_e('Email Report Settings', 'wp-time-slots-booking-form'); ?>
+        </a>
+        <a href="javascript:void(0);" class="nav-tab<?php if ($gotab == 'fixarea') echo ' nav-tab-active'; ?>" data-tab="2">
+            🛠️ <?php esc_html_e('Troubleshoot Area', 'wp-time-slots-booking-form'); ?>
+        </a>
+        <a href="javascript:void(0);" class="nav-tab<?php if ($gotab == 'css') echo ' nav-tab-active'; ?>" data-tab="3">
+            🎨 <?php esc_html_e('Edit Styles (CSS)', 'wp-time-slots-booking-form'); ?>
+        </a>
+        <a href="javascript:void(0);" class="nav-tab<?php if ($gotab == 'js') echo ' nav-tab-active'; ?>" data-tab="4">
+            📜 <?php esc_html_e('Edit Scripts (JS)', 'wp-time-slots-booking-form'); ?>
+        </a>
+    </nav>
+
+    <!-- ==========================================
+         TAB 1: AUTOMATIC EMAIL REPORTS
+         ========================================== -->
+    <div class="ahb-tab<?php if ($gotab == '') echo ' tab-active'; ?>" data-tab="1">
+        <div class="wpts-card">
+            <div class="wpts-card-header">
+                <div>
+                    <h3 class="wpts-card-title">📊 <?php esc_html_e('Automatic Email Reports for ALL Forms (CSV Attachment)', 'wp-time-slots-booking-form'); ?></h3>
+                    <p class="wpts-card-desc"><?php esc_html_e('Schedule periodic CSV digest reports across all booking calendars. For form-specific reports, configure the Reports tab inside each calendar.', 'wp-time-slots-booking-form'); ?></p>
+                </div>
+            </div>
+            <div class="wpts-card-body">
+                <form name="updatereportsettings" action="" method="post">
+                    <input name="nonce" type="hidden" value="<?php echo esc_attr($nonce); ?>" />
+                    <input name="<?php echo esc_attr($cpid); ?>_post_edition" type="hidden" value="1" />
+                    <input name="gotab" type="hidden" value="" />
+
+                    <div class="wpts-grid wpts-cols-3">
+                        <div class="wpts-field">
+                            <label><?php esc_html_e('Enable Reports?', 'wp-time-slots-booking-form'); ?></label>
+                            <?php $option = get_option('cp_cptslotsb_rep_enable', 'no'); ?>
+                            <select name="cp_cptslotsb_rep_enable">
+                                <option value="no"<?php if ($option == 'no' || $option == '') echo ' selected'; ?>><?php esc_html_e('No', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="yes"<?php if ($option == 'yes') echo ' selected'; ?>><?php esc_html_e('Yes', 'wp-time-slots-booking-form'); ?></option>
+                            </select>
+                        </div>
+
+                        <div class="wpts-field">
+                            <label><?php esc_html_e('Send report every (days):', 'wp-time-slots-booking-form'); ?></label>
+                            <input type="text" name="cp_cptslotsb_rep_days" size="1" value="<?php echo esc_attr(get_option('cp_cptslotsb_rep_days', '1')); ?>" />
+                        </div>
+
+                        <div class="wpts-field">
+                            <label><?php esc_html_e('Send after this hour (server time):', 'wp-time-slots-booking-form'); ?></label>
+                            <select name="cp_cptslotsb_rep_hour">
+                                <?php
+                                $hour = get_option('cp_cptslotsb_rep_hour', '0');
+                                for ($k = 0; $k < 24; $k++)
+                                    echo '<option value="'.esc_attr($k).'"'.($hour == $k ? ' selected' : '').'>'.($k < 10 ? '0' : '').esc_html($k).':00</option>';
+                                ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="wpts-grid wpts-cols-2">
+                        <div class="wpts-field">
+                            <label><?php esc_html_e('Send email from:', 'wp-time-slots-booking-form'); ?></label>
+                            <input type="text" name="cp_cptslotsb_fp_from_email" size="70" value="<?php echo esc_attr(get_option('cp_cptslotsb_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) )); ?>" />
+                        </div>
+                        <div class="wpts-field">
+                            <label><?php esc_html_e('Send to email(s):', 'wp-time-slots-booking-form'); ?></label>
+                            <input type="text" name="cp_cptslotsb_rep_emails" size="70" value="<?php echo esc_attr(get_option('cp_cptslotsb_rep_emails', '')); ?>" placeholder="admin@example.com, manager@example.com" />
+                        </div>
+                    </div>
+
+                    <div class="wpts-grid wpts-cols-2">
+                        <div class="wpts-field">
+                            <label><?php esc_html_e('Email subject:', 'wp-time-slots-booking-form'); ?></label>
+                            <input type="text" name="cp_cptslotsb_rep_subject" size="70" value="<?php echo esc_attr(get_option('cp_cptslotsb_rep_subject', 'Submissions report...')); ?>" />
+                        </div>
+                        <div class="wpts-field">
+                            <label><?php esc_html_e('Email format?', 'wp-time-slots-booking-form'); ?></label>
+                            <?php $option = get_option('cp_cptslotsb_rep_emailformat', 'text'); ?>
+                            <select name="cp_cptslotsb_rep_emailformat">
+                                <option value="text"<?php if ($option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="html"<?php if ($option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)', 'wp-time-slots-booking-form'); ?></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="wpts-field" style="margin-bottom:20px;">
+                        <label><?php esc_html_e('Email Text (CSV file will be attached):', 'wp-time-slots-booking-form'); ?></label>
+                        <textarea name="cp_cptslotsb_rep_message" rows="3" cols="80"><?php echo esc_textarea(get_option('cp_cptslotsb_rep_message', 'Attached you will find the data from the form submissions.')); ?></textarea>
+                    </div>
+
+                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:16px;border-top:1px solid var(--wpts-border);">
+                        <span class="wpts-help"><?php esc_html_e('Note: For setting up a report only for a specific form, use the Reports tab when editing that form\'s settings.', 'wp-time-slots-booking-form'); ?></span>
+                        <button type="submit" class="wpts-btn wpts-btn-primary">
+                            💾 <?php esc_html_e('Update Report Settings', 'wp-time-slots-booking-form'); ?>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         TAB 2: TROUBLESHOOT AREA
+         ========================================== -->
+    <div class="ahb-tab<?php if ($gotab == 'fixarea') echo ' tab-active'; ?>" data-tab="2">
+        <div class="wpts-card">
+            <div class="wpts-card-header">
+                <div>
+                    <h3 class="wpts-card-title">🛠️ <?php esc_html_e('Troubleshoot Area', 'wp-time-slots-booking-form'); ?></h3>
+                    <p class="wpts-card-desc"><?php esc_html_e('Important: Use this area only if you are experiencing conflicts with third-party plugins, theme scripts, or character encoding.', 'wp-time-slots-booking-form'); ?></p>
+                </div>
+            </div>
+            <div class="wpts-card-body">
+                <form method="post" action="" name="cpformconf2">
+                    <input name="nonce" type="hidden" value="<?php echo esc_attr($nonce); ?>" />
+                    <input name="<?php echo esc_attr($cpid); ?>_post_edition" type="hidden" value="1" />
+                    <input name="gotab" type="hidden" value="fixarea" />
+
+                    <div class="wpts-grid wpts-cols-2">
+                        <div class="wpts-field">
+                            <label for="ccscriptload"><?php esc_html_e('Script load method', 'wp-time-slots-booking-form'); ?></label>
+                            <select id="ccscriptload" name="ccscriptload">
+                                <option value="0" <?php if (get_option('cp_tslotsb_LOAD_SCRIPTS',"1") == "1") echo 'selected'; ?>><?php esc_html_e('Classic (Recommended)', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="1" <?php if (get_option('cp_tslotsb_LOAD_SCRIPTS',"1") != "1") echo 'selected'; ?>><?php esc_html_e('Direct', 'wp-time-slots-booking-form'); ?></option>
+                            </select>
+                            <span class="wpts-help"><?php esc_html_e("Change the script load method if the form doesn't appear in the public website.", 'wp-time-slots-booking-form'); ?></span>
+                        </div>
+
+                        <div class="wpts-field">
+                            <label for="cccharsets"><?php esc_html_e('Character encoding', 'wp-time-slots-booking-form'); ?></label>
+                            <select id="cccharsets" name="cccharsets">
+                                <option value=""><?php esc_html_e('Keep current charset (Recommended)', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="utf8_general_ci">UTF-8 (<?php esc_html_e('try this first', 'wp-time-slots-booking-form'); ?>)</option>
+                                <option value="latin1_swedish_ci">latin1_swedish_ci</option>
+                            </select>
+                            <span class="wpts-help"><?php esc_html_e('Update the charset if you are getting problems displaying special/non-latin characters. After updating you need to edit the special characters again.', 'wp-time-slots-booking-form'); ?></span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--wpts-border);display:flex;justify-content:flex-end;">
+                        <button type="submit" class="wpts-btn wpts-btn-primary">
+                            💾 <?php esc_html_e('Update Changes', 'wp-time-slots-booking-form'); ?>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         TAB 3: EDIT STYLES (CSS)
+         ========================================== -->
+    <div class="ahb-tab<?php if ($gotab == 'css') echo ' tab-active'; ?>" data-tab="3">
+        <div class="wpts-card">
+            <div class="wpts-card-header">
+                <div>
+                    <h3 class="wpts-card-title">🎨 <?php esc_html_e('Edit Styles & Custom CSS Guide', 'wp-time-slots-booking-form'); ?></h3>
+                    <p class="wpts-card-desc"><?php esc_html_e('Add custom CSS safely through the WordPress Customizer or the built-in Visual Styles Editor.', 'wp-time-slots-booking-form'); ?></p>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_csseditor_page')); ?>" class="wpts-btn wpts-btn-primary">
+                        🖌️ <?php esc_html_e('Open Visual Styles Editor', 'wp-time-slots-booking-form'); ?>
+                    </a>
+                    <a href="customize.php" class="wpts-btn wpts-btn-soft">
+                        ⚙️ <?php esc_html_e('Open WP Theme Customizer', 'wp-time-slots-booking-form'); ?>
+                    </a>
+                </div>
+            </div>
+            <div class="wpts-card-body">
+                <div class="wpts-alert wpts-alert-info">
+                    <span>💡</span>
+                    <div>
+                        <strong><?php esc_html_e('Important Note:', 'wp-time-slots-booking-form'); ?></strong>
+                        <?php esc_html_e("Inserting raw CSS styles directly in this legacy tab is no longer used. Please insert your custom styles in your theme's Additional CSS panel:", 'wp-time-slots-booking-form'); ?>
+                        <a href="customize.php" style="font-weight:700;color:#0369a1;text-decoration:underline;"><?php esc_html_e('Appearance → Customize → Additional CSS', 'wp-time-slots-booking-form'); ?></a>,
+                        <?php esc_html_e('or use the dedicated', 'wp-time-slots-booking-form'); ?>
+                        <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_csseditor_page')); ?>" style="font-weight:700;color:#0369a1;text-decoration:underline;"><?php esc_html_e('Styles Editor', 'wp-time-slots-booking-form'); ?></a>.
+                    </div>
+                </div>
+
+                <div style="text-align:center;margin:20px 0;">
+                    <a href="customize.php" style="display:inline-block;">
+                        <img src="<?php echo esc_url(plugins_url('/images/edit-styles.png', __FILE__)); ?>" alt="Additional CSS in WordPress Customizer" style="max-width:100%;width:760px;padding:12px;background:var(--wpts-bg);border:1px solid var(--wpts-border);border-radius:var(--wpts-radius-sm);box-shadow:var(--wpts-shadow);" />
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sample CSS Snippets Card -->
+        <div class="wpts-card">
+            <div class="wpts-card-header">
+                <div>
+                    <h3 class="wpts-card-title">✨ <?php esc_html_e('Sample Styles', 'wp-time-slots-booking-form'); ?></h3>
+                    <p class="wpts-card-desc"><?php esc_html_e('Click "Copy CSS" on any snippet below to paste it into the WordPress Customizer or Styles Editor.', 'wp-time-slots-booking-form'); ?></p>
+                </div>
+                <a href="https://wptimeslot.dwbooster.com/faq#design" target="_blank" rel="noopener noreferrer" class="wpts-btn wpts-btn-soft">
+                    📖 <?php esc_html_e('More Styles in Design FAQ', 'wp-time-slots-booking-form'); ?> &#8599;
+                </a>
+            </div>
+            <div class="wpts-card-body">
+                <div class="wpts-snippets-grid">
+
+                    <div class="wpts-snippet-card">
+                        <div class="wpts-snippet-header">
+                            <span><?php esc_html_e('Make the calendar 100% width / responsive', 'wp-time-slots-booking-form'); ?></span>
+                            <button type="button" class="wpts-mini-btn" onclick="wptsCopyCssSnippet(this, 'wpts_css_1')"><?php esc_html_e('Copy CSS', 'wp-time-slots-booking-form'); ?></button>
+                        </div>
+                        <pre class="wpts-snippet-code" id="wpts_css_1">#fbuilder .ui-datepicker-inline {
+    max-width: none !important;
+}</pre>
+                    </div>
+
+                    <div class="wpts-snippet-card">
+                        <div class="wpts-snippet-header">
+                            <span><?php esc_html_e('Make the send button change color on hover', 'wp-time-slots-booking-form'); ?></span>
+                            <button type="button" class="wpts-mini-btn" onclick="wptsCopyCssSnippet(this, 'wpts_css_2')"><?php esc_html_e('Copy CSS', 'wp-time-slots-booking-form'); ?></button>
+                        </div>
+                        <pre class="wpts-snippet-code" id="wpts_css_2">.pbSubmit:hover {
+    background-color: #4CAF50;
+    color: white;
+}</pre>
+                    </div>
+
+                    <div class="wpts-snippet-card">
+                        <div class="wpts-snippet-header">
+                            <span><?php esc_html_e('Change the color of all form field labels', 'wp-time-slots-booking-form'); ?></span>
+                            <button type="button" class="wpts-mini-btn" onclick="wptsCopyCssSnippet(this, 'wpts_css_3')"><?php esc_html_e('Copy CSS', 'wp-time-slots-booking-form'); ?></button>
+                        </div>
+                        <pre class="wpts-snippet-code" id="wpts_css_3">#fbuilder, #fbuilder label, #fbuilder span {
+    color: #0000ff;
+}</pre>
+                    </div>
+
+                    <div class="wpts-snippet-card">
+                        <div class="wpts-snippet-header">
+                            <span><?php esc_html_e('Change color of fonts inside all fields', 'wp-time-slots-booking-form'); ?></span>
+                            <button type="button" class="wpts-mini-btn" onclick="wptsCopyCssSnippet(this, 'wpts_css_4')"><?php esc_html_e('Copy CSS', 'wp-time-slots-booking-form'); ?></button>
+                        </div>
+                        <pre class="wpts-snippet-code" id="wpts_css_4">#fbuilder input[type=text], 
+#fbuilder textarea, 
+#fbuilder select { 
+    color: #0000ff; 
+}</pre>
+                    </div>
+
+                    <div class="wpts-snippet-card">
+                        <div class="wpts-snippet-header">
+                            <span><?php esc_html_e('Add text before the selected date-time', 'wp-time-slots-booking-form'); ?></span>
+                            <button type="button" class="wpts-mini-btn" onclick="wptsCopyCssSnippet(this, 'wpts_css_5')"><?php esc_html_e('Copy CSS', 'wp-time-slots-booking-form'); ?></button>
+                        </div>
+                        <pre class="wpts-snippet-code" id="wpts_css_5">.sb_item:before {
+    content: "Selected date: ";
+}</pre>
+                    </div>
+
+                    <div class="wpts-snippet-card">
+                        <div class="wpts-snippet-header">
+                            <span><?php esc_html_e('Change the calendar header color', 'wp-time-slots-booking-form'); ?></span>
+                            <button type="button" class="wpts-mini-btn" onclick="wptsCopyCssSnippet(this, 'wpts_css_6')"><?php esc_html_e('Copy CSS', 'wp-time-slots-booking-form'); ?></button>
+                        </div>
+                        <pre class="wpts-snippet-code" id="wpts_css_6">#fbuilder .ui-datepicker-header {
+    background: #6cc72b;
+    color: #444444;
+    text-shadow: none;
+}</pre>
+                    </div>
+
+                    <div class="wpts-snippet-card">
+                        <div class="wpts-snippet-header">
+                            <span><?php esc_html_e('Change styles of the selected date-times', 'wp-time-slots-booking-form'); ?></span>
+                            <button type="button" class="wpts-mini-btn" onclick="wptsCopyCssSnippet(this, 'wpts_css_7')"><?php esc_html_e('Copy CSS', 'wp-time-slots-booking-form'); ?></button>
+                        </div>
+                        <pre class="wpts-snippet-code" id="wpts_css_7">.sb_item {
+    color: red;
+}</pre>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         TAB 4: EDIT SCRIPTS (JS)
+         ========================================== -->
+    <div class="ahb-tab<?php if ($gotab == 'js') echo ' tab-active'; ?>" data-tab="4">
+        <div class="wpts-card">
+            <div class="wpts-card-header">
+                <div>
+                    <h3 class="wpts-card-title">📜 <?php esc_html_e('Edit Scripts (JavaScript)', 'wp-time-slots-booking-form'); ?></h3>
+                    <p class="wpts-card-desc"><?php esc_html_e('Security & best practices for adding custom JavaScript to your booking forms.', 'wp-time-slots-booking-form'); ?></p>
+                </div>
+            </div>
+            <div class="wpts-card-body">
+                <div class="wpts-alert wpts-alert-warning" style="margin-bottom:0;">
+                    <span>⚠️</span>
+                    <div>
+                        <strong><?php esc_html_e('Important Note:', 'wp-time-slots-booking-form'); ?></strong>
+                        <?php esc_html_e("Inserting raw JavaScript directly inside the plugin settings is no longer allowed for security reasons. Please enqueue or insert your custom scripts via your child theme or a dedicated code-snippets plugin.", 'wp-time-slots-booking-form'); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

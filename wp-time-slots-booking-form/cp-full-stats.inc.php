@@ -6,7 +6,7 @@ global $wpdb;
 
 $this->item = intval($_GET["cal"]);
 
-$blocked_by_admin_indicator ='BLOCKED_BY_ADMIN'; // currently not int use
+$blocked_by_admin_indicator = 'BLOCKED_BY_ADMIN'; // currently not in use
 
 $current_user = wp_get_current_user();
 $current_user_access = current_user_can('edit_pages');
@@ -17,42 +17,45 @@ if ( !is_admin() || (!$current_user_access && !@in_array($current_user->ID, unse
     exit;
 }
 
-// pre-select time-slots
+// Pre-select time-slots
 $selection = array();
-$rows = $wpdb->get_results( $wpdb->prepare("SELECT time,posted_data FROM ".$wpdb->prefix.$this->table_messages." WHERE notifyto<>%s AND formid=%d ORDER BY time DESC LIMIT 0,100000", $blocked_by_admin_indicator, $this->item) );  // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+if ($this->item > 0) {
+    $rows = $wpdb->get_results( $wpdb->prepare("SELECT time,posted_data FROM ".$wpdb->prefix.$this->table_messages." WHERE notifyto<>%s AND formid=%d ORDER BY time DESC LIMIT 0,100000", $blocked_by_admin_indicator, $this->item) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+} else {
+    $rows = $wpdb->get_results( $wpdb->prepare("SELECT time,posted_data FROM ".$wpdb->prefix.$this->table_messages." WHERE notifyto<>%s ORDER BY time DESC LIMIT 0,100000", $blocked_by_admin_indicator) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+}
 
-$yearly_incoming = array();
+$yearly_incoming  = array();
 $monthly_incoming = array();
-$weekly_incoming = array();
-$daily_incoming = array();
+$weekly_incoming  = array();
+$daily_incoming   = array();
 
-$yearly = array();
+$yearly  = array();
 $monthly = array();
-$weekly = array();
-$daily = array();
+$weekly  = array();
+$daily   = array();
 $currentdate = strtotime(date("Y-m-d"));
-
 
 $blockedstatuses = explode(",", get_option('cp_cpappb_statuses_block',',Attended'));
 
-foreach($rows as $item)
+foreach ($rows as $item)
 {        
     $data = unserialize($item->posted_data);
-    foreach($data["apps"] as $app)
-        if ( in_array($app["cancelled"],$blockedstatuses) )
-        {       
+    if (is_array($data) && isset($data["apps"]) && is_array($data["apps"])) {
+        foreach ($data["apps"] as $app) {
+            if ( in_array($app["cancelled"], $blockedstatuses) )
+            {       
                 $dt = strtotime($app["date"]);
                 $dt_incoming = strtotime($item->time);
-                if ($dt>=$currentdate)
+                if ($dt >= $currentdate)
                 {  
-                    //$selection[] = array($app["date"]." ".$app["slot"], $app["date"], $app["slot"]);
-					if (!isset($yearly["x".date("Y",$dt)])) $yearly["x".date("Y",$dt)] = 0;
+                    if (!isset($yearly["x".date("Y",$dt)])) $yearly["x".date("Y",$dt)] = 0;
                     $yearly["x".date("Y",$dt)]++;
-					if (!isset($monthly["x".date("Ym",$dt)])) $monthly["x".date("Ym",$dt)] = 0;
+                    if (!isset($monthly["x".date("Ym",$dt)])) $monthly["x".date("Ym",$dt)] = 0;
                     $monthly["x".date("Ym",$dt)]++;
-					if (!isset($weekly["x".date("YW",$dt)])) $weekly["x".date("YW",$dt)] = 0;
+                    if (!isset($weekly["x".date("YW",$dt)])) $weekly["x".date("YW",$dt)] = 0;
                     $weekly["x".date("YW",$dt)]++;
-					if (!isset($daily["x".date("Ymd",$dt)])) $daily["x".date("Ymd",$dt)] = 0;
+                    if (!isset($daily["x".date("Ymd",$dt)])) $daily["x".date("Ymd",$dt)] = 0;
                     $daily["x".date("Ymd",$dt)]++;                                   
                 }
                 if (empty($yearly_incoming["x".date("Y",$dt_incoming)])) $yearly_incoming["x".date("Y",$dt_incoming)] = 0;
@@ -64,123 +67,141 @@ foreach($rows as $item)
                 $monthly_incoming["x".date("Ym",$dt_incoming)]++;
                 $weekly_incoming["x".date("YW",$dt_incoming)]++;
                 $daily_incoming["x".date("Ymd",$dt_incoming)]++;                  
-        }    
-}
-
-
-function getMonthly($arr, $is_incoming = false)
-{
-    $str = '';
-    $dt = ($is_incoming ? strtotime("-11 months") : time());
-    $dt = strtotime(date("Y-m-01", $dt));
-    $x = []; $y = [];
-    for ($i=0;$i<12;$i++)
-    {
-        $x[] = date("Ym",$dt);
-        $key = "x".date("Ym",$dt);
-        $y[] = (isset($arr[$key])?$arr[$key]:'0'); 
-        $dt = strtotime( "+1 month" ,$dt);    
-    }   
-    echo ' x="'.esc_html(join(",", $x)).'" y="'.esc_html(join(",", $y)).'" '; 
-}
-function getWeekly($arr, $is_incoming = false)
-{
-    $str = '';
-    $dt = ($is_incoming ? strtotime("-11 weeks") : time());
-    $x = []; $y = [];
-    for ($i=0;$i<12;$i++)
-    {
-        $x[] = date("YW",$dt);
-        $key = "x".date("YW",$dt);
-        $y[] = (isset($arr[$key])?$arr[$key]:'0');         
-        $dt = strtotime("+1 week",$dt);    
-    }   
-    echo ' x="'.esc_html(join(",", $x)).'" y="'.esc_html(join(",", $y)).'" ';
-}
-function getDaily($arr, $is_incoming = false)
-{
-    $str = '';
-    $dt = ($is_incoming ? strtotime("-29 days") : time());
-    $x = []; $y = [];
-    for ($i=0;$i<30;$i++)
-    {
-        $x[] = date("Ymd",$dt);
-        $key = "x".date("Ymd",$dt); 
-        $y[] = (isset($arr[$key])?$arr[$key]:'0'); 
-        $dt = strtotime("+1 day",$dt);    
+            }
+        }
     }
-    echo ' x="'.esc_html(join(",", $x)).'" y="'.esc_html(join(",", $y)).'" ';
 }
 
+if (!function_exists('getMonthly')) {
+    function getMonthly($arr, $is_incoming = false)
+    {
+        $dt = ($is_incoming ? strtotime("-11 months") : time());
+        $dt = strtotime(date("Y-m-01", $dt));
+        $x = []; $y = [];
+        for ($i=0;$i<12;$i++)
+        {
+            $x[] = date("Ym",$dt);
+            $key = "x".date("Ym",$dt);
+            $y[] = (isset($arr[$key])?$arr[$key]:'0'); 
+            $dt = strtotime( "+1 month" ,$dt);    
+        }   
+        echo ' x="'.esc_html(join(",", $x)).'" y="'.esc_html(join(",", $y)).'" '; 
+    }
+}
+if (!function_exists('getWeekly')) {
+    function getWeekly($arr, $is_incoming = false)
+    {
+        $dt = ($is_incoming ? strtotime("-11 weeks") : time());
+        $x = []; $y = [];
+        for ($i=0;$i<12;$i++)
+        {
+            $x[] = date("YW",$dt);
+            $key = "x".date("YW",$dt);
+            $y[] = (isset($arr[$key])?$arr[$key]:'0');         
+            $dt = strtotime("+1 week",$dt);    
+        }   
+        echo ' x="'.esc_html(join(",", $x)).'" y="'.esc_html(join(",", $y)).'" ';
+    }
+}
+if (!function_exists('getDaily')) {
+    function getDaily($arr, $is_incoming = false)
+    {
+        $dt = ($is_incoming ? strtotime("-29 days") : time());
+        $x = []; $y = [];
+        for ($i=0;$i<30;$i++)
+        {
+            $x[] = date("Ymd",$dt);
+            $key = "x".date("Ymd",$dt); 
+            $y[] = (isset($arr[$key])?$arr[$key]:'0'); 
+            $dt = strtotime("+1 day",$dt);    
+        }
+        echo ' x="'.esc_html(join(",", $x)).'" y="'.esc_html(join(",", $y)).'" ';
+    }
+}
 ?>
-<div class="ahb-statssection-header"><h2><?php esc_html_e('Submission time stats (date in which the appointment request was received)','wp-time-slots-booking-form')?></h2></div>
-<div class="container">  
-  <div class="col4">  
-    <div class="ahb-graphs" >
-    	<div class="ahb-statssection-header">
-    		<h3><?php esc_html_e('Incoming - Monthly Stats (lastest 12 months)','wp-time-slots-booking-form'); ?></h3>
-    	</div>
-    	<div class="ahb-statssection">
-            <canvas id="chartMonthlyIncoming" label="<?php esc_html_e('Submissions','wp-time-slots-booking-form'); ?>" <?php (getMonthly($monthly_incoming, true)); ?> ></canvas>
-    	</div>
-    </div> 
-  </div>
-  <div class="col4">  
-    <div class="ahb-graphs" >
-    	<div class="ahb-statssection-header">
-    		<h3><?php esc_html_e('Incoming - Weekly Stats (lastest 12 weeks)','wp-time-slots-booking-form'); ?></h3>
-    	</div>
-    	<div class="ahb-statssection">
-            <canvas id="chartWeeklyIncoming" label="<?php esc_html_e('Submissions','wp-time-slots-booking-form'); ?>" <?php (getWeekly($weekly_incoming, true)); ?> ></canvas>
-    	</div>
-    </div> 
-  </div>
-  <div class="col4">  
-    <div class="ahb-graphs" >
-    	<div class="ahb-statssection-header">
-    		<h3><?php esc_html_e('Daily Stats(next 30 days)','wp-time-slots-booking-form'); ?></h3>
-    	</div>
-    	<div class="ahb-statssection">
-            <canvas id="chartDailyIncoming" label="<?php esc_html_e('Submissions','wp-time-slots-booking-form'); ?>" <?php (getDaily($daily_incoming, true)); ?>  ></canvas>
-    	</div>
-    </div> 
-  </div> 
+
+<!-- Section 1: Incoming Submission Velocity -->
+<div class="wpts-section-banner">
+    <div>
+        <h2>📥 <?php esc_html_e('Submission Time Stats (Date Appointment Request Was Received)', 'wp-time-slots-booking-form'); ?></h2>
+        <p><?php esc_html_e('Historical volume of incoming booking requests over the past 12 months, 12 weeks, and 30 days.', 'wp-time-slots-booking-form'); ?></p>
+    </div>
 </div>
 
-<div class="ahb-statssection-header margin-top-15"><h2><?php esc_html_e('Booked times stats (appointment date)','wp-time-slots-booking-form')?></h2></div>
-<div class="container">
-  <div class="col4">  
-    <div class="ahb-graphs" >
-    	<div class="ahb-statssection-header">
-    		<h3><?php esc_html_e('Monthly Stats (next 12 months)','wp-time-slots-booking-form'); ?></h3>
-    	</div>
-    	<div class="ahb-statssection">
-            <canvas id="chartMonthly" label="<?php esc_html_e('Booked times','wp-time-slots-booking-form'); ?>" <?php (getMonthly($monthly)); ?> ></canvas>
-    	</div>
-    </div> 
-  </div>
-  <div class="col4">  
-    <div class="ahb-graphs" >
-    	<div class="ahb-statssection-header">
-    		<h3><?php esc_html_e('Weekly Stats (next 12 weeks)','wp-time-slots-booking-form'); ?></h3>
-    	</div>
-    	<div class="ahb-statssection">
-            <canvas id="chartWeekly" label="<?php esc_html_e('Booked times','wp-time-slots-booking-form'); ?>" <?php (getWeekly($weekly)); ?> ></canvas>
-    	</div>
-    </div> 
-  </div>
-  <div class="col4">  
-    <div class="ahb-graphs" >
-    	<div class="ahb-statssection-header">
-    		<h3><?php esc_html_e('Daily Stats(next 30 days)','wp-time-slots-booking-form'); ?></h3>
-    	</div>
-    	<div class="ahb-statssection">
-            <canvas id="chartDaily" label="<?php esc_html_e('Booked times','wp-time-slots-booking-form'); ?>" <?php (getDaily($daily)); ?>  ></canvas>
-    	</div>
-    </div> 
-  </div> 
+<div class="wpts-charts-3col">  
+    <div class="wpts-card" style="margin-bottom:0;">
+        <div class="wpts-card-header">
+            <h3 class="wpts-card-title">📅 <?php esc_html_e('Incoming — Monthly (Latest 12 Months)', 'wp-time-slots-booking-form'); ?></h3>
+        </div>
+        <div class="wpts-card-body">
+            <div class="wpts-chart-box-sm">
+                <canvas id="chartMonthlyIncoming" label="<?php esc_attr_e('Submissions', 'wp-time-slots-booking-form'); ?>" <?php getMonthly($monthly_incoming, true); ?>></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="wpts-card" style="margin-bottom:0;">
+        <div class="wpts-card-header">
+            <h3 class="wpts-card-title">📊 <?php esc_html_e('Incoming — Weekly (Latest 12 Weeks)', 'wp-time-slots-booking-form'); ?></h3>
+        </div>
+        <div class="wpts-card-body">
+            <div class="wpts-chart-box-sm">
+                <canvas id="chartWeeklyIncoming" label="<?php esc_attr_e('Submissions', 'wp-time-slots-booking-form'); ?>" <?php getWeekly($weekly_incoming, true); ?>></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="wpts-card" style="margin-bottom:0;">
+        <div class="wpts-card-header">
+            <h3 class="wpts-card-title">📈 <?php esc_html_e('Incoming — Daily (Latest 30 Days)', 'wp-time-slots-booking-form'); ?></h3>
+        </div>
+        <div class="wpts-card-body">
+            <div class="wpts-chart-box-sm">
+                <canvas id="chartDailyIncoming" label="<?php esc_attr_e('Submissions', 'wp-time-slots-booking-form'); ?>" <?php getDaily($daily_incoming, true); ?>></canvas>
+            </div>
+        </div>
+    </div>
 </div>
-<style>
-#cTable th{background:#ccc}
-#cTable td{vertical-align:top}
-</style>
+
+<!-- Section 2: Upcoming Booked Appointment Forecast -->
+<div class="wpts-section-banner" style="margin-top:28px;">
+    <div>
+        <h2>🗓️ <?php esc_html_e('Booked Times Stats (Upcoming Appointment Dates)', 'wp-time-slots-booking-form'); ?></h2>
+        <p><?php esc_html_e('Forward-looking schedule of booked appointments for the next 12 months, 12 weeks, and 30 days.', 'wp-time-slots-booking-form'); ?></p>
+    </div>
+</div>
+
+<div class="wpts-charts-3col" style="margin-bottom:28px;">
+    <div class="wpts-card" style="margin-bottom:0;">
+        <div class="wpts-card-header">
+            <h3 class="wpts-card-title">📅 <?php esc_html_e('Booked — Monthly (Next 12 Months)', 'wp-time-slots-booking-form'); ?></h3>
+        </div>
+        <div class="wpts-card-body">
+            <div class="wpts-chart-box-sm">
+                <canvas id="chartMonthly" label="<?php esc_attr_e('Booked times', 'wp-time-slots-booking-form'); ?>" <?php getMonthly($monthly); ?>></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="wpts-card" style="margin-bottom:0;">
+        <div class="wpts-card-header">
+            <h3 class="wpts-card-title">📊 <?php esc_html_e('Booked — Weekly (Next 12 Weeks)', 'wp-time-slots-booking-form'); ?></h3>
+        </div>
+        <div class="wpts-card-body">
+            <div class="wpts-chart-box-sm">
+                <canvas id="chartWeekly" label="<?php esc_attr_e('Booked times', 'wp-time-slots-booking-form'); ?>" <?php getWeekly($weekly); ?>></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="wpts-card" style="margin-bottom:0;">
+        <div class="wpts-card-header">
+            <h3 class="wpts-card-title">📈 <?php esc_html_e('Booked — Daily (Next 30 Days)', 'wp-time-slots-booking-form'); ?></h3>
+        </div>
+        <div class="wpts-card-body">
+            <div class="wpts-chart-box-sm">
+                <canvas id="chartDaily" label="<?php esc_attr_e('Booked times', 'wp-time-slots-booking-form'); ?>" <?php getDaily($daily); ?>></canvas>
+            </div>
+        </div>
+    </div>
+</div>

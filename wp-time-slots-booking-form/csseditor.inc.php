@@ -2,10 +2,9 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-
 global $wpdb;
 
-$this->setId (isset($_GET["ahbcalendar"]) ? intval($_GET["ahbcalendar"]) : 0);
+$this->setId(isset($_GET["ahbcalendar"]) ? intval($_GET["ahbcalendar"]) : 0);
 
 $current_user = wp_get_current_user();
 $current_user_access = current_user_can('manage_options');
@@ -23,38 +22,39 @@ if ( !is_admin() )
 }
 
 $myrows = $wpdb->get_results( "SELECT * FROM ".$wpdb->prefix.$this->table_items );
-if (!$this->getId() && count ($myrows)) $this->setId($myrows[0]->id);
+if (!$this->getId() && count($myrows)) $this->setId($myrows[0]->id);
 
-// 07\edit_style.css
+// Load template edit_style.css
 $css = "";
 $raw_form_str = str_replace("\r"," ",str_replace("\n"," ",$this->cleanJSON($this->translate_json($this->get_option('form_structure', CP_TSLOTSBOOK_DEFAULT_form_structure)))));
 $form_data = json_decode( $raw_form_str );
-if( is_null( $form_data ) ){
+if ( is_null( $form_data ) ) {
     $json = new JSON;
     $form_data = $json->unserialize( $raw_form_str );
 }
 $form_template = '';
-if( !is_null( $form_data ) ) {
-    if( isset( $form_data[ 1 ] ) && isset( $form_data[ 1 ][ 0 ] ) && isset( $form_data[ 1 ][ 0 ]->formtemplate ) )
+if ( !is_null( $form_data ) ) {
+    if ( isset( $form_data[ 1 ] ) && isset( $form_data[ 1 ][ 0 ] ) && isset( $form_data[ 1 ][ 0 ]->formtemplate ) )
     {
         $templatelist = $this->available_templates();
         $form_template = substr(md5($form_data[ 1 ][ 0 ]->formtemplate),0,10);
-        if(  isset( $templatelist[ $form_data[ 1 ][ 0 ]->formtemplate ] ) )
+        if ( isset( $templatelist[ $form_data[ 1 ][ 0 ]->formtemplate ] ) )
             $file = $templatelist[ $form_data[ 1 ][ 0 ]->formtemplate ][ 'file' ];
         else 
-            $file =  plugins_url( 'templates/edit_style.css', __FILE__ );
+            $file = plugins_url( 'templates/edit_style.css', __FILE__ );
         $path = parse_url($file, PHP_URL_PATH);
         $desiredPart = substr($path, strpos($path, 'templates/'));
-        $tpls_dir =  dir( plugin_dir_path( __FILE__ ) );          
+        $tpls_dir = dir( plugin_dir_path( __FILE__ ) );          
         $ecssname = dirname($tpls_dir->path.$desiredPart)."/edit_style.css";
         if (file_exists($ecssname))
             $css = file_get_contents($ecssname);
     }      
 }
 
-if ( isset( $_POST['csseditionon'] )) 
+$message = '';
+if ( isset( $_POST['csseditionon'] ) ) 
 {
-    $this->verify_nonce (sanitize_text_field($_POST["anonce"]), 'cpappb_actions_csseditor');
+    $this->verify_nonce(sanitize_text_field($_POST["anonce"]), 'cpappb_actions_csseditor');
     if (!empty($_POST["savecss"])) 
     {
         update_option('WPTS_CUSTOM_CSS_'.$this->getId().$form_template, sanitize_text_field($_POST["customcsscontents"]));
@@ -65,259 +65,762 @@ if ( isset( $_POST['csseditionon'] ))
         update_option('WPTS_CUSTOM_CSS_'.$this->getId().$form_template, '');
         $message = __('Styles restored to original','wp-time-slots-booking-form'); 
     }
-      
 }
 
 $nonce = wp_create_nonce( 'cpappb_actions_csseditor' );
-    
+$active_form_name = $this->item ? $this->get_option("form_name", "Calendar") : '';
 ?>
-<style>
 
-    .button-primary2 { background-color: #AADDFF !important; }
-    .button-primary3 { background-color: #CCFFFF !important; }
-    .ahb-section-container {
-        border: 1px solid #e6e6e6;
-        padding: 20px;
-        border-radius: 3px;
-        -webkit-box-flex: 1;
-        flex: 1;
-        margin: 1em 1em 1em 0;
-        min-width: 200px;
-        background: white;
-        position:relative;
+<style type="text/css">
+    :root {
+        --wpts-primary: #0d9488;
+        --wpts-primary-hover: #0f766e;
+        --wpts-primary-light: #f0fdfa;
+        --wpts-primary-border: #99f6e4;
+        --wpts-accent: #0284c7;
+        --wpts-accent-light: #f0f9ff;
+        --wpts-accent-border: #bae6fd;
+        --wpts-success: #10b981;
+        --wpts-success-bg: #ecfdf5;
+        --wpts-warning: #f59e0b;
+        --wpts-warning-bg: #fffbeb;
+        --wpts-danger: #ef4444;
+        --wpts-danger-bg: #fef2f2;
+        --wpts-surface: #ffffff;
+        --wpts-bg: #f8fafc;
+        --wpts-border: #e2e8f0;
+        --wpts-text: #0f172a;
+        --wpts-text-muted: #64748b;
+        --wpts-radius: 14px;
+        --wpts-radius-sm: 8px;
+        --wpts-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
     }
 
-	.clear{clear:both;}
-	.ahb-first-button{margin-right:10px !important;}
-    .ahb-buttons-container{margin:1em 1em 1em 0;}
-    .ahb-return-link{float:right;}
-    .ahbadminoptions {display: none}
-    
+    .wpts-admin-wrap {
+        max-width: 1360px;
+        margin: 20px auto 40px;
+        padding-right: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
+        color: var(--wpts-text);
+        box-sizing: border-box;
+    }
+    .wpts-admin-wrap *, .wpts-admin-wrap *::before, .wpts-admin-wrap *::after {
+        box-sizing: border-box;
+    }
+
+    .ahbadminoptions { display: none !important; }
+
+    /* Toast Notification */
+    .wpts-toast {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: var(--wpts-success-bg);
+        border: 1px solid #a7f3d0;
+        border-left: 4px solid var(--wpts-success);
+        color: #065f46;
+        padding: 14px 20px;
+        border-radius: var(--wpts-radius-sm);
+        margin-bottom: 20px;
+        font-size: 13.5px;
+        font-weight: 500;
+        box-shadow: var(--wpts-shadow);
+        animation: wptsSlideDown 0.25s ease-out;
+    }
+    @keyframes wptsSlideDown {
+        from { opacity: 0; transform: translateY(-8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Top Hero & Sub-Navigation Hub */
+    .wpts-hero-shell {
+        background: var(--wpts-surface);
+        border: 1px solid var(--wpts-border);
+        border-radius: var(--wpts-radius);
+        box-shadow: var(--wpts-shadow);
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+    .wpts-hero-top {
+        padding: 20px 26px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 65%);
+    }
+    .wpts-brand-group {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .wpts-brand-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--wpts-primary);
+        color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
+        flex-shrink: 0;
+    }
+    .wpts-title-group h1 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--wpts-text);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0;
+        line-height: 1.3;
+    }
+    .wpts-badge {
+        display: inline-flex;
+        align-items: center;
+        background: var(--wpts-primary-light);
+        color: var(--wpts-primary-hover);
+        border: 1px solid var(--wpts-primary-border);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+    }
+    .wpts-subtitle {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: var(--wpts-text-muted);
+    }
+
+    .wpts-subnav {
+        padding: 10px 26px;
+        background: var(--wpts-bg);
+        border-top: 1px solid var(--wpts-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    .wpts-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .wpts-nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 13px;
+        border-radius: var(--wpts-radius-sm);
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--wpts-text-muted);
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+    .wpts-nav-link:hover {
+        background: #ffffff;
+        color: var(--wpts-primary);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+    .wpts-nav-link.active {
+        background: #ffffff;
+        color: var(--wpts-primary);
+        border: 1px solid var(--wpts-border);
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    /* Buttons */
+    .wpts-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 15px;
+        border-radius: var(--wpts-radius-sm);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.15s ease;
+        border: 1px solid transparent;
+        line-height: 1.2;
+        white-space: nowrap;
+    }
+    .wpts-btn-primary {
+        background: var(--wpts-primary);
+        color: #ffffff;
+        box-shadow: 0 1px 2px rgba(13, 148, 136, 0.25);
+    }
+    .wpts-btn-primary:hover {
+        background: var(--wpts-primary-hover);
+        color: #ffffff;
+        transform: translateY(-1px);
+    }
+    .wpts-btn-soft {
+        background: var(--wpts-primary-light);
+        color: var(--wpts-primary-hover);
+        border-color: var(--wpts-primary-border);
+    }
+    .wpts-btn-soft:hover {
+        background: var(--wpts-primary);
+        color: #ffffff;
+        border-color: var(--wpts-primary);
+    }
+    .wpts-btn-secondary {
+        background: #ffffff;
+        border-color: var(--wpts-border);
+        color: var(--wpts-text);
+    }
+    .wpts-btn-secondary:hover {
+        background: var(--wpts-bg);
+        border-color: #cbd5e1;
+        color: var(--wpts-primary);
+    }
+    .wpts-btn-danger-soft {
+        background: var(--wpts-danger-bg);
+        color: #dc2626;
+        border-color: #fecaca;
+    }
+    .wpts-btn-danger-soft:hover {
+        background: var(--wpts-danger);
+        color: #ffffff;
+        border-color: var(--wpts-danger);
+    }
+
+    /* Studio Card & Control Bar */
+    .wpts-card {
+        background: var(--wpts-surface);
+        border: 1px solid var(--wpts-border);
+        border-radius: var(--wpts-radius);
+        box-shadow: var(--wpts-shadow);
+        margin-bottom: 24px;
+        overflow: hidden;
+    }
+    .wpts-studio-bar {
+        padding: 16px 24px;
+        background: #fcfcfd;
+        border-bottom: 1px solid var(--wpts-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    .wpts-studio-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    .wpts-studio-group label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--wpts-text);
+    }
+    .wpts-studio-bar select {
+        padding: 7px 32px 7px 12px !important;
+        background-position: right 8px center;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--wpts-text);
+        background-color: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: var(--wpts-radius-sm);
+        min-height: 38px;
+        min-width: 220px;
+    }
+    .wpts-studio-bar select:focus {
+        border-color: var(--wpts-primary);
+        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.14);
+        outline: none;
+    }
+
+    /* Studio Instruction Banner */
+    .wpts-studio-hint {
+        padding: 12px 24px;
+        background: var(--wpts-accent-light);
+        border-bottom: 1px solid var(--wpts-accent-border);
+        color: #0369a1;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    /* Interactive Preview Stage */
+    #ahbcustomizationarea {
+        padding: 32px 28px;
+        background-color: #f8fafc;
+        background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+        background-size: 20px 20px;
+        min-height: 360px;
+    }
+    .wpts-stage-inner {
+        background: #ffffff;
+        border: 1px solid var(--wpts-border);
+        border-radius: var(--wpts-radius);
+        padding: 28px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+        max-width: 960px;
+        margin: 0 auto;
+    }
+
+    /* Hover Outline for Inspectable Elements */
+    .cp_csseditor {
+        outline: 2px dashed var(--wpts-accent) !important;
+        outline-offset: 2px;
+        cursor: pointer !important;
+        transition: outline 0.1s ease;
+    }
+    .cp_csseditor .cp_csseditor {
+        outline: 2px dashed var(--wpts-primary) !important;
+    }
+    .cp_csseditor .cp_csseditor .cp_csseditor {
+        outline: 2px solid #f59e0b !important;
+    }
+
+    /* Inspector Modal (#myModal & #modalBackground) */
+    #modalBackground {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(4px);
+        z-index: 9999998;
+    }
     #myModal {
-            display: none;
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: 500px;
-            max-height: 500px;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            z-index: 10000000; 
-            overflow: auto;
-        }
-        #modalBackground {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 9999999;
-        }
-        .close-button {
-            color: #aaa;
-            font-size: 14px;
-            font-weight: bold;
-            position: absolute;
-            right: 10px;
-            top: 10px;
-        }
-        .close-button:hover,
-        .close-button:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .divbuttonCode {
-            position: relative;
-            border-top: 1px solid #ccc;
-            margin-top: 10px;
-            color:#aaa;
-            background-color:#eee;
-        }
-        .buttonCode {
-            position: absolute;
-            right: 0px;
-            top: 0px;
-            background: #ccc;
-            padding: 2px 5px;
-            cursor:pointer;
-            color:#666;
-        }
-        h3{font-size:16px}
-        .cp_csseditor{border:1px dashed #2271b1!important}
-        .cp_csseditor .cp_csseditor{border:2px dashed #2271b1!important}
-        .cp_csseditor .cp_csseditor .cp_csseditor{border:3px dashed #2271b1!important}
+        display: none;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 92%;
+        max-width: 580px;
+        max-height: 82vh;
+        padding: 0;
+        background-color: #ffffff;
+        border: 1px solid var(--wpts-border);
+        border-radius: var(--wpts-radius);
+        box-shadow: 0 20px 30px -10px rgba(15, 23, 42, 0.28);
+        z-index: 9999999;
+        overflow-y: auto;
+    }
+    .wpts-modal-topbar {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: #fcfcfd;
+        border-bottom: 1px solid var(--wpts-border);
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .wpts-modal-topbar strong {
+        font-size: 14px;
+        color: var(--wpts-text);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .close-button {
+        background: var(--wpts-bg);
+        border: 1px solid var(--wpts-border);
+        border-radius: 6px;
+        padding: 4px 10px;
+        color: var(--wpts-text-muted);
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+    .close-button:hover,
+    .close-button:focus {
+        background: var(--wpts-danger-bg);
+        border-color: #fecaca;
+        color: var(--wpts-danger);
+        text-decoration: none;
+    }
+
+    #editor {
+        padding: 20px;
+    }
+    #editor .rule-container {
+        margin-bottom: 18px;
+    }
+    #editor .rule-container h3 {
+        margin: 0 0 12px;
+        font-size: 13.5px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        color: var(--wpts-primary-hover);
+        background: var(--wpts-primary-light);
+        border: 1px solid var(--wpts-primary-border);
+        padding: 8px 12px;
+        border-radius: 6px;
+    }
+    #editor table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid var(--wpts-border);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    #editor table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #f1f5f9;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+    #editor input.inputText,
+    #editor input.colorValue {
+        padding: 5px 8px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 12.5px;
+        color: var(--wpts-text);
+        width: 140px;
+    }
+    #editor input.colorPicker,
+    #editor input.newValue[type="color"] {
+        width: 34px;
+        height: 30px;
+        padding: 1px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        vertical-align: middle;
+        margin-right: 6px;
+        cursor: pointer;
+        background: #ffffff;
+    }
+    #editor select.newProperty,
+    #editor select.newValue {
+        padding: 5px 28px 5px 8px !important;
+        background-position: right 6px center;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 12.5px;
+        margin-right: 6px;
+        min-height: 32px;
+    }
+    #editor button.delProperty {
+        background: var(--wpts-danger-bg);
+        color: #dc2626;
+        border: 1px solid #fecaca;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 11.5px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    #editor button.delProperty:hover {
+        background: var(--wpts-danger);
+        color: #ffffff;
+    }
+    #editor button.addProperty {
+        background: var(--wpts-primary);
+        color: #ffffff;
+        border: none;
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    #editor button.addProperty:hover {
+        background: var(--wpts-primary-hover);
+    }
+
+    /* Generated CSS Code Block inside Modal */
+    .divbuttonCode {
+        position: relative;
+        border-radius: 8px;
+        margin-top: 14px;
+        background-color: #0f172a;
+        color: #e2e8f0;
+        padding: 12px 14px;
+        overflow: hidden;
+    }
+    .divbuttonCode pre.preCode {
+        margin: 0 !important;
+        padding-right: 110px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-all;
+        color: #38bdf8;
+    }
+    .buttonCode {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        color: #ffffff;
+        transition: all 0.15s ease;
+    }
+    .buttonCode:hover {
+        background: var(--wpts-primary);
+        border-color: var(--wpts-primary);
+    }
 </style>
 
-<h1><?php esc_html_e('Styles Editor','wp-time-slots-booking-form'); ?> <?php if ($this->item) echo ' - '. esc_html($this->get_option("form_name")); ?></h1>
+<div class="wrap wpts-admin-wrap">
 
+    <?php if (!empty($message)) : ?>
+    <div id="setting-error-settings_updated" class="wpts-toast">
+        <span>✅ <strong><?php echo esc_html($message); ?></strong></span>
+        <button type="button" class="wpts-btn wpts-btn-secondary" style="padding:4px 10px;font-size:11px;" onclick="this.parentElement.style.display='none'">Dismiss</button>
+    </div>
+    <?php endif; ?>
 
+    <!-- Top Hero & Navigation Hub -->
+    <div class="wpts-hero-shell">
+        <div class="wpts-hero-top">
+            <div class="wpts-brand-group">
+                <div class="wpts-brand-icon">🎨</div>
+                <div class="wpts-title-group">
+                    <h1>
+                        <?php esc_html_e('Visual Styles Editor', 'wp-time-slots-booking-form'); ?>
+                        <?php if ($active_form_name) : ?>
+                            <span class="wpts-badge"><?php echo esc_html($active_form_name); ?> (#<?php echo intval($this->item); ?>)</span>
+                        <?php endif; ?>
+                    </h1>
+                    <p class="wpts-subtitle"><?php esc_html_e('Click any element on your live booking form preview below to customize its colors, typography, borders, and spacing.', 'wp-time-slots-booking-form'); ?></p>
+                </div>
+            </div>
 
-<div class="ahb-section-container" style="margin-bottom:20px;style:clear:both;">   
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                <?php if ($this->item) : ?>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'&cal='.intval($this->item))); ?>" class="wpts-btn wpts-btn-secondary">
+                    ⚙️ <?php esc_html_e('Edit Calendar Settings', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <?php endif; ?>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter)); ?>" class="wpts-btn wpts-btn-secondary">
+                    &larr; <?php esc_html_e('Return to Calendars List', 'wp-time-slots-booking-form'); ?>
+                </a>
+            </div>
+        </div>
 
-	<div class="ahb-section">
-	  
-      <form action="admin.php" method="get">
-        <input type="hidden" name="page" value="<?php echo $this->menu_parameter; ?>_csseditor_page" />           
-        <input type="hidden" name="anonce" value="<?php echo esc_attr($nonce); ?>" />        
-        <div style="float:left">
-            <select id="ahbcalendar" name="ahbcalendar">        
-           <?php
-            $saved_id = $this->getId();
-            foreach ($myrows as $item)
-            {        
-                $this->setId($item->id);
-                if ($current_user_access || @in_array($current_user->ID, unserialize($this->get_option("cp_user_access",""))))
-                   echo '<option value="'.$item->id.'"'.(intval($item->id)==intval($saved_id)?" selected":"").'>'.esc_html($item->form_name).'</option>';
-            }    
-            $this->setId($saved_id);
-           ?>
-            </select>          
-		    <nobr>     
-			<input type="submit" name="<?php echo $this->prefix; ?>_load" value="<?php esc_html_e('Load Form','wp-time-slots-booking-form'); ?>" class="button" style="margin-left:10px;float:right">			
-		    </nobr>
-       </div>
-       <br >       
-      </form>
-      
-      <div style="clear:both;margin-bottom:15px;"></div>           
-      
-      <form action="" name="saverestoreform" method="post" onsubmit="return confirmoption();">
-        <input type="hidden" name="page" value="<?php echo $this->menu_parameter; ?>_csseditor_page" />  
-        <input type="hidden" name="csseditionon" value="1" />          
-        <input type="hidden" name="anonce" value="<?php echo esc_attr($nonce); ?>" />        
-        <div style="float:left">
-            <input type="hidden" name="customcsscontents" id="customcsscontents" value="<?php echo esc_attr(get_option('WPTS_CUSTOM_CSS_'.$this->getId().$form_template,"")); ?>">        
+        <div class="wpts-subnav">
+            <div class="wpts-nav-links">
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter)); ?>" class="wpts-nav-link">
+                    🗓️ <?php esc_html_e('Calendars List', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'&cal=0&list=1')); ?>" class="wpts-nav-link">
+                    📋 <?php esc_html_e('All Booking Orders', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'&cal=0&schedule=1&calendarview=1')); ?>" class="wpts-nav-link">
+                    🕒 <?php esc_html_e('Master Schedule', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_settings')); ?>" class="wpts-nav-link">
+                    ⚙️ <?php esc_html_e('General Settings', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_addons')); ?>" class="wpts-nav-link">
+                    🧩 <?php esc_html_e('Add-Ons', 'wp-time-slots-booking-form'); ?>
+                </a>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_csseditor_page')); ?>" class="wpts-nav-link active">
+                    🎨 <?php esc_html_e('Styles Editor', 'wp-time-slots-booking-form'); ?>
+                </a>
+            </div>
+        </div>
+    </div>
 
-            <input type="submit" name="resetcss" class="button-primary3 button" value="<?php esc_html_e('Restore Original Styles','wp-time-slots-booking-form'); ?>" style="margin-left:10px;float:right">	
-            
-			<input type="submit" class="button-primary button" name="savecss" value="<?php esc_html_e('Save Edited Styles','wp-time-slots-booking-form'); ?>"  style="float:right">			
-		    
-       </div>
-       <br >       
-      </form>
-      
-        <?php if (!empty($message)) echo "<div style=\"clear:both;margin-bottom:15px;\"></div><div id='setting-error-settings_updated' class='updated'><h2>".esc_html($message)."</h2></div>";     ?>
-              
+    <!-- Main Visual Studio Card -->
+    <div class="wpts-card">
+        <!-- Studio Control Bar -->
+        <div class="wpts-studio-bar">
+            <form action="admin.php" method="get" class="wpts-studio-group" style="margin:0;">
+                <input type="hidden" name="page" value="<?php echo esc_attr($this->menu_parameter); ?>_csseditor_page" />           
+                <input type="hidden" name="anonce" value="<?php echo esc_attr($nonce); ?>" />        
+                <label for="ahbcalendar">🗓️ <?php esc_html_e('Calendar:', 'wp-time-slots-booking-form'); ?></label>
+                <select id="ahbcalendar" name="ahbcalendar">        
+                    <?php
+                    $saved_id = $this->getId();
+                    foreach ($myrows as $item)
+                    {        
+                        $this->setId($item->id);
+                        if ($current_user_access || @in_array($current_user->ID, unserialize($this->get_option("cp_user_access",""))))
+                            echo '<option value="'.intval($item->id).'"'.(intval($item->id)==intval($saved_id)?" selected":"").'>#'.intval($item->id).' — '.esc_html($item->form_name).'</option>';
+                    }    
+                    $this->setId($saved_id);
+                    ?>
+                </select>          
+                <button type="submit" name="<?php echo esc_attr($this->prefix); ?>_load" value="1" class="wpts-btn wpts-btn-secondary">
+                    🔄 <?php esc_html_e('Load Form', 'wp-time-slots-booking-form'); ?>
+                </button>
+            </form>
 
+            <form action="" name="saverestoreform" method="post" onsubmit="return confirmoption();" class="wpts-studio-group" style="margin:0;">
+                <input type="hidden" name="page" value="<?php echo esc_attr($this->menu_parameter); ?>_csseditor_page" />  
+                <input type="hidden" name="csseditionon" value="1" />          
+                <input type="hidden" name="anonce" value="<?php echo esc_attr($nonce); ?>" />        
+                <input type="hidden" name="customcsscontents" id="customcsscontents" value="<?php echo esc_attr(get_option('WPTS_CUSTOM_CSS_'.$this->getId().$form_template,"")); ?>" />        
 
-        <div id="ahbcustomizationarea" style="padding:10px;margin-right:10px;clear:both;background-color: white">  
-        <hr />
-        <div id="modalBackground"></div>
-                    <div id="myModal">
-                        <button class="close-button">Close</button>
-                        <div id="editor"></div>	
-                    </div>
-        <?php echo $this->clean_sanitize($this->filter_content(array('id' => $this->item))); ?>
+                <input type="submit" name="resetcss" class="wpts-btn wpts-btn-danger-soft" value="↺ <?php esc_attr_e('Restore Original Styles', 'wp-time-slots-booking-form'); ?>" />
+                <input type="submit" name="savecss" class="wpts-btn wpts-btn-primary" value="💾 <?php esc_attr_e('Save Edited Styles', 'wp-time-slots-booking-form'); ?>" />
+            </form>
+        </div>
 
-        <em><?php esc_html_e('* Remember to click the "Save Edited Styles" button to save the modified styles.','wp-time-slots-booking-form'); ?></em>
+        <!-- Studio Hint Strip -->
+        <div class="wpts-studio-hint">
+            <span>👆 <strong><?php esc_html_e('Interactive Inspector:', 'wp-time-slots-booking-form'); ?></strong> <?php esc_html_e('Hover over any calendar header, day cell, time-slot button, or input field below and click it to open the live CSS property editor.', 'wp-time-slots-booking-form'); ?></span>
+            <span style="font-weight:600;">* <?php esc_html_e('Remember to click "Save Edited Styles" when finished.', 'wp-time-slots-booking-form'); ?></span>
+        </div>
 
-        </div> 
+        <!-- Live Form Stage -->
+        <div id="ahbcustomizationarea">
+            <div id="modalBackground"></div>
+            <div id="myModal">
+                <div class="wpts-modal-topbar">
+                    <strong>🖌️ <?php esc_html_e('Element Style Inspector', 'wp-time-slots-booking-form'); ?></strong>
+                    <button type="button" class="close-button">✕ <?php esc_html_e('Close', 'wp-time-slots-booking-form'); ?></button>
+                </div>
+                <div id="editor"></div>	
+            </div>
 
-	</div>
-    
-</div>    
+            <div class="wpts-stage-inner">
+                <?php echo $this->clean_sanitize($this->filter_content(array('id' => $this->item))); ?>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pre-defined Templates Tip Card -->
+    <div class="wpts-card">
+        <div class="wpts-card-body" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;padding:24px;">
+            <div style="flex:1;min-width:280px;">
+                <h3 style="margin:0 0 8px;font-size:16px;font-weight:700;color:var(--wpts-text);">
+                    💡 <?php esc_html_e('Remember that you can also select pre-defined style templates', 'wp-time-slots-booking-form'); ?>
+                </h3>
+                <p style="margin:0 0 14px;font-size:13.5px;color:var(--wpts-text-muted);line-height:1.55;">
+                    <?php esc_html_e('In the Form Builder under the "Form Settings" tab, you can switch between built-in design templates before fine-tuning individual elements here in the Visual Styles Editor.', 'wp-time-slots-booking-form'); ?>
+                </p>
+                <?php if ($this->item) : ?>
+                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'&cal='.intval($this->item))); ?>" class="wpts-btn wpts-btn-soft">
+                    🎨 <?php esc_html_e('Open Form Builder Settings', 'wp-time-slots-booking-form'); ?> &rarr;
+                </a>
+                <?php endif; ?>
+            </div>
+            <div>
+                <a href="<?php echo esc_url(plugins_url('/images/selecting-templates.png', __FILE__)); ?>" target="_blank" rel="noopener noreferrer">
+                    <img src="<?php echo esc_url(plugins_url('/images/selecting-templates.png', __FILE__)); ?>" alt="Selecting Form Templates" style="max-width:100%;width:380px;border:1px solid var(--wpts-border);border-radius:var(--wpts-radius-sm);padding:8px;background-color:#ffffff;box-shadow:var(--wpts-shadow);display:block;" />
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
 
 <script>
-
 function confirmoption() {
     var form = document.saverestoreform;
     if (form.resetcss && form.resetcss === document.activeElement) {
-        return confirm('<?php esc_js(esc_html_e('Are you sure you want to restore original styles?','wp-time-slots-booking-form')); ?>');
+        return confirm('<?php echo esc_js(__('Are you sure you want to restore original styles?', 'wp-time-slots-booking-form')); ?>');
     }
     return true;
 }
 
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        jQuery('#modalBackground, #myModal').fadeOut();
+        jQuery('.cp_csseditor').removeClass('cp_csseditor');
+    }
+});
+
 jQuery(document).on("showHideDepEvent", function(){
     (function($) {   
         function clickFirstSlot(){
-		    if ($(".availableslot a").length>0)
-		    {
-		        $(".cp_csseditor").removeClass("cp_csseditor");
-		        $(".availableslot a").click();
-		    }    
-		    else
-		        setTimeout(clickFirstSlot,100); 
-		           
-		}
-		clickFirstSlot(); 
+            if ($(".availableslot a").length > 0)
+            {
+                $(".cp_csseditor").removeClass("cp_csseditor");
+                $(".availableslot a").click();
+            }    
+            else
+                setTimeout(clickFirstSlot, 100); 
+        }
+        clickFirstSlot(); 
         $.datepicker._attachHandlers = function() {
             return false;
         };
             
-                    let cssString = `
-                <?php echo esc_html($css); ?>
-                     `;
-                if ($("#customcsscontents").val()!="")
-                    cssString = $("#customcsscontents").val();
-                const rulesArray = parseCssString(cssString);
-                generateModifiedCss(rulesArray);
-                updateRulesArray(rulesArray);
-	            
-                $(document).on('input',".colorValue", function() {
-                    $(this).parent().find('.colorPicker').val($(this).val());
-                    updateRulesArray(rulesArray);
-                    generateModifiedCss(rulesArray);               
-                });
-                $(document).on('input',".colorPicker", function() {
-                    $(this).parent().find('.colorValue').val($(this).val());
-                    updateRulesArray(rulesArray);
-                    generateModifiedCss(rulesArray); 
-                });
-                $(document).on('input',".inputText", function() { 
-                    updateRulesArray(rulesArray);
-                    generateModifiedCss(rulesArray); 
-                });
-                $('#rangeInput').on('input', function() {
-                    var value = $(this).val(); // Obtener el valor del input de rango
-                    $('#textInput').val(value); // Actualizar el input de texto
-                });
-                
-                // Actualizar el input de rango cuando se cambia el input de texto
-                $('#textInput').on('input', function() {
-                    var value = $(this).val(); // Obtener el valor del input de texto
-                    $('#rangeInput').val(value); // Actualizar el input de rango
-                });
-			    for (let i=0;i<rulesArray.length;i++) {
-			        $(document).on('mouseover',rulesArray[i].selector, function() {
-			            $(".cp_csseditor").each(function(){
-			                if ($(this).find(rulesArray[i].selector).length == 0)
-			                    $(this).removeClass(".cp_csseditor");     
-			            });
-                        $(rulesArray[i].selector).addClass("cp_csseditor");
-                    });
-                    $(document).on('mouseout',rulesArray[i].selector, function() {                        
-                        if (!$('#myModal').is(':visible'))
-                            $(rulesArray[i].selector).removeClass("cp_csseditor");
-                    });
-                    $(document).off('click', "#fieldlist_1 .pbSubmit");
-                    
-                    
-                    $(document).on('click',rulesArray[i].selector, function(event) {
-                        event.stopImmediatePropagation();
-                        event.stopPropagation();
-			    	    $("#myModal").attr('class', '').addClass(genName(rulesArray[i].selector,"_m"));
-			    		generateCssEditor(rulesArray,i);
-                        $('#modalBackground, #myModal'+"."+genName(rulesArray[i].selector,"_m")).fadeIn();
-                        event.stopImmediatePropagation();
-                        return false;
-                    });
-                    
-                    $(document).click(function(event) {
-                        if (!$(event.target).closest('#myModal, '+rulesArray[i].selector).length) {
-                            //$('#modalBackground, #myModal'+"."+genName(rulesArray[i].selector,"_m")).fadeOut();
-                        }
-                    });   
-			    }
-            
+        let cssString = `
+<?php echo esc_html($css); ?>
+        `;
+        if ($("#customcsscontents").val() != "")
+            cssString = $("#customcsscontents").val();
+        const rulesArray = parseCssString(cssString);
+        generateModifiedCss(rulesArray);
+        updateRulesArray(rulesArray);
         
-        function genName(s,p) {
-            return s.replace(/[():.#\s]/g, '_')+p; // Reemplaza ., # y espacios con _
+        $(document).on('input', ".colorValue", function() {
+            $(this).parent().find('.colorPicker').val($(this).val());
+            updateRulesArray(rulesArray);
+            generateModifiedCss(rulesArray);               
+        });
+        $(document).on('input', ".colorPicker", function() {
+            $(this).parent().find('.colorValue').val($(this).val());
+            updateRulesArray(rulesArray);
+            generateModifiedCss(rulesArray); 
+        });
+        $(document).on('input', ".inputText", function() { 
+            updateRulesArray(rulesArray);
+            generateModifiedCss(rulesArray); 
+        });
+        $('#rangeInput').on('input', function() {
+            var value = $(this).val();
+            $('#textInput').val(value);
+        });
+        $('#textInput').on('input', function() {
+            var value = $(this).val();
+            $('#rangeInput').val(value);
+        });
+
+        for (let i = 0; i < rulesArray.length; i++) {
+            $(document).on('mouseover', rulesArray[i].selector, function() {
+                $(".cp_csseditor").each(function(){
+                    if ($(this).find(rulesArray[i].selector).length == 0)
+                        $(this).removeClass(".cp_csseditor");     
+                });
+                $(rulesArray[i].selector).addClass("cp_csseditor");
+            });
+            $(document).on('mouseout', rulesArray[i].selector, function() {                        
+                if (!$('#myModal').is(':visible'))
+                    $(rulesArray[i].selector).removeClass("cp_csseditor");
+            });
+            $(document).off('click', "#fieldlist_1 .pbSubmit");
+            
+            $(document).on('click', rulesArray[i].selector, function(event) {
+                event.stopImmediatePropagation();
+                event.stopPropagation();
+                $("#myModal").attr('class', '').addClass(genName(rulesArray[i].selector, "_m"));
+                generateCssEditor(rulesArray, i);
+                $('#modalBackground, #myModal'+"."+genName(rulesArray[i].selector, "_m")).fadeIn(150);
+                event.stopImmediatePropagation();
+                return false;
+            });
         }
+        
+        function genName(s, p) {
+            return s.replace(/[():.#\s]/g, '_') + p;
+        }
+
         function parseCssString(cssString) {
             const rulesArray = [];
             const mergeCss = [{s:"border",e:"width"},{s:"border",e:"color"},{s:"border",e:"style"}];
@@ -328,20 +831,18 @@ jQuery(document).on("showHideDepEvent", function(){
             Array.from(styleElement.sheet.cssRules).forEach(rule => {
                 if (rule.selectorText) {
                     const ruleInfo = {
-                        selector: rule.selectorText.replace(':hover',""),
-                        pseudoClass:"",
+                        selector: rule.selectorText.replace(':hover', ""),
+                        pseudoClass: "",
                         style: {}
                     };
                     Array.from(rule.style).forEach(property => {
                         const computedValue = rule.style.getPropertyValue(property).trim();
-                        // Renombrar 'background-color' a 'background' solo si no est� en cssText
                         if (property === 'background-color' && !rule.cssText.includes('background-color')) {
                             property = 'background';
                         }
-                        for (var i=0;i<mergeCss.length;i++)
+                        for (var i = 0; i < mergeCss.length; i++)
                             if (rule.cssText.includes(mergeCss[i].s+"-"+mergeCss[i].e) && property.startsWith(mergeCss[i].s+"-") && property.includes("-"+mergeCss[i].e))
                                 property = mergeCss[i].s+"-"+mergeCss[i].e;
-                        // Convertir RGB a HEX si la propiedad es un color
                         if (computedValue.startsWith('rgb')) {
                             ruleInfo.style[property] = rgbToHex(computedValue);
                         } else if (computedValue !== 'initial') {
@@ -349,9 +850,8 @@ jQuery(document).on("showHideDepEvent", function(){
                         }
                     });   
                     
-                    //// Incluir pseudo-clases en el objeto
                     if (rule.selectorText.includes(':hover')) {
-                        rule.selectorText = rule.selectorText.replace(':hover',"")
+                        rule.selectorText = rule.selectorText.replace(':hover', "");
                         ruleInfo.pseudoClass = ':hover';
                     }
                     if (Object.keys(ruleInfo.style).length > 0) {
@@ -364,21 +864,16 @@ jQuery(document).on("showHideDepEvent", function(){
             return rulesArray;
         }
         
-        // Funci�n para convertir RGB a HEX
         function rgbToHex(rgb) {
-            const result = rgb.match(/\d+/g); // Extraer los valores num�ricos
-            if (!result) return rgb; // Si no hay coincidencias, devolver el valor original
-        
-            return `#${((1 << 24) + (result[0] << 16) + (result[1] << 8) + +result[2]).toString(16).slice(1)}`; // Convertir a HEX
+            const result = rgb.match(/\d+/g);
+            if (!result) return rgb;
+            return `#${((1 << 24) + (result[0] << 16) + (result[1] << 8) + +result[2]).toString(16).slice(1)}`;
         }
         
-        function generateCssEditor(parsedCssRules,visible) {
-            
+        function generateCssEditor(parsedCssRules, visible) {
             const $editor = $('#editor');
             $editor.empty();
-            // Diccionario de propiedades CSS y sus valores permitidos
             const cssPropertyValues = {
-                
                 'Select property': [],
                 'background': ['none', 'red', 'blue', 'green', 'yellow', 'orange', 'black', 'white', '#ffffff'],
                 'background-color': ['none', 'red', 'blue', 'green', 'yellow', 'orange', 'black', 'white', '#ffffff'],
@@ -400,22 +895,21 @@ jQuery(document).on("showHideDepEvent", function(){
                 'border-radius': ['inherit','2px', '4px', '6px', '10%', '20%', '50%'],
                 'opacity': ['0', '0.5', '1'],
             };
+
             parsedCssRules.forEach((rule, index) => {
                 const $ruleContainer = $('<div>').addClass('rule-container').attr('data-index', index);
-                if (visible!=index)
-                    $ruleContainer.hide() 
-                if (rule.pseudoClass!="" && visible==index-1)
-                    $ruleContainer.show()     
+                if (visible != index)
+                    $ruleContainer.hide();
+                if (rule.pseudoClass != "" && visible == index - 1)
+                    $ruleContainer.show();
                 $ruleContainer.append(`<h3>${rule.selector}${rule.pseudoClass}</h3>`);
                 
-                // Crear una tabla para las propiedades y valores
                 const $table = $('<table cellpadding="5" cellspacing="0" width="100%">');
         
-                // Iterar sobre las propiedades de estilo
                 Object.entries(rule.style).forEach(([property, value]) => {
-                    const $tr = $('<tr>'); // Crear una fila para cada propiedad
-                    let $label = $('<td >').text(property); // Celda para la propiedad
-                    let $input,$input1,$inputCell; 
+                    const $tr = $('<tr>');
+                    let $label = $('<td style="font-weight:600;color:#334155;">').text(property);
+                    let $input, $input1, $inputCell; 
                     if (property.includes('-color') || property === 'color' || property === 'background') {
                         $input = $('<input class="colorPicker">').attr({
                             type: 'color',
@@ -427,72 +921,65 @@ jQuery(document).on("showHideDepEvent", function(){
                         });                        
                         $inputCell = $('<td nowrap>').append($input).append($input1);
                     } else if (property.includes('--comment')) {
-                        $label = $('<td >').html("<b>*</b>Note");                       
-                        $inputCell = $('<td nowrap>').append(value.replace( /-/g, "<b>" ));
+                        $label = $('<td>').html("<b>*</b>Note");                       
+                        $inputCell = $('<td nowrap>').append(value.replace(/-/g, "<b>"));
                     } else {
-                        $input = $('<input  class="inputText">').attr({
+                        $input = $('<input class="inputText">').attr({
                             type: 'text',
                             value: value
                         });
                         $inputCell = $('<td style="white-space: nowrap;">').append($input);
                     }
-                    let $delProperty = $('<td >').append($('<button class="delProperty">Del</button>')); // Celda para borrarla
+                    let $delProperty = $('<td style="text-align:right;">').append($('<button type="button" class="delProperty">Delete</button>'));
         
-                    $tr.append($label).append($inputCell).append($delProperty); // A�adir celdas a la fila
-                    $table.append($tr); // A�adir fila a la tabla
+                    $tr.append($label).append($inputCell).append($delProperty);
+                    $table.append($tr);
                 });
-                 // A�adir bot�n para agregar nuevas propiedades
-                const $addPropertyRow = $('<tr style="background-color:#ddd">');
-                const $addPropertyLabel = $('<td>').append('<label for="propertySelect">New Property:</label>');
+
+                const $addPropertyRow = $('<tr style="background-color:#f8fafc;">');
+                const $addPropertyLabel = $('<td style="font-weight:600;">').append('<label for="propertySelect">New Property:</label>');
                 const $propertySelect = $('<select class="newProperty">');
                 
-                // Poblar el select con propiedades CSS
                 Object.keys(cssPropertyValues).forEach(prop => {
                     $propertySelect.append(`<option value="${prop}">${prop}</option>`);
                 });
                 
-                const $addPropertyValue = $('<select class="newValue"></select>'); // Cambiado a select
-                const $addButton = $('<button class="addProperty">Add</button>');
-                $addPropertyRow.append($addPropertyLabel).append($('<td>').append($propertySelect).append($addPropertyValue)).append($('<td>').append($addButton));
+                const $addPropertyValue = $('<select class="newValue"></select>');
+                const $addButton = $('<button type="button" class="addProperty">+ Add</button>');
+                $addPropertyRow.append($addPropertyLabel).append($('<td>').append($propertySelect).append($addPropertyValue)).append($('<td style="text-align:right;">').append($addButton));
                 $table.append($addPropertyRow);
                 
                 $propertySelect.on('change', function() {
                     const selectedProperty = $(this).val();
-                    // Si la propiedad seleccionada es de color o background, mostrar un input de tipo color
                     if (selectedProperty.includes('background') || selectedProperty.includes('color')) {
                         const $newColorInput = $('<input class="newValue">').attr({
                             type: 'color',
-                            value: '#ffffff'  // Valor por defecto
+                            value: '#ffffff'
                         });
                         $(this).parent().find(".newValue").replaceWith($newColorInput);
-                    
                     } else {
                         const $newSelect = $('<select class="newValue"></select>');
-                        cssPropertyValues[selectedProperty].forEach(value => {
+                        (cssPropertyValues[selectedProperty] || []).forEach(value => {
                             $newSelect.append(`<option value="${value}">${value}</option>`);
                         });
                         $(this).parent().find(".newValue").replaceWith($newSelect);
-                    
                     }
                 }); 
-                //$propertySelect.change();
-                // Acci�n del bot�n "Agregar Propiedad"
+
                 $addButton.on('click', function() {
                     const propertyName = $addPropertyRow.find('.newProperty').val();
                     const propertyValue = $addPropertyRow.find('.newValue').val();
-                    if (propertyName && propertyValue) { 
+                    if (propertyName && propertyName !== 'Select property' && propertyValue) { 
                         let index = $(this).parents(".rule-container").attr('data-index');                       
-                        parsedCssRules[index].style[propertyName] = propertyValue; // Agregar la nueva propiedad al objeto de regla
-                        if (parsedCssRules[index].pseudoClass == ':hover') index--; // Es para el caso especial del hover que muestra las dos reglas
-                        generateCssEditor(parsedCssRules, index); // Volver a renderizar el editor para mostrar la nueva propiedad                        
+                        parsedCssRules[index].style[propertyName] = propertyValue;
+                        if (parsedCssRules[index].pseudoClass == ':hover') index--;
+                        generateCssEditor(parsedCssRules, index);                        
                         generateModifiedCss(parsedCssRules);
-                    } else {
-                        alert('Please provide both property name and value.');
                     }
                 });            
-                $ruleContainer.append($table); // A�adir tabla al contenedor de la regla
-                $styleElement = $('<pre class="preCode" style="margin-top:20px;overflow:auto">');
-                const selector = rule.selector.replace(':hover',"");
+                $ruleContainer.append($table);
+                const $styleElement = $('<pre class="preCode">');
+                const selector = rule.selector.replace(':hover', "");
                 const pseudoClass = rule.pseudoClass;
                 const styles = Object.entries(rule.style)
                     .filter(([property, value]) => !property.includes('--comment'))
@@ -500,10 +987,9 @@ jQuery(document).on("showHideDepEvent", function(){
                     .join(' ');
         
                 $styleElement.append(`${selector}${pseudoClass} { ${styles} }\n`);
-                $copyB = $('<div class="buttonCode">').html("Copy CSS rule");
+                const $copyB = $('<div class="buttonCode">').html("Copy CSS rule");
                 $ruleContainer.append($("<div class='divbuttonCode'>").append($styleElement).append($copyB)); 
-                //$ruleContainer.append('<button class="buttonCode">Copy CSS rule</button>')
-                $editor.append($ruleContainer); // A�adir contenedor de regla al editor
+                $editor.append($ruleContainer);
             });
         }
         
@@ -517,17 +1003,18 @@ jQuery(document).on("showHideDepEvent", function(){
                 $container.find('input').each(function() {
                     const property = $(this).parents('tr').find('td').first().text();
                     const value = $(this).val();
-                    if (property != "--comment")
+                    if (property && property != "--comment" && property != "New Property:")
                         updatedStyle[property] = value;
                 });
             
                 rulesArray[index] = {
-                    selector: selector.replace(':hover',""),
+                    selector: selector.replace(':hover', ""),
                     pseudoClass: rulesArray[index].pseudoClass,
                     style: updatedStyle
                 };
             });
         }  
+
         function generateModifiedCss(rulesArray) {
             let $styleElement = $('#dynamicStyles');
         
@@ -538,7 +1025,7 @@ jQuery(document).on("showHideDepEvent", function(){
             $styleElement.empty();
             let $c = "";
             rulesArray.forEach((rule, index) => {
-                const selector = rule.selector.replace(':hover',"")+rule.pseudoClass;
+                const selector = rule.selector.replace(':hover', "") + rule.pseudoClass;
                 let styles = Object.entries(rule.style)
                     .filter(([property, value]) => !property.includes('--comment'))
                     .map(([property, value]) => `${property}: ${value};`)
@@ -548,47 +1035,39 @@ jQuery(document).on("showHideDepEvent", function(){
                 $('.rule-container[data-index="'+index+'"] pre').text(`${selector} { ${styles} }\n`);
             });
             $styleElement.append($c);
-            $("#customcsscontents").val($c)
+            $("#customcsscontents").val($c);
         }
        
-            
-            $(document).on('click',".buttonCode", function(event) {
-                const preText = $('.preCode:visible').text();
-                const $temp = $('<textarea>');
-                $('body').append($temp);
-                $temp.val(preText).select();
-                document.execCommand('copy');
-                $temp.remove();
-                alert('CSS rule copied to clipboard!');
-            });
-            $(document).on('click',".delProperty", function(event) { 
-                    const propertyName = $(this).parents("tr").find("td").first().text();
-                    let index = $(this).parents(".rule-container").attr('data-index');
-                    let r = rulesArray[index];
-                    if (r.style.hasOwnProperty(propertyName)) {
-                        delete r.style[propertyName]; // Eliminar la propiedad
-                        if (r.pseudoClass == ':hover') index--; // Es para el caso especial del hover que muestra las dos reglas
-                        generateCssEditor(rulesArray, index); // Volver a renderizar el editor para mostrar la nueva propiedad                        
-                        generateModifiedCss(rulesArray);
-                    }
-                    
-                });  
-            $(document).on('click',".close-button", function(event) {
-                $('#modalBackground, #myModal').fadeOut();
-            });
-            
-        })(jQuery);
+        $(document).on('click', ".buttonCode", function(event) {
+            const $btn = $(this);
+            const preText = $(this).siblings('.preCode').text() || $('.preCode:visible').text();
+            const $temp = $('<textarea>');
+            $('body').append($temp);
+            $temp.val(preText).select();
+            document.execCommand('copy');
+            $temp.remove();
+            const origText = $btn.text();
+            $btn.text('✓ Copied!');
+            setTimeout(function() { $btn.text(origText); }, 1600);
+        });
+
+        $(document).on('click', ".delProperty", function(event) { 
+            const propertyName = $(this).parents("tr").find("td").first().text();
+            let index = $(this).parents(".rule-container").attr('data-index');
+            let r = rulesArray[index];
+            if (r.style.hasOwnProperty(propertyName)) {
+                delete r.style[propertyName];
+                if (r.pseudoClass == ':hover') index--;
+                generateCssEditor(rulesArray, index);                        
+                generateModifiedCss(rulesArray);
+            }
+        });  
+
+        $(document).on('click', ".close-button, #modalBackground", function(event) {
+            $('#modalBackground, #myModal').fadeOut(150);
+            $('.cp_csseditor').removeClass('cp_csseditor');
+        });
+        
+    })(jQuery);
 });         
-</script> 
-  
-  
-  <hr />
-  
-<div class="ahb-section-container">
-	<div class="ahb-section">  
-    
-    <h2><?php esc_html_e('Remember that you can select pre-defined style templates in the following area:','wp-time-slots-booking-form'); ?></h2>
-    <a href="<?php echo esc_attr(plugins_url('/images/selecting-templates.png', __FILE__)); ?>" target="_blank"><img src="<?php echo esc_attr(plugins_url('/images/selecting-templates.png', __FILE__)); ?>" width="400px" style="border:1px dotted black;padding:10px;background-color:#ffffff"></a>
-  </div>  
-</div>  
-  
+</script>

@@ -19,17 +19,30 @@
   
 ?>
 <form class="cpp_form no-prefetch" name="<?php echo esc_attr($this->prefix); ?>_pform<?php echo '_'.esc_attr($this->print_counter); ?>" id="<?php echo esc_attr($this->prefix); ?>_pform<?php echo '_'.esc_attr($this->print_counter); ?>" action="<?php echo esc_attr($path); ?>" method="post" enctype="multipart/form-data" onsubmit="return <?php echo esc_attr($this->prefix); ?>_pform_doValidate<?php echo '_'.esc_attr($this->print_counter); ?>(this);"><input type="hidden" name="cp_pform_psequence" value="<?php echo '_'.esc_attr($this->print_counter); ?>" /><input type="hidden" name="<?php echo esc_attr($this->prefix); ?>_pform_process" value="1" /><input type="hidden" name="<?php echo esc_attr($this->prefix); ?>_id" value="<?php echo intval($this->item); ?>" /><input type="hidden" name="cp_ref_page" value="<?php esc_attr($this->get_site_url()); ?>" /><input type="hidden" name="form_structure<?php echo '_'.esc_attr($this->print_counter); ?>" id="form_structure<?php echo '_'.esc_attr($this->print_counter); ?>" size="180" value="<?php echo $this->clean_sanitize($raw_form_str); ?>" /><input type="hidden" name="refpage<?php echo '_'.esc_attr($this->print_counter); ?>" id="refpage<?php echo '_'.esc_attr($this->print_counter); ?>" value=""><input type="hidden" name="<?php echo esc_attr($this->prefix); ?>_pform_status" value="0" />
-<?php if (is_admin() && !defined('WPTIMESLOTSBK_ELEMENTOR_EDIT_MODE') && (empty($_GET["action"]) || @$_GET["action"] != 'edit')) {?>
-  <fieldset class="ahbadminoptions" style="border: 1px solid black; -webkit-border-radius: 8px; -moz-border-radius: 8px; border-radius: 8px; padding:15px;">
-   <legend><?php _e('Administrator options','wp-time-slots-booking-form'); ?></legend>
-    <input type="checkbox" name="sendemails_admin" value="1" vt="1" checked /> <?php _e('Send notification emails for this booking','wp-time-slots-booking-form'); ?><br /><br />    
-    <div id="wptsremoveval"> <input type="checkbox" name="ignorewptsval" value="1" vt="1" onclick="wptsingnoreval();" /><?php _e('Ignore validation of required fields?','wp-time-slots-booking-form'); ?></div>
-    <div id="wptsremovedval" style="display:none"> <input type="checkbox" name="ignorewptsval" value="1" vt="1" checked disabled /> <?php echo esc_js(__('Required field validation ignored!','wp-time-slots-booking-form')); ?></div>
+<?php if (is_admin() && !defined('WPTIMESLOTSBK_ELEMENTOR_EDIT_MODE') && (empty($_GET["action"]) || @$_GET["action"] != 'edit')) { ?>
+  <fieldset class="ahbadminoptions" style="background:#f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #0d9488; border-radius: 8px; padding: 14px 18px; margin-bottom: 22px;">
+   <legend style="font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #0f766e; padding: 0 6px;">⚙️ <?php _e('Administrator options','wp-time-slots-booking-form'); ?></legend>
+    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:20px; padding-top:4px;">
+        <label style="display:inline-flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600; color:#0f172a; cursor:pointer;">
+            <input type="checkbox" name="sendemails_admin" value="1" vt="1" checked style="margin:0;" />
+            <?php _e('Send notification emails for this booking','wp-time-slots-booking-form'); ?>
+        </label>
+        <div id="wptsremoveval" style="display:inline-flex; align-items:center;">
+            <label style="display:inline-flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600; color:#0f172a; cursor:pointer;">
+                <input type="checkbox" name="ignorewptsval" value="1" vt="1" onclick="wptsingnoreval();" style="margin:0;" />
+                <?php _e('Ignore validation of required fields?','wp-time-slots-booking-form'); ?>
+            </label>
+        </div>
+        <div id="wptsremovedval" style="display:none; align-items:center; gap:6px; background:#ecfdf5; border:1px solid #a7f3d0; color:#065f46; padding:3px 10px; border-radius:6px; font-size:12.5px; font-weight:600;">
+            <input type="checkbox" name="ignorewptsval" value="1" vt="1" checked disabled style="margin:0;" />
+            <?php echo esc_js(__('Required field validation ignored!','wp-time-slots-booking-form')); ?>
+        </div>
+    </div>
     <script>
         function wptsingnoreval() {
            jQuery(".required").removeClass("required");
            jQuery("#wptsremoveval").hide();
-           jQuery("#wptsremovedval").show();
+           jQuery("#wptsremovedval").css("display", "inline-flex");
          }
     </script>
   </fieldset> 

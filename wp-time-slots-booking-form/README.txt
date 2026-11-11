@@ -4,7 +4,7 @@ Donate link: https://wptimeslot.dwbooster.com/download
 Tags: booking, booking calendar, appointment booking, time slots, reservation
 Requires at least: 3.0.5
 Tested up to: 7.1
-Stable tag: 1.2.56
+Stable tag: 1.2.57
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -974,7 +974,10 @@ You can also use this area to change the JavaScript loading method if a third-pa
 * New AI-assisted email reply feature in the Booking Orders list (free, no API key required)
 * Interface and booking list action improvements
 
+= 1.2.57 =
+* Admin interface modernized
+
 == Upgrade Notice ==
 
-= 1.2.56 =
-* New AI-assisted email reply feature in the Booking Orders list (free, no API key required) and admin interface improvements.
+= 1.2.57 =
+* Admin interface modernized
