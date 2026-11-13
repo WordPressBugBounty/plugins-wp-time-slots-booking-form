@@ -78,8 +78,8 @@ function initMultiViewCal(container,calendarId,config)
             path:"",
             hoursStart:0,
             hoursEnd:23,
-            cellheight:42,
-            hourswidth:52,
+            cellheight:48,
+            hourswidth:64,
             rowsByCategory:"",
             rowsList:"",
             dayWithColumns:"",
@@ -94,7 +94,7 @@ function initMultiViewCal(container,calendarId,config)
             columnsList:false,
             rowsList:false,
             palette:0,
-            paletteDefault:"f00"
+            paletteDefault:"2563eb"
             }
             if (config.rowsByCategory!="" && !config.dayWithTime)
                 config.dayWithTime = false;
@@ -559,11 +559,14 @@ function initMultiViewCal(container,calendarId,config)
                             title:i18n.dcmvcal.manage_the_calendar
                             ,close: function(event, ui) {$jc("#editEvent").remove();$jc("#gridcontainer"+op.thecontainer).reload();  }
                         }).parent().addClass("mv_dlg").addClass("mv_dlg_editevent");
-                        $jc(".ui-widget-overlay").css("position","absolute");
-                        $jc(".ui-widget-overlay").css("top","0");
-                        $jc(".ui-widget-overlay").css("left","0");
-                        $jc(".ui-widget-overlay").css("background","#aaaaaa");
-                        $jc(".ui-widget-overlay").css("opacity","0.3");
+                        $jc(".ui-widget-overlay").css({
+                            "position": "fixed",
+                            "top": "0",
+                            "left": "0",
+                            "background": "rgba(15, 23, 42, 0.45)",
+                            "backdrop-filter": "blur(2px)",
+                            "opacity": "1"
+                        });
                         } catch(e){};
                     }
                     //Add a new event
