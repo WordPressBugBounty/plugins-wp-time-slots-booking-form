@@ -1,61 +1,80 @@
-	$.fbuilder.controls[ 'facceptance' ]=function(){};
+	$.fbuilder.controls['facceptance'] = function () {};
 	$.extend(
-		$.fbuilder.controls[ 'facceptance' ].prototype,
-		$.fbuilder.controls[ 'ffields' ].prototype,
+		$.fbuilder.controls['facceptance'].prototype,
+		$.fbuilder.controls['ffields'].prototype,
 		{
-			title:"Accept terms and conditions",
-			ftype:"facceptance",
-			value:"I accept",
-			required:true,
-			url:"",
-			message:"",
-			show:function()
-				{
-					var me = this,
-						dlg = '',
-						label = me.title;
+			title: 'Accept terms and conditions',
+			ftype: 'facceptance',
+			value: 'I accept',
+			required: true,
+			url: '',
+			message: '',
+			show: function () {
+				var me = this,
+					dlg = '',
+					label = me.title;
 
-					if(!/^\s*$/.test(me.url))
-					{
-						label = '<a href="'+$.fbuilder.htmlEncode($.trim(me.url))+'" target="_blank">'+label+'</a>';
-					}
-					else if(!/^\s*$/.test(me.message))
-					{
-						label = '<a href="javascript:void(0);" class="cff-open-dlg">'+label+'</a>';
-						dlg += '<div class="cff-dialog hide"><span class="cff-close-dlg"></span><div class="cff-dialog-content">'+me.message+'</div></div>'
-					}
-					return '<div class="fields '+$.fbuilder.htmlEncode(me.csslayout)+' cff-checkbox-field" id="field'+me.form_identifier+'-'+me.index+'"><div class="dfield">'+
-					'<div class="one_column"><label><input name="'+me.name+'" id="'+me.name+'" class="field required" value="'+$.fbuilder.htmlEncode(me.value)+'" vt="'+$.fbuilder.htmlEncode((/^\s*$/.test(me.value)) ? me.title : me.value)+'" type="checkbox" /> <span>'+
-					$.fbuilder.htmlDecode( label )+''+((me.required)?'<span class="r">*</span>':'')+
-					'</span></label></div>'+
-					dlg+
-					'</div><div class="clearer"></div></div>';
-				},
-			after_show:function()
-				{
-					$(document).on('click','.cff-open-dlg', function(){
-						var dlg = $(this).closest('.fields').find('.cff-dialog'), w = dlg.data('width'), h=dlg.data('height');
-						dlg.removeClass('hide');
-
-						if('undefined' == typeof w) w = Math.min($(this).closest('form').width(), $(window).width(), dlg.width());
-						if('undefined' == typeof h) h = Math.min($(this).closest('form').height(), $(window).height(), dlg.height());
-
-						dlg.data('width',w);
-						dlg.data('height',h);
-
-						dlg.css({'width': w+'px', 'height': h+'px', 'margin-top': (-1*h/2)+'px', 'margin-left': (-1*w/2)+'px'});
-					});
-					$(document).on('click','.cff-close-dlg', function(){$(this).closest('.cff-dialog').addClass('hide');});
-				},
-			val:function()
-				{
-					var e = $('[id="'+this.name+'"]:checked:not(.ignore)');
-					if( e.length )
-					{
-						var t = $.fbuilder.parseValStr( e[0].value );
-						if(!$.isNumeric(t)) t = t.replace(/^"/,'').replace(/"$/,'');
-					}
-					return (v) ? (($.isNumeric(v)) ? v : '"'+v+'"') : 0;
+				if (!/^\s*$/.test(me.url)) {
+					label = '<a href="' + $.fbuilder.htmlEncode($.trim(me.url)) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>';
+				} else if (!/^\s*$/.test(me.message)) {
+					label = '<a href="#" class="cff-open-dlg" role="button">' + label + '</a>';
+					dlg += '<div class="cff-dialog-backdrop hide" aria-hidden="true"></div>' +
+						'<div class="cff-dialog hide" role="dialog" aria-modal="true">' +
+							'<button type="button" class="cff-close-dlg" aria-label="Close"></button>' +
+							'<div class="cff-dialog-content">' + me.message + '</div>' +
+						'</div>';
 				}
+
+				return '<div class="fields ' + $.fbuilder.htmlEncode(me.csslayout) + ' cff-checkbox-field" id="field' + me.form_identifier + '-' + me.index + '">' +
+					'<div class="dfield">' +
+						'<div class="one_column">' +
+							'<label class="wpts-pub-acceptance">' +
+								'<input name="' + me.name + '" id="' + me.name + '" class="field required" value="' + $.fbuilder.htmlEncode(me.value) + '" vt="' + $.fbuilder.htmlEncode((/^\s*$/.test(me.value)) ? me.title : me.value) + '" type="checkbox" /> ' +
+								'<span>' + $.fbuilder.htmlDecode(label) + (me.required ? '<span class="r">*</span>' : '') + '</span>' +
+							'</label>' +
+						'</div>' +
+						dlg +
+					'</div>' +
+					'<div class="clearer"></div>' +
+				'</div>';
+			},
+			after_show: function () {
+				$(document)
+					.off('click.wptsAcceptance', '.cff-open-dlg')
+					.on('click.wptsAcceptance', '.cff-open-dlg', function (e) {
+						e.preventDefault();
+						var $wrap = $(this).closest('.fields');
+						var $dlg = $wrap.find('.cff-dialog');
+						var $backdrop = $wrap.find('.cff-dialog-backdrop');
+						$backdrop.removeClass('hide');
+						$dlg.removeClass('hide');
+						$dlg.find('.cff-close-dlg').trigger('focus');
+					});
+
+				$(document)
+					.off('click.wptsAcceptanceClose', '.cff-close-dlg, .cff-dialog-backdrop')
+					.on('click.wptsAcceptanceClose', '.cff-close-dlg, .cff-dialog-backdrop', function (e) {
+						e.preventDefault();
+						var $wrap = $(this).closest('.fields');
+						$wrap.find('.cff-dialog, .cff-dialog-backdrop').addClass('hide');
+					});
+
+				$(document)
+					.off('keydown.wptsAcceptanceEsc')
+					.on('keydown.wptsAcceptanceEsc', function (e) {
+						if (e.key === 'Escape') {
+							$('.cff-dialog:not(.hide), .cff-dialog-backdrop:not(.hide)').addClass('hide');
+						}
+					});
+			},
+			val: function () {
+				var e = $('[id="' + this.name + '"]:checked:not(.ignore)');
+				if (e.length) {
+					var v = $.fbuilder.parseValStr(e[0].value);
+					if (!$.isNumeric(v)) v = v.replace(/^"/, '').replace(/"$/, '');
+					return v ? ($.isNumeric(v) ? v : '"' + v + '"') : 0;
+				}
+				return 0;
+			}
 		}
 	);

@@ -1,61 +1,81 @@
-	$.fbuilder.typeList.push(
+	$.fbuilder.typeList.push({
+		id: 'facceptance',
+		name: 'Accept/GDPR',
+		control_category: 1
+	});
+
+	$.fbuilder.controls['facceptance'] = function () {};
+	$.extend(
+		$.fbuilder.controls['facceptance'].prototype,
+		$.fbuilder.controls['ffields'].prototype,
 		{
-			id:"facceptance",
-			name:"Accept/GDPR",
-			control_category:1
+			title: 'Accept terms and conditions',
+			ftype: 'facceptance',
+			value: 'I accept',
+			url: '',
+			message: '',
+			required: true,
+			display: function () {
+				var hasLink = !!(this.url && $.trim(this.url) !== '') || !!(this.message && $.trim(this.message) !== '');
+				var str = '<label class="wpts-acceptance-preview">' +
+					'<input class="field" disabled="disabled" type="checkbox" />' +
+					'<span>' + $.fbuilder.htmlEncode(this.title) + (this.required ? '<span class="wpts-req-star">*</span>' : '') + '</span>' +
+					(hasLink ? '<span class="wpts-meta-pill">Consent link</span>' : '') +
+				'</label>';
+
+				return '<div class="fields ' + this.name + '" id="field' + this.form_identifier + '-' + this.index + '" title="' + $.fbuilder.htmlEncode(this.name) + '">' +
+					'<div class="arrow ui-icon ui-icon-play"></div>' +
+					'<div title="Delete" class="remove ui-icon ui-icon-trash"></div>' +
+					'<div title="Duplicate" class="copy ui-icon ui-icon-copy"></div>' +
+					'<div class="dfield">' + str + '<span class="uh">' + $.fbuilder.htmlEncode(this.userhelp) + '</span></div>' +
+					'<div class="clearer"></div>' +
+				'</div>';
+			},
+			editItemEvents: function () {
+				var evt = [
+					{ s: '#sValue', e: 'input change keyup', l: 'value' },
+					{ s: '#sURL', e: 'input change keyup', l: 'url' },
+					{ s: '#sMessage', e: 'input change keyup', l: 'message' }
+				];
+				$.fbuilder.controls['ffields'].prototype.editItemEvents.call(this, evt);
+			},
+			showRequired: function () {
+				return '<div class="wpts-setting-group">' +
+					'<label class="wpts-checkbox-row wpts-checkbox-card">' +
+						'<input type="checkbox" checked disabled />' +
+						'<span>Acceptance fields are always required</span>' +
+					'</label>' +
+				'</div>';
+			},
+			showUserhelp: function () {
+				return '';
+			},
+			showValue: function () {
+				return '<div class="wpts-setting-group">' +
+					'<label for="sValue">Submitted value</label>' +
+					'<input class="large" type="text" name="sValue" id="sValue" value="' + $.fbuilder.htmlEncode(this.value) + '" placeholder="I accept" />' +
+				'</div>';
+			},
+			showURL: function () {
+				return '<div class="wpts-setting-group">' +
+					'<label for="sURL">URL to Consent / Terms page</label>' +
+					'<input class="large" type="text" name="sURL" id="sURL" value="' + $.fbuilder.htmlEncode(this.url) + '" placeholder="https://example.com/terms" />' +
+				'</div>';
+			},
+			showMessage: function () {
+				return '<div class="wpts-setting-group">' +
+					'<label for="sMessage">Or enter Consent / Acknowledgement text</label>' +
+					'<textarea class="large" name="sMessage" id="sMessage" rows="5" placeholder="Optional popup text shown when clicked...">' + $.fbuilder.htmlEncode(this.message) + '</textarea>' +
+				'</div>';
+			},
+			showCsslayout: function () {
+				var notice = '<div class="wpts-gdpr-notice">' +
+					'<strong>GDPR Compliance:</strong> This control records explicit user consent before the booking can be submitted.' +
+				'</div>';
+				return $.fbuilder.controls['ffields'].prototype.showCsslayout.call(this) + notice;
+			},
+			showSpecialDataInstance: function () {
+				return this.showValue() + this.showURL() + this.showMessage();
+			}
 		}
 	);
-	$.fbuilder.controls[ 'facceptance' ] = function(){};
-	$.extend(
-		$.fbuilder.controls[ 'facceptance' ].prototype,
-		$.fbuilder.controls[ 'ffields' ].prototype,
-		{
-			title:"Accept terms and conditions",
-			ftype:"facceptance",
-			value:"I accept",
-			url:"",
-			message:"",
-			required:true,
-			display:function()
-				{
-					var	str = '<div class="one_column"><input class="field" disabled="true" type="checkbox"/> '+$.fbuilder.htmlEncode(this.title)+((this.required)?"*":"")+'</div>';
-					return '<div class="fields '+this.name+'" id="field'+this.form_identifier+'-'+this.index+'" title="'+this.name+'"><div class="arrow ui-icon ui-icon-play "></div><div title="Delete" class="remove ui-icon ui-icon-trash "></div><div title="Duplicate" class="copy ui-icon ui-icon-copy "></div><div class="dfield">'+str+'<span class="uh">'+$.fbuilder.htmlEncode(this.userhelp)+'</span></div><div class="clearer"></div></div>';
-				},
-			editItemEvents:function()
-				{
-					var me 		= this;
-						evt 	= [
-							{s:"#sValue",e:"change keyup", l:"value"},
-							{s:"#sURL",e:"change keyup", l:"url"},
-							{s:"#sMessage",e:"change keyup", l:"message"}
-						];
-					$.fbuilder.controls[ 'ffields' ].prototype.editItemEvents.call(this, evt);
-				},
-			showRequired: function(v)
-				{
-					return '<div><input type="checkbox" checked disabled><label>Acceptance fields are always required</label></div>';
-				},
-			showUserhelp: function(){ return ''; },
-			showValue:function()
-				{
-					return '<div><label>Value</label><input class="large" type="text" name="sValue" id="sValue" value="'+$.fbuilder.htmlEncode(this.value)+'"></div>';
-				},
-			showURL:function()
-				{
-					return '<div><label>URL to the Consent and Acknowledgement page</label><input class="large" type="text" name="sURL" id="sURL" value="'+$.fbuilder.htmlEncode(this.url)+'"></div>';
-				},
-			showMessage:function()
-				{
-					return '<div><label>- or - enter the Consent and Acknowledgement text</label><textarea class="large" name="sMessage" id="sMessage" style="height:150px;">'+this.message+'</textarea></div>';
-				},
-			showCsslayout:function()
-				{
-					var str = '<div style="color: #666;border: 1px solid #EF7E59;display: block;padding: 5px;background: #FBF0EC;border-radius: 4px;text-align: center;margin-top:20px;">The Acceptance control helps to make the form comply with one of requirements of the General Data Protection Regulation (GDPR)</div>';
-
-					return $.fbuilder.controls[ 'ffields' ].prototype.showCsslayout.call(this)+str;
-				},
-			showSpecialDataInstance: function()
-				{
-					return this.showValue()+this.showURL()+this.showMessage();
-				}
-	});

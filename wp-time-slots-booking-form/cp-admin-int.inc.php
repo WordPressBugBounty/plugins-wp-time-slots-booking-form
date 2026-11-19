@@ -497,19 +497,21 @@ $shortcode_str  = '[' . $this->shorttag . ' id="' . intval($this->item) . '"]';
         margin-top: 14px;
     }
 
-    /* Form Builder Modernization */
-    .ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active {
-        border: 1px solid var(--wpts-primary);
-        background: var(--wpts-primary);
-        font-weight: bold;
-        color: #ffffff;
+    /* Form Builder Modernization (harmonized with css/style.css) */
+    .wpts-builder-wrap {
+        padding: 18px !important;
     }
     .wpts-builder-wrap .form-builder {
-        background: var(--wpts-bg) !important;
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius-sm);        
         width: 100% !important;
-        min-width: 100% !important;
+        min-width: 0 !important;
+    }
+    .wpts-admin-wrap .form-builder input[type="text"],
+    .wpts-admin-wrap .form-builder input[type="email"],
+    .wpts-admin-wrap .form-builder input[type="number"],
+    .wpts-admin-wrap .form-builder select,
+    .wpts-admin-wrap .form-builder textarea {
+        min-height: 0;
+        font-size: 12.5px;
     }
 
     /* Pro Upgrade Banner inside Builder */
@@ -677,33 +679,28 @@ $shortcode_str  = '[' . $this->shorttag . ' id="' . intval($this->item) . '"]';
                         <input type="hidden" name="form_structure_control" id="form_structure_control" value="&quot;&quot;&quot;&quot;&quot;&quot;" />
                         <input type="hidden" name="form_structure" id="form_structure" size="180" value="<?php echo $this->clean_sanitize(str_replace('"','&quot;',str_replace("\r","",str_replace("\n","",esc_attr($this->cleanJSON($this->get_option('form_structure', CP_TSLOTSBOOK_DEFAULT_form_structure))))))); ?>" />
 
-                        <script type="text/javascript">                 
+                        <script type="text/javascript">
                         $easyFormQuery = jQuery.noConflict();
                         $easyFormQuery(document).ready(function() {
                             var f = $easyFormQuery("#fbuilder").fbuilder();
                             window['cff_form'] = f;
                             f.fBuild.loadData("form_structure", "templates");
-                            
-                            $easyFormQuery("#saveForm").click(function() {       
+
+                            $easyFormQuery("#saveForm").on("click", function() {
                                 f.fBuild.saveData("form_structure");
-                            });  
-                                 
-                            $easyFormQuery(".itemForm").click(function() {
-                                f.fBuild.addItem($easyFormQuery(this).attr("id"));
-                            });  
-                          
-                            $easyFormQuery( ".itemForm" ).draggable({revert1: "invalid",helper: "clone",cursor: "move"});
-                            $easyFormQuery( "#fbuilder" ).droppable({
-                                accept: ".button",
-                                drop: function( event, ui ) {
-                                    f.fBuild.addItem(ui.draggable.attr("id"));				
+                            });
+
+                            $easyFormQuery("#tabs-1").on("click", ".itemForm", function() {
+                                var ftype = $easyFormQuery(this).attr("data-ftype") || $easyFormQuery(this).attr("id");
+                                if (ftype) {
+                                    f.fBuild.addItem(ftype);
                                 }
                             });
-                        }); 
+                        });
                         </script>
-                        
-                        <div style="background:#fafafa;min-width:780px;" class="form-builder">
-                            <div class="column width50">
+
+                        <div class="form-builder wpts-modern-builder">
+                            <div class="ctrlsColumn">
                                 <div id="tabs">
                                     <ul>
                                         <li><a href="#tabs-1"><?php esc_html_e('Add a Field','wp-time-slots-booking-form'); ?></a></li>
@@ -713,13 +710,21 @@ $shortcode_str  = '[' . $this->shorttag . ' id="' . intval($this->item) . '"]';
                                     <div id="tabs-1"></div>
                                     <div id="tabs-2"></div>
                                     <div id="tabs-3"></div>
-                                </div>	
+                                </div>
                             </div>
-                            <div class="columnr width50 padding10" id="fbuilder">
-                                <div id="formheader"></div>
-                                <div id="fieldlist"></div>
+                            <div class="dashboardColumn">
+                                <div class="wpts-canvas-toolbar">
+                                    <span class="wpts-canvas-toolbar-title"><?php esc_html_e('Live Form Preview', 'wp-time-slots-booking-form'); ?></span>
+                                    <span class="wpts-canvas-toolbar-hint"><?php esc_html_e('Drag fields to add or reorder · Click any field to edit', 'wp-time-slots-booking-form'); ?></span>
+                                </div>
+                                <div class="padding10 wpts-canvas-body">
+                                    <div class="form-builder-error-messages"></div>
+                                    <div id="fbuilder">
+                                        <div id="formheader"></div>
+                                        <div id="fieldlist"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="clearer"></div>
                         </div>
 
                         <div class="wpts-pro-banner">

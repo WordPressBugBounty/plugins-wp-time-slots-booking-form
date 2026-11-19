@@ -14,7 +14,7 @@
 .cp_cff_natural #fbuilder td:not(.ui-datepicker-unselectable) a.ui-state-default{color:#666666;background:#dedede;}
 .cp_cff_natural #fbuilder td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: inherit; background: #f7f7f7;}
 .cp_cff_natural #fbuilder .slots div a{background-color: #ededed;padding:4px;}
-.cp_cff_natural #fbuilder .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+.cp_cff_natural #fbuilder .slots div:not(.usedslot)  a:hover{background-color: #f7f7f7;}
 
 .cp_cff_natural #fbuilder .pbSubmit{color:#fff;font-size:14px;font-weight:bold;border-radius: 5px;}
 .cp_cff_natural #fbuilder .pbSubmit:hover {color: #fff}

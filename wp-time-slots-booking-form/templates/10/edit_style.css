@@ -21,14 +21,14 @@
 	color: #000;
 	padding:8px 12px;
 }
-.ahb_m4 #fbuilder .slots div:not(.htmlUsed)  a:hover {
+.ahb_m4 #fbuilder .slots div:not(.usedslot)  a:hover {
 	background:#66CCFF;
 	color:#fff;
 }
-.ahb_m4 #fbuilder .slots div.htmlUsed a{
+.ahb_m4 #fbuilder .slots div.usedslot a{
 	border:1px solid #ccc;
 }
-.ahb_m4 #fbuilder .slots div.currentSelection.htmlUsed a {
+.ahb_m4 #fbuilder .slots div.currentSelection.usedslot a {
     color: #fff; background: #3995D0 !important;
 }
 .ahb_m4 #fbuilder .slots div.currentSelection a {

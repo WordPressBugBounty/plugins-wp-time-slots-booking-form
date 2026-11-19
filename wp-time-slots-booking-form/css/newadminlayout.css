@@ -27,7 +27,7 @@ label {font-weight:600;}
 
 .ahb-mssg{margin-left:0 !important; display:none;}
 
-.form-builder .button {
+.form-builder .button:not(.wpts-palette-item) {
     margin: 5px 10px !important;
 }
 
@@ -37,7 +37,7 @@ label {font-weight:600;}
 
 @media screen and (max-width: 710px)
 {
-     .form-builder .button {
+     .form-builder .button:not(.wpts-palette-item) {
          margin: 5px 5px !important;
      }    
 	.ahb-calendars-list table, 
@@ -171,18 +171,21 @@ label {font-weight:600;}
 
 .form-builder{
 	width: 100% !important;
-	background: white !important;
-	border-radius: 6px !important;
-	border: 1px solid #e6e6e6 !important;
-    height:620px !important;
+	background: #ffffff !important;
+	border-radius: 12px !important;
+	border: 1px solid #e2e8f0 !important;
+	height: 700px !important;
 }
 
 .form-builder #tabs{
-	height:615px !important;
-	border-right: 1px solid #e6e6e6;
-	border-left:0;
-	border-top:0;
-	border-bottom:0;
+	height: 100% !important;
+	border: 0;
+}
+
+@media screen and (max-width: 960px) {
+	.form-builder{
+		height: auto !important;
+	}
 }
 
 .working_dates input[type='checkbox'] { width: auto !important; margin-left: 10px; }

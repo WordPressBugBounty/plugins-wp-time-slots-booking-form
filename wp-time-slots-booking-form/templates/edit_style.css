@@ -8,7 +8,7 @@
 #fbuilder td:not(.ui-datepicker-unselectable) a.ui-state-default{color:#666666;background:#dedede;}
 #fbuilder td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: inherit; background: #f7f7f7;}
 #fbuilder .slots div a{background-color: #ededed;padding:4px;}
-#fbuilder .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+#fbuilder .slots div:not(.usedslot)  a:hover{background-color: #f7f7f7;}
 
 #fbuilder .pbSubmit{color:#000;background:#ccc;margin: 10px 10px 0px 0px;padding: 5px 20px;}
 #fbuilder .pbSubmit:hover {color: #000;background:#ccc;}

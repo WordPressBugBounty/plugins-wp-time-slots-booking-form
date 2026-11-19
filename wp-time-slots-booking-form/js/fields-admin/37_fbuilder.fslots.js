@@ -1,894 +1,1287 @@
 $.fbuilder.typeList.push({
-	  id:"fslots",
-	  name:"Slots booking",
-	  control_category:1
+	id: 'fslots',
+	name: 'Slots booking',
+	control_category: 1
 });
-$.fbuilder.controls[ 'fslots' ]=function(){  this.init();  };
+
+$.fbuilder.controls['fslots'] = function () {
+	this.init();
+};
+
 $.extend(
-	  $.fbuilder.controls[ 'fslots' ].prototype,
-	  $.fbuilder.controls[ 'ffields' ].prototype,
-	  {
-	  	  title:"Slots booking",
-	  	  ftype:"fslots",
-	  	  slotsavailInit:{"d1":[{h1:8,m1:0,c:1,p:0,min:8*60}],
-	  	  	        "d2":[{h1:8,m1:0,c:1,p:0,min:8*60}],
-	  	  	        "d3":[{h1:8,m1:0,c:1,p:0,min:8*60}],
-	  	  	        "d4":[{h1:8,m1:0,c:1,p:0,min:8*60}],
-	  	  	        "d5":[{h1:8,m1:0,c:1,p:0,min:8*60}]},
-	  	  slots_special:new Array(),
-	  	  min_quantity:1,
-	  	  max_quantity:5,
-	  	  quantity1:1,
-	  	  quantity1start:0,
-	  	  label1:"",
-	  	  quantity2:1,
-	  	  label2:"",
-	  	  quantity3:1,
-	  	  label3:"",
-	  	  quantity4:1,
-	  	  label4:"",
-	  	  quantity5:1,
-	  	  label5:"",
-	  	  prices:new Array({name:"default",price1:new Array(),price2:new Array(),price3:new Array(),price4:new Array(),price5:new Array()}),
-	  	  dateFormat:"mm/dd/yy",
-	  	  showDropdown:false,
-	  	  showTotalCost:false,
-		  usedSlotsCheckbox:false,
-	  	  flatPrice:false,
-	  	  showTotalCostFormat:"$ {0}",
-	  	  dropdownRange:"-10:+10",
-	  	  working_dates:[true,true,true,true,true,true,true],
-	  	  numberOfMonths:1,
-	  	  firstDay:0,
-	  	  minDate:"0",
-	  	  maxDate:"",
-	  	  defaultDate:"",
-	  	  invalidDates:"",
-	  	  tmpinvalidDates:[],
-	  	  required:true,
-		  militaryTime:1,
-	  	  formattime:function(t)
-		  {
-		      var h = Math.floor(t/60);
-		      var m = t%60;
-		      var suffix = "";
-		      if (this.militaryTime==0)
-		      {
-		          if (h>12)
-		          {
-		              h = h-12;
-		              suffix = " PM";
-		          }
-		          else if (h==12)
-		              suffix = " PM";
-		          else
-		          {
-		              if (h==0) h=12;
-		              suffix = " AM";
-		          }
-		      }
-		  	  return (((h<10)?"":"")+h+":"+(m<10?"0":"")+m)+suffix;
-		  },
-	  	  showSlotsPrices:function()
-	  	  {
-	  	      var str = "", h1 = 50, h2 = 50;
-	  	      if (this.quantity1>1 && this.quantity2>1 && this.quantity3>1 && this.quantity4>1 && this.quantity5>1)
-	  	      {
-	  	          h1 = 25;
-	  	          h2 = 15;
-	  	      }
-	  	      else if (this.quantity1>1 && this.quantity2>1 && this.quantity3>1 && this.quantity4>1)
-	  	      {
-	  	          h1 = 20;
-	  	          h2 = 20;
-	  	      }
-	  	      else if (this.quantity1>1 && this.quantity2>1 && this.quantity3>1)
-	  	      {
-	  	          h1 = 40;
-	  	          h2 = 20;
-	  	      }
-	  	      else if (this.quantity1>1 && this.quantity2>1)
-	  	      {
-	  	          h1 = 40;
-	  	          h2 = 30;
-	  	      }
-	  	      for (var i=0;i<this.prices.length;i++)
-	  	      {
-	  	          str += '<div class="slotspricediv '+((i%2)?"even":"odd")+'" >';
-	  	          if (i==0)
-	  	  	          str += '<label>Slots Price: '+this.prices[i].name+'</label><div class="clearer"></div>';
-	  	  	      else
-	  	  	          str += '<label>Slots Price: <input type="text" class="nameSlotsprice" i="'+i+'" value="'+this.prices[i].name+'"></label> <input type="button" i="'+i+'" class="deleteSlotsprice" value="Delete"><div class="clearer"></div>';
-	  	  	      str += '<div class="column width'+h1+'">Slots #</div>';
-	  	  	      str += '<div class="column width'+h2+'">'+(this.quantity1>1?this.label1:"price")+'</div>';
-	  	  	      if (this.quantity1>1 && this.quantity2>1)
-	  	  	          str += '<div class="column width'+h2+'">'+this.label2+'</div>';
-	  	  	      if (this.quantity1>1 && this.quantity2>1 && this.quantity3>1)
-	  	  	          str += '<div class="column width'+h2+'">'+this.label3+'</div>';
-	  	  	      if (this.quantity1>1 && this.quantity2>1 && this.quantity3>1 && this.quantity4>1)
-	  	  	          str += '<div class="column width'+h2+'">'+this.label4+'</div>';
-	  	  	      if (this.quantity1>1 && this.quantity2>1 && this.quantity3>1 && this.quantity4>1 && this.quantity5>1)
-	  	  	          str += '<div class="column width'+h2+'">'+this.label5+'</div>';
-	  	  	      str += '<div class="clearer"></div>';
-	  	  	      if (this.prices[i].price1.length<this.max_quantity)
-	  	          {
-	  	              for (var k=this.prices[i].price1.length;k<this.max_quantity;k++)
-	  	              {
-	  	                  this.prices[i].price1[k]=0;
-	  	                  this.prices[i].price2[k]=0;
-	  	                  this.prices[i].price3[k]=0;
-	  	                  this.prices[i].price4[k]=0;
-	  	                  this.prices[i].price5[k]=0;
-	  	              }
-	  	          }
-	  	          for (var j=0;j<this.max_quantity;j++)
-	  	          {
-	  	              str += '<div class="column width'+h1+'">slot #'+(j+1)+'</div>';
-	  	              str += '<div class="column width'+h2+'"><input class="large price1" previousvalue="'+(this.prices[i].price1[j])+'" i="'+i+'" j="'+j+'" type="text" value="'+(this.prices[i].price1[j])+'"></div>';
-	  	              if (this.quantity1>1 && this.quantity2>1)
-	  	                  str += '<div class="column width'+h2+'"><input class="large price2" previousvalue="'+(this.prices[i].price2[j])+'" i="'+i+'" j="'+j+'" type="text" value="'+(this.prices[i].price2[j])+'"></div>';
-	  	              if (this.quantity1>1 && this.quantity2>1 && this.quantity3>1)
-	  	                  str += '<div class="column width'+h2+'"><input class="large price3" previousvalue="'+(this.prices[i].price3[j])+'" i="'+i+'" j="'+j+'" type="text" value="'+(this.prices[i].price3[j])+'"></div>';
-	  	              if (this.quantity1>1 && this.quantity2>1 && this.quantity3>1 && this.quantity4>1)
-	  	                  str += '<div class="column width'+h2+'"><input class="large price4" previousvalue="'+(this.prices[i].price4[j])+'" i="'+i+'" j="'+j+'" type="text" value="'+(this.prices[i].price4[j])+'"></div>';
-	  	              if (this.quantity1>1 && this.quantity2>1 && this.quantity3>1 && this.quantity4>1 && this.quantity5>1)
-	  	                  str += '<div class="column width'+h2+'"><input class="large price5" previousvalue="'+(this.prices[i].price5[j])+'" i="'+i+'" j="'+j+'" type="text" value="'+(this.prices[i].price5[j])+'"></div>';
-	  	              str += '<div class="clearer"></div>';
-	  	          }
-	  	          str += '</div>';
-	  	          str += '<hr>';
-	  	      }
-	  	      str += '<input type="button" class="addSlotsprice" value="Add Special Slots Price">';
-	  	      var str2 = "";
-	  	      for (var m=0;m<this.prices.length;m++)
-	  	  		    str2 += '<option  value="'+m+'">'+this.prices[m].name+'</option>';
-	  	      $(".p1").html(str2);
-	  	      $("#slots_prices").html(str);
-	  	      return str;
-	  	  },
-	  	  showQuantity:function(id,value)
-	  	  {
-	  	  	  str = '<option value="1" '+((value==1)?"selected":"")+'> - No, don\'t use it - </option>';
-	  	      for (var j=2;j<=500;j++)
-	  	          str += '<option value="'+(j)+'" '+((value==j)?"selected":"")+'>Max selection: '+(j)+'</option>';
-	  	      $("#"+id).html(str);
-	  	      return str;
-	  	  },
-	  	  showStartQuantity:function(id,value,maxvalue)
-	  	  {
-	  	  	  str = '';
-	  	      for (var j=0;j<=maxvalue;j++)
-	  	          str += '<option value="'+(j)+'" '+((value==j)?"selected":"")+'>'+(j)+'</option>';
-	  	      $("#"+id).html(str);
-	  	      return str;
-	  	  },
-	  	  display:function()
-	  	  {
-	  	  	  return '<div class="fields '+this.name+' fslots" id="field'+this.form_identifier+'-'+this.index+'"><div class="arrow ui-icon ui-icon-play "></div><div title="Duplicate" class="copy ui-icon ui-icon-copy "></div><div title="Delete" class="remove ui-icon ui-icon-trash "></div><label>'+$.fbuilder.htmlEncode(this.title)+''+((this.required)?"*":"")+'</label><div class="dfield"><div class="sbfieldCalendar'+this.name+'"></div><div class="slotsCalendar'+this.name+'"></div><span class="uh">'+$.fbuilder.htmlEncode(this.userhelp)+'</span></div><div class="clearer"></div></div>';
-	  	  },
-	  	  showSlots:function()
-	  	  {
-	          function isOpen(h,m,s)
-	  	      {
-	  	          for (var i=0;i<s.length;i++)
-	  	              if ((h*60+m>=s[i].h1*60+s[i].m1) && (h*60+m<=s[i].h2*60+s[i].m2))
-	  	                  return "sopen";
-	  	          return "";
-	  	      }
-	  	      var slots = '';
-	  	      for (var i=0;i<24;i++)
-	  	      {
-	  	          slots += '<div><div>'+i+'</div>';
-	  	          for (var j=0;j<60;j=j+5)
-	  	              slots += '<div id="d'+i+'-'+j+'" class="slot '+isOpen(i,j,this.slots)+'" ></div>';
-	  	          slots += '</div>';
-	  	      }
-	  	      return slots+this.slots.length;
-	  	  },
-	  	  editItemEvents:function()
-	  	  {
-	  	      var me = this;
-	  	      $(".dateSpecial").datepicker({dateFormat:me.dateFormat,
-	  	          firstDay:parseInt(me.firstDay),
-	  	      	  onSelect: function(d,inst) {
-	  	      		    $.fbuilder.reloadItems({'field':me});
-                }
-            });
-	  	      function msortadd(arr,newObj){
-	  	  	      if (!arr) arr = new Array();
-	  	  		    var inserted = false;
-	  	  		    if (arr.length==0)
-	  	  		    {
-	  	  		        arr[0] = jQuery.extend({},newObj);
-                    inserted = true;
-	  	  		    }
-                for(var i =0;(i<arr.length && !inserted);i++){
-                    if(i==0 && newObj.min<arr[i].min){
-                	      arr.splice(i, 0, jQuery.extend({},newObj));
-                	      inserted = true;
-                    }
-                    else if(newObj.min>arr[i].min && (arr.length==i+1 || newObj.min<arr[i+1].min )){
-                	      arr.splice(i+1, 0, jQuery.extend({},newObj));
-                	      inserted = true;
-                    }
-                }
-	  	          return arr;
-            }
-            function msortSpecial(arr,d){
-	  	  		    var inserted = false;
-	  	  		    if (arr.length==0)
-	  	  		    {
-	  	  		    	  arr[0] = {type:d,slots:new Array()};
-                    inserted = true;
-	  	  		    }
-                for(var i =0;(i<arr.length && !inserted);i++){
-                    if(i==0 && d<arr[i].type){
-                    	 arr.splice(i, 0, {type:d,slots:new Array()});
-                    	 inserted = true;
-                    }
-                    else if(d>arr[i].type && (arr.length==i+1 || d<arr[i+1].type )){
-                    	 arr.splice(i+1, 0, {type:d,slots:new Array()});
-                    	 inserted = true;
-                    }
-                }
-	  	  		    return arr;
-            }
-	  	      function showSpecialDates()
-	  	  	  {
-	  	  	      str = "";
-	  	  	      for (var i=0;i<me.slots_special.length;i++)
-	  	  	          str += '<div class="day_header">'+me.slots_special[i].type+'<a class="deleteSpecial" href="" ind="'+i+'">Delete</a><a href="" class="openSpecial"  n="'+me.slots_special[i].type+'">Open</a><div id="day_slots'+me.slots_special[i].type+'" i="'+me.slots_special[i].type+'" class="day_slots" ind="'+i+'"></div></div>';
-	  	  	      $("#special_dates").html(str);
-	  	  	      for (var i=0;i<me.slots_special.length;i++)
-                    show_day_slots_form(me.slots_special[i].type,me.slots_special[i].slots,i);
-	  	      }
-            function show_day_slots_form(i,arr,ind)
-            {
-            	  var str = "";
-            	  var s = $( '#day_slots'+i );
-	  	    	  	str += '<div class="add_slots_f" i="'+i+'" ind="'+ind+'">';
-	  	    	  	str += '<label>Add a single appointment time</label><br />';
-	  	    	  	str += '<div>From<br /><select class="h1">';
-	  	    	  	for (var h=0;h<24;h++)
-	  	  		        str += '<option '+((h==8)?"selected":"")+' value="'+h+'">'+((h<10)?"0":"")+h+'</option>';
-	  	  		    str += '</select>';
-	  	  		    str += '<select class="m1">';
-	  	    	  	for (var m=0;m<60;m=m+1)
-	  	  		        str += '<option '+((m==0)?"selected":"")+' value="'+m+'">'+((m<10)?"0":"")+m+'</option>';
-	  	  		    str += '</select></div>';
-	  	    	  	str += '<div>capacity<br /><input type="text" class="c1" value="1"></div>';
-	  	    	  	str += '<div>price<br /><select class="p1">';
-	  	    	  	for (var m=0;m<me.prices.length;m++)
-	  	  		        str += '<option  value="'+m+'">'+me.prices[m].name+'</option>';
-	  	  		    str += '</select></div><input type="button" class="add1" value="Add">';
-	  	  		    str += '<hr />';
-	  	  		    str += '<label>Add multiple appointment times</label><br />';
-	  	    	  	str += '<div>From<br /><select class="h2">';
-	  	    	  	for (var h=0;h<24;h++)
-	  	  		        str += '<option '+((h==8)?"selected":"")+' value="'+h+'">'+((h<10)?"0":"")+h+'</option>';
-	  	  		    str += '</select>';
-	  	  		    str += '<select class="m2">';
-	  	    	  	for (var m=0;m<60;m=m+5)
-	  	  		        str += '<option '+((m==8)?"selected":"")+' value="'+m+'">'+((m<10)?"0":"")+m+'</option>';
-	  	  		    str += '</select></div>';
-	  	    	  	str += '<div>capacity<br /><input type="text" class="c2" value="1"></div>';
-	  	  		    str += '<div>each<br /><select class="s2">';
-	  	  		    str += '<option  value="1">1 min</option>';
-	  	  		    str += '<option  value="2">2 min</option>';
-	  	  		    str += '<option  value="3">3 min</option>';
-	  	  		    str += '<option  value="4">4 min</option>';
-	  	    	  	for (var m=5;m<=90;m=m+5)
-	  	    	  	{
-	  	  		        str += '<option '+((m==30)?"selected":"")+' value="'+m+'">'+m+' min</option>';
-	  	  		        if (m==10)
-	  	  		            str += '<option  value="12">12 min</option>';
-	  	  		    }
-	                str += '<option value="120">2 hours</option>';
-	                str += '<option value="180">3 hours</option>';
-	                str += '<option value="240">4 hours</option>';
-                    str += '<option value="300">5 hours</option>';
-                    str += '<option value="360">6 hours</option>';
-                    str += '<option value="420">7 hours</option>';
-                    str += '<option value="480">8 hours</option>';
-	  	  		    str += '</select></div>';
+	$.fbuilder.controls['fslots'].prototype,
+	$.fbuilder.controls['ffields'].prototype,
+	{
+		title: 'Slots booking',
+		ftype: 'fslots',
+		slotsavailInit: {
+			d1: [{ h1: 8, m1: 0, c: 1, p: 0, min: 8 * 60 }],
+			d2: [{ h1: 8, m1: 0, c: 1, p: 0, min: 8 * 60 }],
+			d3: [{ h1: 8, m1: 0, c: 1, p: 0, min: 8 * 60 }],
+			d4: [{ h1: 8, m1: 0, c: 1, p: 0, min: 8 * 60 }],
+			d5: [{ h1: 8, m1: 0, c: 1, p: 0, min: 8 * 60 }]
+		},
+		slots_special: [],
+		min_quantity: 1,
+		max_quantity: 5,
+		quantity1: 1,
+		quantity1start: 0,
+		label1: '',
+		quantity2: 1,
+		label2: '',
+		quantity3: 1,
+		label3: '',
+		quantity4: 1,
+		label4: '',
+		quantity5: 1,
+		label5: '',
+		prices: [{ name: 'default', price1: [], price2: [], price3: [], price4: [], price5: [] }],
+		dateFormat: 'mm/dd/yy',
+		showDropdown: false,
+		showTotalCost: false,
+		usedSlotsCheckbox: false,
+		flatPrice: false,
+		showTotalCostFormat: '$ {0}',
+		dropdownRange: '-10:+10',
+		working_dates: [true, true, true, true, true, true, true],
+		numberOfMonths: 1,
+		firstDay: 0,
+		minDate: '0',
+		maxDate: '',
+		defaultDate: '',
+		invalidDates: '',
+		tmpinvalidDates: [],
+		required: true,
+		militaryTime: 1,
 
-	  	  		    str += '<div>times<br /><select class="n2">';
-	  	    	  	for (var c=1;c<100;c++)
-	  	  		        str += '<option '+((c==2)?"selected":"")+' value="'+c+'">'+c+'</option>';
-	  	  		    str += '</select></div>';
-	  	  		    str += '<div>price<br /><select class="p2">';
-	  	    	  	for (var m=0;m<me.prices.length;m++)
-	  	  		        str += '<option  value="'+m+'">'+me.prices[m].name+'</option>';
-	  	  		    str += '</select></div><input type="button" class="add2" value="Add">';
-	  	  		    str += '</div>';
-	  	  		    str += '<div class="onlySlots" i="'+i+'" ind="'+ind+'">';
-	  	    	    str += '</div>';
-	  	    	    str += '<div><input type="button" value="Delete marked slots" class="deletemarked" style="float:left"></div>';	  	    	    
-	  	    	    str += '<div><input type="button" value="Paste" class="pasteSlots" style="float:right"></div>';	  	    	    
-	  	    	    str += '<div><input type="button" value="Copy" class="copySlots" style="float:right"></div>';
-	  	    	    str += '<div class="clearer"></div>';
-	  	    	  	s.html(str);
-	  	    	    show_day_slots(i,arr);
-            }
-            function show_day_slots(i,arr)
-            {
-                var str = "";
-                if (arr)
-	  	    	  	{
-	  	    	  	    var s = $( '#day_slots'+i+' .onlySlots' );
-	  	    	  	    str = '<hr />';
-	  	    	  	    var ind = 0;
-	  	    	  	    for (var j=0;j<arr.length;j++)
-	  	    	  	    {
-	  	    	  	        ind = arr[j].p;
-	  	    	  	        str += '<div class="s">'+me.formattime(arr[j].h1*60+arr[j].m1*1)+'<br /><input type="checkbox">c='+arr[j].c+'<br />'+((ind>0 && me.prices[ind] && me.prices[ind].name)?me.prices[ind].name:"&nbsp;")+'</div>';
-	  	    	  	    }
-	  	    	  	    s.html(str);
-	  	    	    }
-            }
-	  	  	  try{
-	  	  	  for (var i=0;i<7;i++)
-	  	      	    show_day_slots_form(i,me.slotsavail["d"+i],0);
-	  	      } catch (e) {}
-	  	      showSpecialDates();
-	  	  	  var evt = [
-	  	  	          {s:"#sMin_quantity",e:"change", l:"min_quantity"},
-	  	  	          {s:"#sMax_quantity",e:"change", l:"max_quantity", f:function(el){
-	  	  	  	  	  var v = (el.val()>=1);$(".max_quantity_scope")[( v ) ? 'show' : 'hide']();
-	  	  	  	  	  me.max_quantity = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},//max_quantity_scope
-	  	  	  	  {s:"#sQuantity1",e:"change", l:"quantity1", f:function(el){
-	  	  	  	  	  var v = (el.val()>1);$(".quantity1_scope")[( v ) ? 'show' : 'hide']();
-	  	  	  	  	  me.quantity1 = el.val();
-	  	  	  	      me.showStartQuantity('sQuantity1start',me.quantity1start,me.quantity1);
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sQuantity1start",e:"change", l:"quantity1start", f:function(el){
-	  	  	  	      me.quantity1start = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sLabel1",e:"keyup", l:"label1", f:function(el){
-	  	  	  	  	  me.label1 = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sQuantity2",e:"change", l:"quantity2", f:function(el){
-	  	  	  	  	  var v = (el.val()>1);$(".quantity2_scope")[( v ) ? 'show' : 'hide']();
-	  	  	  	  	  me.quantity2 = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sLabel2",e:"keyup", l:"label2", f:function(el){
-	  	  	  	  	  me.label2 = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sQuantity3",e:"change", l:"quantity3", f:function(el){
-	  	  	  	  	  var v = (el.val()>1);$(".quantity3_scope")[( v ) ? 'show' : 'hide']();
-	  	  	  	  	  me.quantity3 = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sLabel3",e:"keyup", l:"label3", f:function(el){
-	  	  	  	  	  me.label3 = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sQuantity4",e:"change", l:"quantity4", f:function(el){
-	  	  	  	  	  var v = (el.val()>1);$(".quantity4_scope")[( v ) ? 'show' : 'hide']();
-	  	  	  	  	  me.quantity4 = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sLabel4",e:"keyup", l:"label4", f:function(el){
-	  	  	  	  	  me.label4 = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sQuantity5",e:"change", l:"quantity5", f:function(el){
-	  	  	  	  	  var v = (el.val()>1);$(".quantity5_scope")[( v ) ? 'show' : 'hide']();
-	  	  	  	  	  me.quantity5 = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-	  	  	  	  {s:"#sLabel5",e:"keyup", l:"label5", f:function(el){
-	  	  	  	  	  me.label5 = el.val();
-	  	  	  	  	  me.showSlotsPrices();
-	  	  	  	  	  return el.val();
-	  	  	  	  }},
-				  {s:"#sUsedSlotsCheckbox",e:"click", l:"usedSlotsCheckbox", f:function(el){
-				  	return el.is(':checked');
-				  	}
-				  },
-	  	  	      {s:"#sDateFormat",e:"change", l:"dateFormat"},
-	  	  	  	  {s:"#sNumberOfMonths",e:"change", l:"numberOfMonths"},
-	  	  	  	  {s:"#sFirstDay",e:"change", l:"firstDay"},
-				  {s:"#sMilitaryTime",e:"change", l:"militaryTime"},
-	  	  	  	  {s:"#sMinDate",e:"change", l:"minDate"},
-	  	  	  	  {s:"#sMaxDate",e:"change", l:"maxDate"},
-	  	  	  	  {s:"#sInvalidDates",e:"change", l:"invalidDates"},
-	  	  	  	  {s:"#sDefaultDate",e:"change", l:"defaultDate"},
-	  	  	  	  {s:"#sDropdownRange",e:"keyup", l:"dropdownRange"},
-	  	  	  	  {s:"#sShowTotalCostFormat",e:"keyup", l:"showTotalCostFormat"},
-	  	  	  	  {s:"#sShowTotalCost",e:"click", l:"showTotalCost", f:function(el){
-	  	  	  	  	  var v = el.is(':checked');
-	  	  	  	  	  $("#divTotalCostFormat")[( v ) ? 'show' : 'hide']();
-	  	  	  	  	  return v;
-	  	  	  	  }},
-	  	  	  	  {s:"#sShowDropdown",e:"click", l:"showDropdown", f:function(el){
-	  	  	  	  	  var v = el.is(':checked');
-	  	  	  	  	  $("#divdropdownRange")[( v ) ? 'show' : 'hide']();
-	  	  	  	  	  return v;
-	  	  	  	  }},
-	  	  	  	  {s:"#sFlatPrice",e:"click", l:"flatPrice", f:function(el){
-	  	  	  	  	  return el.is(':checked');
-	  	  	  	  }}
+		formattime: function (t) {
+			var h = Math.floor(t / 60);
+			var m = t % 60;
+			var suffix = '';
+			if (parseInt(this.militaryTime, 10) === 0) {
+				if (h > 12) {
+					h = h - 12;
+					suffix = ' PM';
+				} else if (h === 12) {
+					suffix = ' PM';
+				} else {
+					if (h === 0) h = 12;
+					suffix = ' AM';
+				}
+			}
+			return ((h < 10 && parseInt(this.militaryTime, 10) !== 0) ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + suffix;
+		},
 
-	  	  	  ];
-	  	  	  $(document).off("keyup", "input.price1").on("keyup", "input.price1", {obj: this}, function(e) {
-	  	  	      var i = $(this).attr("i")*1,j = $(this).attr("j")*1,v = $(this).val(),pv = $(this).attr("previousvalue");
-	  	  	      for (var k=j;k<e.data.obj.max_quantity;k++)
-	  	  	          if ($("input.price1[i='"+i+"'][j='"+k+"']").attr("previousvalue")==pv)
-	  	  	          {
-	  	  	              $("input.price1[i='"+i+"'][j='"+k+"']").attr("previousvalue",pv);
-	  	  	              $("input.price1[i='"+i+"'][j='"+k+"']").val(v);
-	  	  	              e.data.obj.prices[i].price1[k] = v;
-	  	  	          }
-	  	  	      e.data.obj.prices[i].price1[j] = v;
-	  	  	      $.fbuilder.reloadItems({'field':e.data.obj});
-	  	  	  });
-	  	  	  $(document).off("keyup", "input.price2").on("keyup", "input.price2", {obj: this}, function(e) {
-	  	  	      var i = $(this).attr("i")*1,j = $(this).attr("j")*1,v = $(this).val(),pv = $(this).attr("previousvalue");
-	  	  	      for (var k=j;k<e.data.obj.max_quantity;k++)
-	  	  	          if ($("input.price2[i='"+i+"'][j='"+k+"']").attr("previousvalue")==pv)
-	  	  	          {
-	  	  	              $("input.price2[i='"+i+"'][j='"+k+"']").attr("previousvalue",pv);
-	  	  	              $("input.price2[i='"+i+"'][j='"+k+"']").val(v);
-	  	  	              e.data.obj.prices[i].price2[k] = v;
-	  	  	          }
-	  	  	      e.data.obj.prices[$(this).attr("i")*1].price2[$(this).attr("j")*1] = $(this).val();
-	  	  	      $.fbuilder.reloadItems({'field':e.data.obj});
-	  	      });
-	  	  	  $(document).off("keyup", "input.price3").on("keyup", "input.price3", {obj: this}, function(e) {
-	  	  	      var i = $(this).attr("i")*1,j = $(this).attr("j")*1,v = $(this).val(),pv = $(this).attr("previousvalue");
-	  	  	      for (var k=j;k<e.data.obj.max_quantity;k++)
-	  	  	          if ($("input.price3[i='"+i+"'][j='"+k+"']").attr("previousvalue")==pv)
-	  	  	          {
-	  	  	              $("input.price3[i='"+i+"'][j='"+k+"']").attr("previousvalue",pv);
-	  	  	              $("input.price3[i='"+i+"'][j='"+k+"']").val(v);
-	  	  	              e.data.obj.prices[i].price3[k] = v;
-	  	  	          }
-	  	  	      e.data.obj.prices[$(this).attr("i")*1].price3[$(this).attr("j")*1] = $(this).val();
-	  	  	      $.fbuilder.reloadItems({'field':e.data.obj});
-	  	      });
-	  	  	  $(document).off("keyup", "input.price4").on("keyup", "input.price4", {obj: this}, function(e) {
-	  	  	      var i = $(this).attr("i")*1,j = $(this).attr("j")*1,v = $(this).val(),pv = $(this).attr("previousvalue");
-	  	  	      for (var k=j;k<e.data.obj.max_quantity;k++)
-	  	  	          if ($("input.price4[i='"+i+"'][j='"+k+"']").attr("previousvalue")==pv)
-	  	  	          {
-	  	  	              $("input.price4[i='"+i+"'][j='"+k+"']").attr("previousvalue",pv);
-	  	  	              $("input.price4[i='"+i+"'][j='"+k+"']").val(v);
-	  	  	              e.data.obj.prices[i].price4[k] = v;
-	  	  	          }
-	  	  	      e.data.obj.prices[$(this).attr("i")*1].price4[$(this).attr("j")*1] = $(this).val();
-	  	  	      $.fbuilder.reloadItems({'field':e.data.obj});
-	  	      });
-	  	  	  $(document).off("keyup", "input.price5").on("keyup", "input.price5", {obj: this}, function(e) {
-	  	  	      var i = $(this).attr("i")*1,j = $(this).attr("j")*1,v = $(this).val(),pv = $(this).attr("previousvalue");
-	  	  	      for (var k=j;k<e.data.obj.max_quantity;k++)
-	  	  	          if ($("input.price5[i='"+i+"'][j='"+k+"']").attr("previousvalue")==pv)
-	  	  	          {
-	  	  	              $("input.price5[i='"+i+"'][j='"+k+"']").attr("previousvalue",pv);
-	  	  	              $("input.price5[i='"+i+"'][j='"+k+"']").val(v);
-	  	  	              e.data.obj.prices[i].price5[k] = v;
-	  	  	          }
-	  	  	      e.data.obj.prices[$(this).attr("i")*1].price5[$(this).attr("j")*1] = $(this).val();
-	  	  	      $.fbuilder.reloadItems({'field':e.data.obj});
-	  	      });
-	  	      $(document).off("click", "input.addSlotsprice").on("click", "input.addSlotsprice", {obj: this}, function(e) {
-                e.data.obj.prices[e.data.obj.prices.length] = {name:"special",price1:new Array(),price2:new Array(),price3:new Array(),price4:new Array(),price5:new Array()};
-                me.showSlotsPrices();
-                $.fbuilder.reloadItems({'field':e.data.obj});
-            });
-	  	      $(document).off("click", "input.deleteSlotsprice").on("click", "input.deleteSlotsprice", {obj: this}, function(e) {
-	  	          e.data.obj.prices.splice($(this).attr("i")*1, 1 );
-	  	  	      me.showSlotsPrices();
-	  	  	      $.fbuilder.reloadItems({'field':e.data.obj});
-	  	      });
-	  	      $(document).off("keyup", "input.nameSlotsprice").on("keyup", "input.nameSlotsprice", {obj: this}, function(e) {
-	  	  	      e.data.obj.prices[$(this).attr("i")*1].name = $(this).val();
-	  	  	      $.fbuilder.reloadItems({'field':e.data.obj});
-	  	      });
-	  	  	  $(".sb_working_dates .day_header input[type='checkbox']").bind("click", {obj: this}, function(e) {
-	  	  	      e.data.obj.working_dates[$(this).val()] = $(this).is(':checked');
-	  	  	  	  $.fbuilder.reloadItems({'field':e.data.obj});
-	  	  	  });
-	  	      $(".sb_working_dates .day_header .openSpecial").bind("click", {obj: this}, function(e) {
-	  	  	      var s = "#day_slots"+$(this).attr("n");
-	  	  	      var c = ($(s).css('display') == 'none');
-	  	  	      $(".day_slots").each( function( index, element ){
-                        $(this).hide();$(this).parent().find(".openSpecial").html("Open");
-                });
-	  	  	      if (c){
-	  	  	          $(s).show();$(this).html("Close")
-	  	  	      }else {
-	  	  	          $(s).hide();$(this).html("Open")
-	  	  	      }
-	  	  	      return false;
-	  	  	  });
-	  	  	  $(".sb_working_dates .addSpecial").bind("click", {obj: this}, function(e) {
-	  	  	  	  if ($(".dateSpecial").val()!="")
-	  	  	  	  {
-	  	  	  	  	  var d = $.datepicker.formatDate('yy-mm-dd', $.datepicker.parseDate(me.dateFormat, $(".dateSpecial").val()));
-	  	  	  	      e.data.obj.slots_special = msortSpecial(e.data.obj.slots_special,d);
-	  	  	  	      showSpecialDates();
-	  	  	  	      $.fbuilder.editItem(e.data.obj.index);
-	  	  	  	      $.fbuilder.reloadItems({'field':e.data.obj});
-	  	  	  	  }
-	  	  	  });
-	  	  	  $(".sb_working_dates .add_slots_f .add1").bind("click", {obj: this}, function(e) {
-	  	  	  	  var f = $(this).parents(".add_slots_f");
-	  	  	  	  var d = f.attr("i")+"";
-	  	  	  	  var newObj = {h1:f.find(".h1").val(),m1:f.find(".m1").val(),c:f.find(".c1").val(),p:f.find(".p1").val(),min:f.find(".h1").val()*60+f.find(".m1").val()*1};
-	  	  	  	  if (d.length==1)
-	  	  	  	  {
-	  	  	  	      e.data.obj.slotsavail["d"+d] = msortadd(e.data.obj.slotsavail["d"+d],newObj);
-	  	  	  	      show_day_slots(d,e.data.obj.slotsavail["d"+d]);
-	  	  	  	  }
-	  	  	  	  else
-	  	  	  	  {
-	  	  	  	  	  var ind = f.attr("ind");
-	  	  	  	      e.data.obj.slots_special[ind].slots = msortadd(e.data.obj.slots_special[ind].slots,newObj);
-	  	  	  	      show_day_slots(d,e.data.obj.slots_special[ind].slots);
-	  	  	  	  }
-	  	  	  	  $.fbuilder.reloadItems({'field':e.data.obj});
-	  	  	  });
-	  	  	  $(".sb_working_dates .add_slots_f .add2").bind("click", {obj: this}, function(e) {
-	  	  	  	  var f = $(this).parents(".add_slots_f");
-	  	  	  	  var n = f.find(".n2").val()*1;
-	  	  	  	  var s = f.find(".s2").val()*1;
-	  	  	  	  var h = f.find(".h2").val()*1;
-	  	  	  	  var m = f.find(".m2").val()*1;
-	  	  	  	  var initialMin = h*60+m;
-	  	  	  	  var dayofweek = f.attr("i")+"";
-	  	  	  	  if (dayofweek.length==1)
-	  	  	  	  {
-	  	  	  	      for (var i=0;i<n;i++)
-	  	  	  	      {
-	  	  	  	          min = initialMin + s*i;
-	  	  	  	          h = Math.trunc(min/60);
-	  	  	  	          m = min%60;
-	  	  	  	          var newObj = {h1:h,m1:m,c:f.find(".c2").val(),p:f.find(".p2").val(),min:min};
-	  	  	  	          e.data.obj.slotsavail["d"+dayofweek] = msortadd(e.data.obj.slotsavail["d"+dayofweek],newObj);
-	  	  	          }
-	  	  	  	      show_day_slots(dayofweek,e.data.obj.slotsavail["d"+dayofweek]);
-	  	  	      }
-	  	  	      else
-	  	  	      {
-	  	  	      	  var ind = f.attr("ind");
-	  	  	  	      for (var i=0;i<n;i++)
-	  	  	  	      {
-	  	  	  	          min = initialMin + s*i;
-	  	  	  	          h = Math.trunc(min/60);
-	  	  	  	          m = min%60;
-	  	  	  	          var newObj = {h1:h,m1:m,c:f.find(".c2").val(),p:f.find(".p2").val(),min:min};
-	  	  	  	          e.data.obj.slots_special[ind].slots = msortadd(e.data.obj.slots_special[ind].slots,newObj);
-	  	  	          }
-	  	  	  	      show_day_slots(dayofweek,e.data.obj.slots_special[ind].slots);
-	  	  	      }
-	  	  	  	  $.fbuilder.reloadItems({'field':e.data.obj});
-	  	  	  });
-	  	  	  $(".sb_working_dates .day_slots .pasteSlots").bind("click", {obj: this}, function(e) {
-	  	  	      e.data.obj.tmpCopy = e.data.obj.tmpCopy || [];
-	  	  	      var f = $(this).parents(".day_slots");
-	  	  	      var dayofweek = f.attr("i");	
-                  if (dayofweek.length==1)
-                  {
-                      for (var i = 0; i < e.data.obj.tmpCopy.length; i++)
-                          e.data.obj.slotsavail["d"+dayofweek] = msortadd(e.data.obj.slotsavail["d"+dayofweek],jQuery.extend({}, e.data.obj.tmpCopy[i]));
-	  	  	      	  show_day_slots(dayofweek,e.data.obj.slotsavail["d"+dayofweek]);
-	  	  	      }
-	  	  	      else
-	  	  	      {
-	  	  	          var ind = f.attr("ind");
-	  	  	          for (var i = 0; i < e.data.obj.tmpCopy.length; i++)
-                          e.data.obj.slots_special[ind].slots = msortadd(e.data.obj.slots_special[ind].slots,jQuery.extend({}, e.data.obj.tmpCopy[i]));
-	  	  	          show_day_slots(dayofweek,e.data.obj.slots_special[ind].slots);
-	  	  	      }
-	  	  	  	  $.fbuilder.reloadItems({'field':e.data.obj});
-	  	  	  });
-	  	  	  $(".sb_working_dates .day_slots .copySlots").bind("click", {obj: this}, function(e) {
-	  	  	      var f = $(this).parents(".day_slots");
-	  	  	      var dayofweek = f.attr("i");	
-                  if (dayofweek.length==1)
-                  {
-                      e.data.obj.tmpCopy = e.data.obj.slotsavail["d"+dayofweek];
-	  	  	      	  show_day_slots(dayofweek,e.data.obj.slotsavail["d"+dayofweek]);
-	  	  	      }
-	  	  	      else
-	  	  	      {
-	  	  	          var ind = f.attr("ind");
-	  	  	          e.data.obj.tmpCopy = e.data.obj.slots_special[ind].slots;
-	  	  	          show_day_slots(dayofweek,e.data.obj.slots_special[ind].slots);
-	  	  	      }
-	  	  	  	  $.fbuilder.reloadItems({'field':e.data.obj});
-	  	  	  });
-	  	  	  $(".sb_working_dates .day_slots .deletemarked").bind("click", {obj: this}, function(e) {
-	  	  	      var f = $(this).parents(".day_slots");
-	  	  	      var dayofweek = f.attr("i");
-	  	  	  	  var toDeleted = new Array();
-	  	  	  	  f.find(".onlySlots input").each( function( index, element ){
-                          if ($(this).is(":checked"))
-                          toDeleted[toDeleted.length] = index;
-                });
-                if (dayofweek.length==1)
-                {
-                    for (var i=toDeleted.length-1;i>=0;i--)
-                        e.data.obj.slotsavail["d"+dayofweek].splice(toDeleted[i], 1 );
-	  	  	      	  show_day_slots(dayofweek,e.data.obj.slotsavail["d"+dayofweek]);
-	  	  	      }
-	  	  	      else
-	  	  	      {
-	  	  	          var ind = f.attr("ind");
-                        for (var i=toDeleted.length-1;i>=0;i--)
-                            e.data.obj.slots_special[ind].slots.splice(toDeleted[i], 1 );
-	  	  	          show_day_slots(dayofweek,e.data.obj.slots_special[ind].slots);
-	  	  	      }
-	  	  	  	  $.fbuilder.reloadItems({'field':e.data.obj});
-	  	  	  });
-	  	  	  $(".sb_working_dates .deleteSpecial").bind("click", {obj: this}, function(e) {
-	  	  	      var ind = $(this).attr("ind")*1;
-	  	  	      e.data.obj.slots_special.splice(ind, 1 );
-	  	  	      showSpecialDates();
-	  	  	      $.fbuilder.editItem(e.data.obj.index);
-	  	  	      $.fbuilder.reloadItems({'field':e.data.obj});
-	  	  	      return false;
-	  	  	  });
-	  	  	  $.fbuilder.controls[ 'ffields' ].prototype.editItemEvents.call(this, evt);
-	  	  },
-	  	  after_show:function()
-	  	  {
-	  	      //avoid conflict with a date field
-		      function closeOtherDatepicker(){
-		          $('#ui-datepicker-div').css("display","none");
-		      }
-		      setTimeout(closeOtherDatepicker,100);
-		      //end avoid conflict with a date field
-	  	      function onChangeDate(d)
-	  	      {
-	  	          var str = "";
-	  	          var day = $.datepicker.formatDate('yy-mm-dd', $.datepicker.parseDate(me.dateFormat, d));
-	  	          var ind = -1;
-	  	          for (var i=0;ind==-1 && i<me.slots_special.length;i++)
-	  	              if (me.slots_special[i].type==day)
-	  	                  ind = i;
-	  	          if (ind==-1)
-	  	          	 arr = me.slotsavail["d"+$.datepicker.parseDate(me.dateFormat, d).getDay()];
-	  	          else
-	  	          	 arr = me.slots_special[ind].slots;
-	  	          for (var j=0;arr && j<arr.length;j++)
-	  	            str += '<div>'+me.formattime(arr[j].h1*60+arr[j].m1*1)+'</div>';
-	  	          var s = $( '#field' + me.form_identifier + '-' + me.index + ' .slotsCalendar'+me.name );
-	  	          s.html("<div class=\"slots\">"+d+"<br />"+str+"</div>");
+		_getDayNames: function () {
+			var defaults = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+			try {
+				var e = $('#field' + this.form_identifier + '-' + this.index + ' .sbfieldCalendar' + this.name);
+				if (e.length && e.hasClass('hasDatepicker')) {
+					var names = e.datepicker('option', 'dayNames');
+					if ($.isArray(names) && names.length === 7) return names;
+				}
+			} catch (err) {}
+			return defaults;
+		},
 
-	  	      }
-	  	    	var me  = this,
-	  	  		e   = $( '#field' + me.form_identifier + '-' + me.index + ' .sbfieldCalendar'+me.name ),
-	  	  		str = "",
-	  	  		op = "";
-	  	  	  if (typeof me.slotsavail === 'undefined')
-	  	  	      me.slotsavail = $.extend({}, me.slotsavailInit);
-	  	  	  me.minDateTmp = me.minDate ;
-	  	  	  for (var i=0;i<me.prices.length;i++)
-			  {
-			      me.prices[i].price3 = me.prices[i].price3 || [];
-			      me.prices[i].price4 = me.prices[i].price4 || [];
-			      me.prices[i].price5 = me.prices[i].price5 || [];
-			      for (var j=0;j<me.prices[i].price1.length;j++)
-			      {
-			          if (me.prices[i].price3.length<=j)
-			              me.prices[i].price3[j] = 0;
-			          if (me.prices[i].price4.length<=j)
-			              me.prices[i].price4[j] = 0;
-			          if (me.prices[i].price5.length<=j)
-			              me.prices[i].price5[j] = 0;
-			      }
-			  }
-	  	  	  if (me.minDate.toLowerCase().indexOf("h")!=-1)
-			  {
-			      var h = me.minDate.toLowerCase().replace(/h/gi, "");
-			      me.minDateTmp = new Date(((new Date).getTime() + h * 60 * 60 * 1000) )
-			  }
-			  else if (me.minDate == parseInt(me.minDate, 10))
-			  {
-			      me.minDateTmp = new Date(((new Date).getTime() + parseInt(me.minDate) * 24 * 60 * 60 * 1000) )
-			  }
-	  	  	  this.tmpinvalidDates = this.invalidDates;
-	  	  	  this.tmpinvalidDates = this.tmpinvalidDates.replace( /\s+/g, '' );
-	  	  	  if( !/^\s*$/.test( this.tmpinvalidDates ) )
-	  	  	  {
-	  	  	  	  var	dateRegExp = new RegExp( /^\d{1,2}\/\d{1,2}\/\d{4}$/ ),
-	  	  	  	      counter = 0,
-	  	  	  	      dates = this.tmpinvalidDates.split( ',' );
-	  	  	  	  this.tmpinvalidDates = [];
-	  	  	  	  for( var i = 0, h = dates.length; i < h; i++ )
-	  	  	  	  {
-	  	  	  	  	  var range = dates[ i ].split( '-' );
+		_syncPriceDropdowns: function () {
+			var opts = '';
+			for (var m = 0; m < this.prices.length; m++) {
+				opts += '<option value="' + m + '">' + $.fbuilder.htmlEncode(this.prices[m].name || ('Tier ' + (m + 1))) + '</option>';
+			}
+			$('#tabs-2 .p1, #tabs-2 .p2').each(function () {
+				var prev = $(this).val();
+				$(this).html(opts);
+				if (prev !== null && $(this).find('option[value="' + prev + '"]').length) {
+					$(this).val(prev);
+				}
+			});
+		},
 
-	  	  	  	  	  if( range.length == 2 && range[0].match( dateRegExp ) != null && range[1].match( dateRegExp ) != null )
-	  	  	  	  	  {
-	  	  	  	  	  	  var fromD = new Date( range[ 0 ] ),
-	  	  	  	  	  	  	  toD = new Date( range[ 1 ] );
-	  	  	  	  	  	  while( fromD <= toD )
-	  	  	  	  	  	  {
-	  	  	  	  	  	  	  this.tmpinvalidDates[ counter ] = fromD;
-	  	  	  	  	  	  	  var tmp = new Date( fromD.valueOf() );
-	  	  	  	  	  	  	  tmp.setDate( tmp.getDate() + 1 );
-	  	  	  	  	  	  	  fromD = tmp;
-	  	  	  	  	  	  	  counter++;
-	  	  	  	  	  	  }
-	  	  	  	  	  }
-	  	  	  	  	  else
-	  	  	  	  	  {
-	  	  	  	  	  	  for( var j = 0, k = range.length; j < k; j++ )
-	  	  	  	  	  	  {
-	  	  	  	  	  	  	  if( range[ j ].match( dateRegExp ) != null )
-	  	  	  	  	  	  	  {
-	  	  	  	  	  	  	  	  this.tmpinvalidDates[ counter ] = new Date( range[ j ] );
-	  	  	  	  	  	  	  	  counter++;
-	  	  	  	  	  	  	  }
-	  	  	  	  	  	  }
-	  	  	  	  	  }
-	  	  	  	  }
-	  	  	  }
-	  	  	  me.special_days = new Array();
-			  for (var i=0;i<me.slots_special.length;i++)
-			      me.special_days[me.special_days.length] = me.slots_special[i].type;
-	  	      e.datepicker({numberOfMonths:parseInt(me.numberOfMonths),
-	  	  	      firstDay:parseInt(me.firstDay),
-	  	  	      minDate:me.minDateTmp,
-	  	  	      maxDate:me.maxDate,
-	  	  	      dateFormat:me.dateFormat,
-	  	  	      defaultDate:me.defaultDate,
-	  	  	      changeMonth: me.showDropdown,
-	  	  	      changeYear: me.showDropdown,
-	  	  	      yearRange: ((me.showDropdown)?me.dropdownRange:""),
-	  	  	      onSelect: function(d,inst) {
-	  	  	      	  onChangeDate(d);
-                },
-	  	  	      beforeShowDay: function (d) {
-	  	  	          var day = $.datepicker.formatDate('yy-mm-dd', d);
-                    var c =  new Array(day);
-                    if (me.working_dates[d.getDay()]==0  && ($.inArray(day, me.special_days) == -1))
-                        c.push("nonworking");
-                    for( var i = 0, l = me.tmpinvalidDates.length; i < l; i++ )
-                    {
-                    	if (d.getTime() === me.tmpinvalidDates[i].getTime())
-                    	   c.push("nonworking invalidDate");
-                    }
-                    return [true,c.join(" ")];
-	              }
-	          });
-	          me.tmpinvalidDatestime = new Array();
-            for (var i=0;i<me.tmpinvalidDates.length;i++)
-                me.tmpinvalidDatestime[i]=me.tmpinvalidDates[i].getTime();
-            function DisableSpecificDates(date) {
-                var currentdate = date.getTime();
-                if ($.inArray(currentdate, me.tmpinvalidDatestime) > -1 )
-                    return false;
-                if (me.working_dates[date.getDay()]==0)
-                    return false;
-                return true;
-            }
-            var sum = 0;
-            for (var i=0;i<7;i++)
-                sum += me.working_dates[i];
-            if (sum>0)
-            {
-	  	          var nextdateAvailable = e.datepicker("getDate");
-                while (!DisableSpecificDates(nextdateAvailable))
-                    nextdateAvailable.setDate(nextdateAvailable.getDate() + 1);
-                e.datepicker("setDate", nextdateAvailable);
-                me.getD = nextdateAvailable;
-	  	          onChangeDate($.datepicker.formatDate(me.dateFormat, nextdateAvailable));
-	  	      }
+		showSlotsPrices: function () {
+			var maxQty = Math.max(1, parseInt(this.max_quantity, 10) || 1);
+			var cols = [
+				{ key: 'price1', label: (this.quantity1 > 1 ? (this.label1 || 'Qty 1') : 'Price') }
+			];
+			if (this.quantity1 > 1 && this.quantity2 > 1) cols.push({ key: 'price2', label: this.label2 || 'Qty 2' });
+			if (this.quantity1 > 1 && this.quantity2 > 1 && this.quantity3 > 1) cols.push({ key: 'price3', label: this.label3 || 'Qty 3' });
+			if (this.quantity1 > 1 && this.quantity2 > 1 && this.quantity3 > 1 && this.quantity4 > 1) cols.push({ key: 'price4', label: this.label4 || 'Qty 4' });
+			if (this.quantity1 > 1 && this.quantity2 > 1 && this.quantity3 > 1 && this.quantity4 > 1 && this.quantity5 > 1) cols.push({ key: 'price5', label: this.label5 || 'Qty 5' });
 
-	      },
-	  	  showSpecialDataInstance: function()
-	      {
-	  	      var str = "", e   = $( '#field' + this.form_identifier + '-' + this.index + ' .sbfieldCalendar'+this.name ),dayNames  = e.datepicker( "option", "dayNames" );
-	  	      str += '<div class="sb_working_dates">Working Dates';
-	  	      for (var i=0;i<7;i++)
-	  	      {
-	  	          str += '<div class="day_header"><input name="sWD'+i+'" id="sWD'+i+'" value="'+i+'" type="checkbox" '+((this.working_dates[i])?"checked":"")+'/>'+dayNames[i]+'<a class="openSpecial" href="" n="'+i+'">Open</a><div id="day_slots'+i+'" i="'+i+'" class="day_slots"></div></div>';
-	  	      }
-	  	      str += '<div>Special Dates</div>';
-	  	      str += '<input class="dateSpecial" type="text"  value=""/><input type="button" class="addSpecial" value="Add"><div id="special_dates">';
-	  	      str += '</div></div>';
-	  	      //Minimum slots to be selected
-	  	      str += '<div class="prices"><label>Slots Price Configuration[<a class="helpfbuilder" text="Add the price offered: service name, price (number only, without currency symbol or code) and its duration">help?</a>]</label><div class="clearer"></div>';
-	  	      str += '<hr /><div class="column width50">Min slots to be selected</div><div class="column width50">';
-	  	      str += '<select class="large" id="sMin_quantity">';
-	  	      for (var j=1;j<=99;j++)
-	  	          str += '<option value="'+(j)+'" '+((this.min_quantity==j)?"selected":"")+'>'+(j)+'</option>';
-	  	      str += '</select>';
-	  	      str += '</div><div class="clearer"></div>';
-	  	      str += '<div class="column width50">Max slots to be selected</div><div class="column width50">';
-	  	      str += '<select class="large" id="sMax_quantity">';
-	  	      for (var j=1;j<=99;j++)
-	  	          str += '<option value="'+(j)+'" '+((this.max_quantity==j)?"selected":"")+'>'+(j)+'</option>';
-	  	      str += '</select>';
-	  	      str += '</div><div class="clearer"></div>';
-	  	      str += '<div class="max_quantity_scope">';//begin max_quantity_scope
-	  	      str += '<hr /><div class="column width50">Use quantity selection field</div><div class="column width50">';
-	  	      str += '<select class="large" id="sQuantity1">'+this.showQuantity('sQuantity1',this.quantity1)+'</select>';
-	  	      str += '</div><div class="clearer"></div>';
+			var str = '';
+			for (var i = 0; i < this.prices.length; i++) {
+				this.prices[i].price1 = this.prices[i].price1 || [];
+				this.prices[i].price2 = this.prices[i].price2 || [];
+				this.prices[i].price3 = this.prices[i].price3 || [];
+				this.prices[i].price4 = this.prices[i].price4 || [];
+				this.prices[i].price5 = this.prices[i].price5 || [];
 
-	  	      str += '<div class="quantity1_scope" style="display:'+((this.quantity1>1)?"":"none")+'">';//begin quantity1_scope
-	  	      str += '<div class="column width50">Start quantity at</div><div class="column width50"><select class="large" id="sQuantity1start">'+this.showStartQuantity('sQuantity1start',this.quantity1start,this.quantity1)+'</select></div><div class="clearer"></div>';
-	  	      str += '<div class="column width50">Quantity field label</div><div class="column width50"><input id="sLabel1" type="text" value="'+$.fbuilder.htmlEncode(this.label1)+'"></div><div class="clearer"></div>';
-	  	      str += '<hr /><div class="column width50">Use 2nd quantity selection field</div><div class="column width50">';
-	  	      str += '<select  class="large" id="sQuantity2">'+this.showQuantity('sQuantity2',this.quantity2)+'</select>';
-	  	      str += '</div><div class="clearer"></div>';
+				for (var k = 0; k < maxQty; k++) {
+					if (typeof this.prices[i].price1[k] === 'undefined') this.prices[i].price1[k] = 0;
+					if (typeof this.prices[i].price2[k] === 'undefined') this.prices[i].price2[k] = 0;
+					if (typeof this.prices[i].price3[k] === 'undefined') this.prices[i].price3[k] = 0;
+					if (typeof this.prices[i].price4[k] === 'undefined') this.prices[i].price4[k] = 0;
+					if (typeof this.prices[i].price5[k] === 'undefined') this.prices[i].price5[k] = 0;
+				}
 
-	  	      str += '<div class="quantity2_scope" style="display:'+((this.quantity2>1)?"":"none")+'">';//begin quantity2_scope
-	  	      str += '<div class="column width50">Quantity field label</div><div class="column width50"><input id="sLabel2" type="text" value="'+$.fbuilder.htmlEncode(this.label2)+'"></div><div class="clearer"></div>';
-	  	      str += '<hr /><div class="column width50">Use 3rd quantity selection field</div><div class="column width50">';
-	  	      str += '<select  class="large" id="sQuantity3">'+this.showQuantity('sQuantity3',this.quantity3)+'</select>';
-	  	      str += '</div><div class="clearer"></div>';
+				str += '<div class="slotspricediv wpts-price-tier ' + ((i % 2) ? 'even' : 'odd') + '">';
+				str += '<div class="wpts-price-tier-header">';
+				if (i === 0) {
+					str += '<span class="wpts-price-tier-badge">Default Tier</span>';
+				} else {
+					str += '<input type="text" class="nameSlotsprice" i="' + i + '" value="' + $.fbuilder.htmlEncode(this.prices[i].name) + '" placeholder="Price tier name" />';
+					str += '<button type="button" i="' + i + '" class="deleteSlotsprice wpts-btn-danger-xs" title="Delete price tier">Delete</button>';
+				}
+				str += '</div>';
 
-	  	      str += '<div class="quantity3_scope" style="display:'+((this.quantity3>1)?"":"none")+'">';//begin quantity3_scope
-	  	      str += '<div class="column width50">Quantity field label</div><div class="column width50"><input id="sLabel3" type="text" value="'+$.fbuilder.htmlEncode(this.label3)+'"></div><div class="clearer"></div>';
-	  	      str += '<hr /><div class="column width50">Use 4th quantity selection field</div><div class="column width50">';
-	  	      str += '<select  class="large" id="sQuantity4">'+this.showQuantity('sQuantity4',this.quantity4)+'</select>';
-	  	      str += '</div><div class="clearer"></div>';
+				str += '<div class="wpts-price-table-wrap"><table class="wpts-price-table"><thead><tr><th>Slot #</th>';
+				for (var cIdx = 0; cIdx < cols.length; cIdx++) {
+					str += '<th>' + $.fbuilder.htmlEncode(cols[cIdx].label) + '</th>';
+				}
+				str += '</tr></thead><tbody>';
 
-	  	      str += '<div class="quantity4_scope" style="display:'+((this.quantity4>1)?"":"none")+'">';//begin quantity4_scope
-	  	      str += '<div class="column width50">Quantity field label</div><div class="column width50"><input id="sLabel4" type="text" value="'+$.fbuilder.htmlEncode(this.label4)+'"></div><div class="clearer"></div>';
-	  	      str += '<hr /><div class="column width50">Use 5th quantity selection field</div><div class="column width50">';
-	  	      str += '<select  class="large" id="sQuantity5">'+this.showQuantity('sQuantity5',this.quantity5)+'</select>';
-	  	      str += '</div><div class="clearer"></div>';
+				for (var j = 0; j < maxQty; j++) {
+					str += '<tr><td class="wpts-slot-num-cell">#' + (j + 1) + '</td>';
+					for (var cI = 0; cI < cols.length; cI++) {
+						var pKey = cols[cI].key;
+						var pVal = this.prices[i][pKey][j];
+						str += '<td><input class="large ' + pKey + '" previousvalue="' + $.fbuilder.htmlEncode(pVal) + '" i="' + i + '" j="' + j + '" type="text" value="' + $.fbuilder.htmlEncode(pVal) + '" /></td>';
+					}
+					str += '</tr>';
+				}
 
-	  	      str += '<div class="quantity5_scope" style="display:'+((this.quantity5>1)?"":"none")+'"><div class="column width50">Quantity field label</div><div class="column width50"><input id="sLabel5" type="text" value="'+$.fbuilder.htmlEncode(this.label5)+'"></div><div class="clearer"></div></div>';
+				str += '</tbody></table></div></div>';
+			}
 
-	  	      str += '</div>';//end quantity4_scope
-	  	      str += '</div>';//end quantity3_scope
-	  	      str += '</div>';//end quantity2_scope
-	  	      str += '</div>';//end quantity1_scope
+			str += '<div class="wpts-price-actions">' +
+				'<button type="button" class="addSlotsprice wpts-btn-secondary-sm">+ Add Special Price Tier</button>' +
+			'</div>';
 
-	  	      str += '</div>';//end max_quantity_scope
-	  	      str += '<hr /><div><input type="checkbox" name="sFlatPrice" id="sFlatPrice" '+((this.flatPrice)?"checked":"")+'/> Check if number of persons doesn\'t affect the price (use only flat price of the time-slot)</div>';
+			this._syncPriceDropdowns();
+			$('#slots_prices').html(str);
+			return str;
+		},
 
-	  	      str += '<hr />';
-	  	      str += '<div id="slots_prices">'+this.showSlotsPrices()+'</div>';
-	  	      str += '</div>';
-	  	      var sfirst = "";
-	  	      for (var i=0;i<7;i++)
-	  	      {
-	  	          sfirst += '<option value="'+i+'" '+((i==this.firstDay)?"selected":"")+'>'+dayNames[i]+'</option>';
-	  	      }
-	  	      str += '<div><label>First Date</label><br /><label><select name="sFirstDay" id="sFirstDay">'+sfirst+'</select></div>';
-	  	      var snumberOfM = "";
-	  	      for (var i=1;i<=12;i++)
-	  	      {
-	  	          snumberOfM += '<option value="'+i+'" '+((i==this.numberOfMonths)?"selected":"")+'>'+i+'</option>';
-	  	      }
-	  	      str += '<div><label>Military Time</label><br /><label><select name="sMilitaryTime" id="sMilitaryTime"><option value="1" '+((1==this.militaryTime)?"selected":"")+'>Yes (24 hours)</option><option value="0" '+((1!=this.militaryTime)?"selected":"")+'>No (12 hours AM/PM)</option></select></div>';
-              str += '<div><label>Number of months</label><br /><label><select name="sNumberOfMonths" id="sNumberOfMonths">'+snumberOfM+'</select></div>';
-	  	      str += '<div><label>Default date [<a class="helpfbuilder" text="You can put one of the following type of values into this field:\n\nEmpty: Leave empty for current date.\n\nDate: A Fixed date with the same date format indicated in the &quot;Date Format&quot; drop-down field.\n\nNumber: A number of days from today. For example 2 represents two days from today and -1 represents yesterday.\n\nString: A smart text indicating a relative date. Relative dates must contain value (number) and period pairs; valid periods are &quot;y&quot; for years, &quot;m&quot; for months, &quot;w&quot; for weeks, and &quot;d&quot; for days. For example, &quot;+1m +7d&quot; represents one month and seven days from today.">help?</a>]</label><br /><input class="medium" name="sDefaultDate" id="sDefaultDate" value="'+$.fbuilder.htmlEncode(this.defaultDate)+'" /></div>';
-	  	      str += '<div><label>Min date [<a class="helpfbuilder" text="You can put one of the following type of values into this field:\n\nEmpty: No min Date.\n\nDate: A Fixed date with the same date format indicated in the &quot;Date Format&quot; drop-down field.\n\nNumber: A number of days from today. For example 2 represents two days from today and -1 represents yesterday. For hours interval put the character &quot;h&quot; after the number, example 6 h means 6 hours.\n\nString: A smart text indicating a relative date. Relative dates must contain value (number) and period pairs; valid periods are &quot;y&quot; for years, &quot;m&quot; for months, &quot;w&quot; for weeks, and &quot;d&quot; for days. For example, &quot;+1m +7d&quot; represents one month and seven days from today.">help?</a>]</label><br /><input class="medium" name="sMinDate" id="sMinDate" value="'+$.fbuilder.htmlEncode(this.minDate)+'" /></div>';
-	  	      str += '<div><label>Max date [<a class="helpfbuilder" text="You can put one of the following type of values into this field:\n\nEmpty: No max Date.\n\nDate: A Fixed date with the same date format indicated in the &quot;Date Format&quot; drop-down field.\n\nNumber: A number of days from today. For example 2 represents two days from today and -1 represents yesterday.\n\nString: A smart text indicating a relative date. Relative dates must contain value (number) and period pairs; valid periods are &quot;y&quot; for years, &quot;m&quot; for months, &quot;w&quot; for weeks, and &quot;d&quot; for days. For example, &quot;+1m +7d&quot; represents one month and seven days from today.">help?</a>]</label><br /><input class="medium" name="sMaxDate" id="sMaxDate" value="'+$.fbuilder.htmlEncode(this.maxDate)+'" /></div>';
-            str += '<div><label>Invalid Dates [<a class="helpfbuilder" text="To define some dates as invalid, enter the dates with the format: mm/dd/yyyy separated by comma; for example: 12/31/2014,02/20/2014 or by hyphen for intervals; for example: 12/20/2014-12/28/2014 ">help?</a>]</label><br /><input class="medium" name="sInvalidDates" id="sInvalidDates" value="'+$.fbuilder.htmlEncode(this.invalidDates)+'" /></div>';
-            str += '<div><input type="checkbox" name="sShowDropdown" id="sShowDropdown" '+((this.showDropdown)?"checked":"")+'/><label>Show Dropdown Year and Month</label><div id="divdropdownRange" style="display:'+((this.showDropdown)?"":"none")+'">Year Range [<a class="helpfbuilder" text="The range of years displayed in the year drop-down: either relative to today\'s year (&quot;-nn:+nn&quot;), absolute (&quot;nnnn:nnnn&quot;), or combinations of these formats (&quot;nnnn:-nn&quot;)">help?</a>]: <input type="text" name="sDropdownRange" id="sDropdownRange" value="'+$.fbuilder.htmlEncode(this.dropdownRange)+'"/></div></div>';
-	  	      str += '<div><input type="checkbox" name="sShowTotalCost" id="sShowTotalCost" '+((this.showTotalCost)?"checked":"")+'/><label>Show Total Cost</label><div id="divTotalCostFormat" style="display:'+((this.showTotalCost)?"":"none")+'">Total cost format [<a class="helpfbuilder" text="The string {0} will be replaced with the calculated cost. Keep the {0} reference. You can edit the currency symbol or add additional text.">help?</a>]: <input type="text" name="sShowTotalCostFormat" id="sShowTotalCostFormat" value="'+$.fbuilder.htmlEncode(this.showTotalCostFormat)+'"/></div></div>';
-	  	      str += '<div><input type="checkbox"  name="sUsedSlotsCheckbox" id="sUsedSlotsCheckbox" '+((this.usedSlotsCheckbox)?"checked":"")+'/><label>Show used slots</label></div>';
+		showQuantity: function (id, value) {
+			var str = '<option value="1" ' + (parseInt(value, 10) === 1 ? 'selected' : '') + '>Disabled</option>';
+			for (var j = 2; j <= 500; j++) {
+				str += '<option value="' + j + '" ' + (parseInt(value, 10) === j ? 'selected' : '') + '>Max selection: ' + j + '</option>';
+			}
+			$('#' + id).html(str);
+			return str;
+		},
 
-	  	      str += '<hr></hr>';
-	  	      return str;
-	      }
-	  }
+		showStartQuantity: function (id, value, maxvalue) {
+			var str = '';
+			var limit = parseInt(maxvalue, 10) || 1;
+			for (var j = 0; j <= limit; j++) {
+				str += '<option value="' + j + '" ' + (parseInt(value, 10) === j ? 'selected' : '') + '>' + j + '</option>';
+			}
+			$('#' + id).html(str);
+			return str;
+		},
+
+		display: function () {
+			var modeBadge = (parseInt(this.militaryTime, 10) === 0) ? '12h AM/PM' : '24h';
+			var slotLimitBadge = (parseInt(this.min_quantity, 10) === parseInt(this.max_quantity, 10))
+				? (this.max_quantity + ' slot' + (parseInt(this.max_quantity, 10) > 1 ? 's' : ''))
+				: (this.min_quantity + '–' + this.max_quantity + ' slots');
+
+			return '<div class="fields ' + this.name + ' fslots" id="field' + this.form_identifier + '-' + this.index + '">' +
+				'<div class="arrow ui-icon ui-icon-play"></div>' +
+				'<div title="Duplicate" class="copy ui-icon ui-icon-copy"></div>' +
+				'<div title="Delete" class="remove ui-icon ui-icon-trash"></div>' +
+				'<div class="wpts-fslots-card-top">' +
+					'<label>' + $.fbuilder.htmlEncode(this.title) + (this.required ? '<span class="wpts-req-star">*</span>' : '') + '</label>' +
+					'<div class="wpts-fslots-meta-pills">' +
+						'<span class="wpts-meta-pill">' + modeBadge + '</span>' +
+						'<span class="wpts-meta-pill">' + $.fbuilder.htmlEncode(slotLimitBadge) + '</span>' +
+					'</div>' +
+				'</div>' +
+				'<div class="dfield wpts-fslots-preview-grid">' +
+					'<div class="sbfieldCalendar' + this.name + ' wpts-fslots-cal-wrap"></div>' +
+					'<div class="slotsCalendar' + this.name + ' wpts-fslots-slots-wrap"></div>' +
+					'<span class="uh">' + $.fbuilder.htmlEncode(this.userhelp) + '</span>' +
+				'</div>' +
+				'<div class="clearer"></div>' +
+			'</div>';
+		},
+
+		showSlots: function () {
+			function isOpen(h, m, s) {
+				for (var i = 0; i < s.length; i++) {
+					if ((h * 60 + m >= s[i].h1 * 60 + s[i].m1) && (h * 60 + m <= s[i].h2 * 60 + s[i].m2)) {
+						return 'sopen';
+					}
+				}
+				return '';
+			}
+			var slots = '';
+			for (var i = 0; i < 24; i++) {
+				slots += '<div><div>' + i + '</div>';
+				for (var j = 0; j < 60; j = j + 5) {
+					slots += '<div id="d' + i + '-' + j + '" class="slot ' + isOpen(i, j, this.slots) + '"></div>';
+				}
+				slots += '</div>';
+			}
+			return slots + this.slots.length;
+		},
+
+		editItemEvents: function () {
+			var me = this;
+			if (typeof me.slotsavail === 'undefined') {
+				me.slotsavail = $.extend(true, {}, me.slotsavailInit);
+			}
+
+			$('.dateSpecial').datepicker({
+				dateFormat: me.dateFormat,
+				firstDay: parseInt(me.firstDay, 10) || 0,
+				onSelect: function () {
+					// Keep date input ready for clicking Add without collapsing settings
+				}
+			});
+
+			function msortadd(arr, newObj) {
+				if (!arr) arr = [];
+				var inserted = false;
+				if (arr.length === 0) {
+					arr[0] = $.extend({}, newObj);
+					inserted = true;
+				}
+				for (var i = 0; i < arr.length && !inserted; i++) {
+					if (newObj.min === arr[i].min) {
+						// Update existing slot at the same time instead of silently dropping
+						arr[i] = $.extend({}, newObj);
+						inserted = true;
+					} else if (i === 0 && newObj.min < arr[i].min) {
+						arr.splice(i, 0, $.extend({}, newObj));
+						inserted = true;
+					} else if (newObj.min > arr[i].min && (arr.length === i + 1 || newObj.min < arr[i + 1].min)) {
+						arr.splice(i + 1, 0, $.extend({}, newObj));
+						inserted = true;
+					}
+				}
+				return arr;
+			}
+
+			function msortSpecial(arr, d) {
+				if (!arr) arr = [];
+				var inserted = false;
+				if (arr.length === 0) {
+					arr[0] = { type: d, slots: [] };
+					inserted = true;
+				}
+				for (var i = 0; i < arr.length && !inserted; i++) {
+					if (d === arr[i].type) {
+						inserted = true;
+					} else if (i === 0 && d < arr[i].type) {
+						arr.splice(i, 0, { type: d, slots: [] });
+						inserted = true;
+					} else if (d > arr[i].type && (arr.length === i + 1 || d < arr[i + 1].type)) {
+						arr.splice(i + 1, 0, { type: d, slots: [] });
+						inserted = true;
+					}
+				}
+				return arr;
+			}
+
+			function updateDayCountBadge(dayKey, arr) {
+				var count = arr ? arr.length : 0;
+				var $badge = $('#tabs-2 .wpts-day-count[data-day="' + dayKey + '"]');
+				if ($badge.length) {
+					$badge.text(count + (count === 1 ? ' slot' : ' slots'));
+					$badge.toggleClass('wpts-day-count-empty', count === 0);
+				}
+			}
+
+			function show_day_slots(i, arr) {
+				var $container = $('#day_slots' + i + ' .onlySlots');
+				if (!$container.length) return;
+
+				updateDayCountBadge(i, arr);
+
+				if (!arr || arr.length === 0) {
+					$container.html('<div class="wpts-no-slots-msg">No time slots configured for this day yet.</div>');
+					return;
+				}
+
+				var str = '<div class="wpts-slot-chips-grid">';
+				for (var j = 0; j < arr.length; j++) {
+					var ind = parseInt(arr[j].p, 10) || 0;
+					var tierName = (ind > 0 && me.prices[ind] && me.prices[ind].name) ? me.prices[ind].name : '';
+					var timeStr = me.formattime(parseInt(arr[j].h1, 10) * 60 + parseInt(arr[j].m1, 10));
+					str += '<div class="s wpts-slot-chip" data-slot-index="' + j + '">' +
+						'<label class="wpts-slot-chip-check" title="Select for bulk delete">' +
+							'<input type="checkbox" />' +
+							'<span class="wpts-slot-chip-time">' + $.fbuilder.htmlEncode(timeStr) + '</span>' +
+						'</label>' +
+						'<span class="wpts-slot-chip-cap" title="Capacity">' + $.fbuilder.htmlEncode(arr[j].c) + '</span>' +
+						(tierName ? '<span class="wpts-slot-chip-tier" title="Price tier">' + $.fbuilder.htmlEncode(tierName) + '</span>' : '') +
+						'<button type="button" class="wpts-slot-chip-del" data-slot-index="' + j + '" title="Remove slot">&times;</button>' +
+					'</div>';
+				}
+				str += '</div>';
+				$container.html(str);
+			}
+
+			function show_day_slots_form(i, arr, ind) {
+				var $s = $('#day_slots' + i);
+				if (!$s.length) return;
+
+				var priceOpts = '';
+				for (var m = 0; m < me.prices.length; m++) {
+					priceOpts += '<option value="' + m + '">' + $.fbuilder.htmlEncode(me.prices[m].name || ('Tier ' + (m + 1))) + '</option>';
+				}
+
+				var hourOpts = '';
+				for (var h = 0; h < 24; h++) {
+					hourOpts += '<option ' + (h === 8 ? 'selected' : '') + ' value="' + h + '">' + (h < 10 ? '0' : '') + h + '</option>';
+				}
+
+				var minOptsSingle = '';
+				for (var ms = 0; ms < 60; ms++) {
+					minOptsSingle += '<option ' + (ms === 0 ? 'selected' : '') + ' value="' + ms + '">' + (ms < 10 ? '0' : '') + ms + '</option>';
+				}
+
+				var minOptsBatch = '';
+				for (var mb = 0; mb < 60; mb += 5) {
+					minOptsBatch += '<option ' + (mb === 0 ? 'selected' : '') + ' value="' + mb + '">' + (mb < 10 ? '0' : '') + mb + '</option>';
+				}
+
+				var stepOpts = '<option value="1">1 min</option>' +
+					'<option value="2">2 min</option>' +
+					'<option value="3">3 min</option>' +
+					'<option value="4">4 min</option>';
+				for (var st = 5; st <= 90; st += 5) {
+					stepOpts += '<option ' + (st === 30 ? 'selected' : '') + ' value="' + st + '">' + st + ' min</option>';
+					if (st === 10) stepOpts += '<option value="12">12 min</option>';
+				}
+				stepOpts += '<option value="120">2 hours</option>' +
+					'<option value="180">3 hours</option>' +
+					'<option value="240">4 hours</option>' +
+					'<option value="300">5 hours</option>' +
+					'<option value="360">6 hours</option>' +
+					'<option value="420">7 hours</option>' +
+					'<option value="480">8 hours</option>';
+
+				var countOpts = '';
+				for (var c = 1; c < 100; c++) {
+					countOpts += '<option ' + (c === 4 ? 'selected' : '') + ' value="' + c + '">' + c + '</option>';
+				}
+
+				var str = '<div class="add_slots_f" i="' + i + '" ind="' + ind + '">' +
+					'<div class="wpts-slot-gen-box">' +
+						'<div class="wpts-slot-gen-title">Add single time slot</div>' +
+						'<div class="wpts-slot-gen-row">' +
+							'<div class="wpts-mini-field"><span class="wpts-mini-lbl">Time</span><div class="wpts-time-pair"><select class="h1">' + hourOpts + '</select><span class="wpts-time-sep">:</span><select class="m1">' + minOptsSingle + '</select></div></div>' +
+							'<div class="wpts-mini-field wpts-mini-cap"><span class="wpts-mini-lbl">Capacity</span><input type="text" class="c1" value="1" /></div>' +
+							'<div class="wpts-mini-field wpts-mini-price"><span class="wpts-mini-lbl">Price</span><select class="p1">' + priceOpts + '</select></div>' +
+							'<div class="wpts-mini-action"><button type="button" class="add1 wpts-btn-primary-xs">+ Add</button></div>' +
+						'</div>' +
+					'</div>' +
+					'<div class="wpts-slot-gen-box">' +
+						'<div class="wpts-slot-gen-title">Generate multiple slots</div>' +
+						'<div class="wpts-slot-gen-row">' +
+							'<div class="wpts-mini-field"><span class="wpts-mini-lbl">Start</span><div class="wpts-time-pair"><select class="h2">' + hourOpts + '</select><span class="wpts-time-sep">:</span><select class="m2">' + minOptsBatch + '</select></div></div>' +
+							'<div class="wpts-mini-field"><span class="wpts-mini-lbl">Every</span><select class="s2">' + stepOpts + '</select></div>' +
+							'<div class="wpts-mini-field wpts-mini-cap"><span class="wpts-mini-lbl">Count</span><select class="n2">' + countOpts + '</select></div>' +
+						'</div>' +
+						'<div class="wpts-slot-gen-row wpts-slot-gen-row-bottom">' +
+							'<div class="wpts-mini-field wpts-mini-cap"><span class="wpts-mini-lbl">Capacity</span><input type="text" class="c2" value="1" /></div>' +
+							'<div class="wpts-mini-field wpts-mini-price"><span class="wpts-mini-lbl">Price</span><select class="p2">' + priceOpts + '</select></div>' +
+							'<div class="wpts-mini-action"><button type="button" class="add2 wpts-btn-primary-xs">+ Generate</button></div>' +
+						'</div>' +
+					'</div>' +
+				'</div>' +
+				'<div class="onlySlots" i="' + i + '" ind="' + ind + '"></div>' +
+				'<div class="wpts-slot-bulk-bar">' +
+					'<div class="wpts-slot-bulk-left">' +
+						'<button type="button" class="wpts-btn-ghost-xs wpts-select-all-slots">Select all</button>' +
+						'<button type="button" class="deletemarked wpts-btn-danger-xs">Delete marked</button>' +
+					'</div>' +
+					'<div class="wpts-slot-bulk-right">' +
+						'<button type="button" class="copySlots wpts-btn-ghost-xs" title="Copy this day\'s slots">Copy</button>' +
+						'<button type="button" class="pasteSlots wpts-btn-ghost-xs" title="Paste copied slots into this day">Paste</button>' +
+					'</div>' +
+				'</div>';
+
+				$s.html(str);
+				show_day_slots(i, arr);
+			}
+
+			function showSpecialDates() {
+				var str = '';
+				if (!me.slots_special || me.slots_special.length === 0) {
+					$('#special_dates').html('<div class="wpts-no-special-msg">No special override dates added.</div>');
+					return;
+				}
+				for (var i = 0; i < me.slots_special.length; i++) {
+					var dateKey = me.slots_special[i].type;
+					var count = me.slots_special[i].slots ? me.slots_special[i].slots.length : 0;
+					str += '<div class="wpts-day-item wpts-special-day-item">' +
+						'<div class="day_header">' +
+							'<div class="wpts-day-header-left">' +
+								'<span class="wpts-special-date-label">' + $.fbuilder.htmlEncode(dateKey) + '</span>' +
+							'</div>' +
+							'<div class="wpts-day-header-right">' +
+								'<span class="wpts-day-count ' + (count === 0 ? 'wpts-day-count-empty' : '') + '" data-day="' + $.fbuilder.htmlEncode(dateKey) + '">' + count + (count === 1 ? ' slot' : ' slots') + '</span>' +
+								'<a href="#" class="openSpecial wpts-day-toggle" n="' + $.fbuilder.htmlEncode(dateKey) + '">Edit</a>' +
+								'<a href="#" class="deleteSpecial wpts-special-del-btn" ind="' + i + '" title="Remove special date">&times;</a>' +
+							'</div>' +
+						'</div>' +
+						'<div id="day_slots' + $.fbuilder.htmlEncode(dateKey) + '" i="' + $.fbuilder.htmlEncode(dateKey) + '" class="day_slots" ind="' + i + '"></div>' +
+					'</div>';
+				}
+				$('#special_dates').html(str);
+				for (var k = 0; k < me.slots_special.length; k++) {
+					show_day_slots_form(me.slots_special[k].type, me.slots_special[k].slots, k);
+				}
+			}
+
+			try {
+				for (var dIdx = 0; dIdx < 7; dIdx++) {
+					show_day_slots_form(dIdx, me.slotsavail['d' + dIdx], 0);
+				}
+			} catch (e) {}
+			showSpecialDates();
+
+			var evt = [
+				{ s: '#sMin_quantity', e: 'change', l: 'min_quantity' },
+				{
+					s: '#sMax_quantity',
+					e: 'change',
+					l: 'max_quantity',
+					f: function (el) {
+						var v = (parseInt(el.val(), 10) >= 1);
+						$('.max_quantity_scope')[v ? 'show' : 'hide']();
+						me.max_quantity = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sQuantity1',
+					e: 'change',
+					l: 'quantity1',
+					f: function (el) {
+						var v = (parseInt(el.val(), 10) > 1);
+						$('.quantity1_scope')[v ? 'show' : 'hide']();
+						me.quantity1 = el.val();
+						me.showStartQuantity('sQuantity1start', me.quantity1start, me.quantity1);
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sQuantity1start',
+					e: 'change',
+					l: 'quantity1start',
+					f: function (el) {
+						me.quantity1start = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sLabel1',
+					e: 'input keyup',
+					l: 'label1',
+					f: function (el) {
+						me.label1 = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sQuantity2',
+					e: 'change',
+					l: 'quantity2',
+					f: function (el) {
+						var v = (parseInt(el.val(), 10) > 1);
+						$('.quantity2_scope')[v ? 'show' : 'hide']();
+						me.quantity2 = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sLabel2',
+					e: 'input keyup',
+					l: 'label2',
+					f: function (el) {
+						me.label2 = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sQuantity3',
+					e: 'change',
+					l: 'quantity3',
+					f: function (el) {
+						var v = (parseInt(el.val(), 10) > 1);
+						$('.quantity3_scope')[v ? 'show' : 'hide']();
+						me.quantity3 = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sLabel3',
+					e: 'input keyup',
+					l: 'label3',
+					f: function (el) {
+						me.label3 = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sQuantity4',
+					e: 'change',
+					l: 'quantity4',
+					f: function (el) {
+						var v = (parseInt(el.val(), 10) > 1);
+						$('.quantity4_scope')[v ? 'show' : 'hide']();
+						me.quantity4 = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sLabel4',
+					e: 'input keyup',
+					l: 'label4',
+					f: function (el) {
+						me.label4 = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sQuantity5',
+					e: 'change',
+					l: 'quantity5',
+					f: function (el) {
+						var v = (parseInt(el.val(), 10) > 1);
+						$('.quantity5_scope')[v ? 'show' : 'hide']();
+						me.quantity5 = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sLabel5',
+					e: 'input keyup',
+					l: 'label5',
+					f: function (el) {
+						me.label5 = el.val();
+						me.showSlotsPrices();
+						return el.val();
+					}
+				},
+				{
+					s: '#sUsedSlotsCheckbox',
+					e: 'change',
+					l: 'usedSlotsCheckbox',
+					f: function (el) {
+						return el.is(':checked');
+					}
+				},
+				{ s: '#sDateFormat', e: 'change', l: 'dateFormat' },
+				{ s: '#sNumberOfMonths', e: 'change', l: 'numberOfMonths' },
+				{ s: '#sFirstDay', e: 'change', l: 'firstDay' },
+				{
+					s: '#sMilitaryTime',
+					e: 'change',
+					l: 'militaryTime',
+					f: function (el) {
+						me.militaryTime = parseInt(el.val(), 10);
+						for (var d = 0; d < 7; d++) {
+							show_day_slots(d, me.slotsavail['d' + d]);
+						}
+						for (var sp = 0; sp < me.slots_special.length; sp++) {
+							show_day_slots(me.slots_special[sp].type, me.slots_special[sp].slots);
+						}
+						return me.militaryTime;
+					}
+				},
+				{ s: '#sMinDate', e: 'change', l: 'minDate' },
+				{ s: '#sMaxDate', e: 'change', l: 'maxDate' },
+				{ s: '#sInvalidDates', e: 'change', l: 'invalidDates' },
+				{ s: '#sDefaultDate', e: 'change', l: 'defaultDate' },
+				{ s: '#sDropdownRange', e: 'input keyup', l: 'dropdownRange' },
+				{ s: '#sShowTotalCostFormat', e: 'input keyup', l: 'showTotalCostFormat' },
+				{
+					s: '#sShowTotalCost',
+					e: 'change',
+					l: 'showTotalCost',
+					f: function (el) {
+						var v = el.is(':checked');
+						$('#divTotalCostFormat')[v ? 'show' : 'hide']();
+						return v;
+					}
+				},
+				{
+					s: '#sShowDropdown',
+					e: 'change',
+					l: 'showDropdown',
+					f: function (el) {
+						var v = el.is(':checked');
+						$('#divdropdownRange')[v ? 'show' : 'hide']();
+						return v;
+					}
+				},
+				{
+					s: '#sFlatPrice',
+					e: 'change',
+					l: 'flatPrice',
+					f: function (el) {
+						return el.is(':checked');
+					}
+				}
+			];
+
+			// Delegated price cell editing (price1..price5)
+			var $tabs2 = $('#tabs-2');
+			$tabs2.off('.wptsSlots');
+
+			for (var pNum = 1; pNum <= 5; pNum++) {
+				(function (priceKey) {
+					$tabs2.on('keyup.wptsSlots change.wptsSlots', 'input.' + priceKey, function () {
+						var i = parseInt($(this).attr('i'), 10),
+							j = parseInt($(this).attr('j'), 10),
+							v = $(this).val(),
+							pv = $(this).attr('previousvalue'),
+							maxQty = parseInt(me.max_quantity, 10) || 1;
+
+						for (var k = j; k < maxQty; k++) {
+							var $cell = $tabs2.find('input.' + priceKey + '[i="' + i + '"][j="' + k + '"]');
+							if ($cell.attr('previousvalue') === pv) {
+								$cell.val(v);
+								me.prices[i][priceKey][k] = v;
+							}
+						}
+						me.prices[i][priceKey][j] = v;
+						$.fbuilder.reloadItems({ field: me });
+					});
+				})('price' + pNum);
+			}
+
+			$tabs2.on('click.wptsSlots', '.addSlotsprice', function (e) {
+				e.preventDefault();
+				me.prices.push({
+					name: 'special ' + me.prices.length,
+					price1: [],
+					price2: [],
+					price3: [],
+					price4: [],
+					price5: []
+				});
+				me.showSlotsPrices();
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			$tabs2.on('click.wptsSlots', '.deleteSlotsprice', function (e) {
+				e.preventDefault();
+				var delIdx = parseInt($(this).attr('i'), 10);
+				if (isNaN(delIdx) || delIdx <= 0) return;
+				me.prices.splice(delIdx, 1);
+
+				// Keep slot price references valid after tier removal
+				var fixSlotPrices = function (arr) {
+					if (!arr) return;
+					for (var s = 0; s < arr.length; s++) {
+						var pVal = parseInt(arr[s].p, 10) || 0;
+						if (pVal === delIdx) arr[s].p = 0;
+						else if (pVal > delIdx) arr[s].p = pVal - 1;
+					}
+				};
+				for (var d = 0; d < 7; d++) {
+					fixSlotPrices(me.slotsavail['d' + d]);
+					show_day_slots(d, me.slotsavail['d' + d]);
+				}
+				for (var sp = 0; sp < me.slots_special.length; sp++) {
+					fixSlotPrices(me.slots_special[sp].slots);
+					show_day_slots(me.slots_special[sp].type, me.slots_special[sp].slots);
+				}
+
+				me.showSlotsPrices();
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			$tabs2.on('input.wptsSlots keyup.wptsSlots', 'input.nameSlotsprice', function () {
+				var idx = parseInt($(this).attr('i'), 10);
+				if (!me.prices[idx]) return;
+				me.prices[idx].name = $(this).val();
+				me._syncPriceDropdowns();
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			// Working day enable/disable checkbox
+			$tabs2.on('change.wptsSlots', '.sb_working_dates .day_header input[type="checkbox"]', function () {
+				var dayIndex = parseInt($(this).val(), 10);
+				var isChecked = $(this).is(':checked');
+				me.working_dates[dayIndex] = isChecked;
+				$(this).closest('.wpts-day-item').toggleClass('wpts-day-disabled', !isChecked);
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			// Day accordion open/close
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .openSpecial', function (e) {
+				e.preventDefault();
+				var dayKey = $(this).attr('n');
+				var $drawer = $('#day_slots' + dayKey);
+				var $header = $(this).closest('.day_header');
+				var willOpen = !$drawer.is(':visible');
+
+				$tabs2.find('.sb_working_dates .day_slots').hide();
+				$tabs2.find('.sb_working_dates .day_header').removeClass('open');
+				$tabs2.find('.sb_working_dates .openSpecial').text('Edit');
+
+				if (willOpen) {
+					$drawer.show();
+					$header.addClass('open');
+					$(this).text('Close');
+				}
+			});
+
+			// Add Special Date
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .addSpecial', function (e) {
+				e.preventDefault();
+				var rawVal = $.trim($('.dateSpecial').val());
+				if (rawVal === '') return;
+				try {
+					var d = $.datepicker.formatDate('yy-mm-dd', $.datepicker.parseDate(me.dateFormat, rawVal));
+					me.slots_special = msortSpecial(me.slots_special, d);
+					$('.dateSpecial').val('');
+					showSpecialDates();
+					// Auto-open the newly added special date drawer
+					$tabs2.find('.sb_working_dates .openSpecial[n="' + d + '"]').trigger('click');
+					$.fbuilder.reloadItems({ field: me });
+				} catch (err) {}
+			});
+
+			// Delete Special Date
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .deleteSpecial', function (e) {
+				e.preventDefault();
+				var ind = parseInt($(this).attr('ind'), 10);
+				if (isNaN(ind)) return;
+				me.slots_special.splice(ind, 1);
+				showSpecialDates();
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			// Add single slot
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .add_slots_f .add1', function (e) {
+				e.preventDefault();
+				var $f = $(this).closest('.add_slots_f');
+				var d = String($f.attr('i'));
+				var h1 = parseInt($f.find('.h1').val(), 10) || 0;
+				var m1 = parseInt($f.find('.m1').val(), 10) || 0;
+				var c1 = Math.max(1, parseInt($f.find('.c1').val(), 10) || 1);
+				var p1 = parseInt($f.find('.p1').val(), 10) || 0;
+				var newObj = { h1: h1, m1: m1, c: c1, p: p1, min: h1 * 60 + m1 };
+
+				if (d.length === 1) {
+					me.slotsavail['d' + d] = msortadd(me.slotsavail['d' + d], newObj);
+					show_day_slots(d, me.slotsavail['d' + d]);
+				} else {
+					var ind = parseInt($f.attr('ind'), 10);
+					me.slots_special[ind].slots = msortadd(me.slots_special[ind].slots, newObj);
+					show_day_slots(d, me.slots_special[ind].slots);
+				}
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			// Generate multiple slots
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .add_slots_f .add2', function (e) {
+				e.preventDefault();
+				var $f = $(this).closest('.add_slots_f');
+				var n = parseInt($f.find('.n2').val(), 10) || 1;
+				var step = parseInt($f.find('.s2').val(), 10) || 30;
+				var hStart = parseInt($f.find('.h2').val(), 10) || 0;
+				var mStart = parseInt($f.find('.m2').val(), 10) || 0;
+				var c2 = Math.max(1, parseInt($f.find('.c2').val(), 10) || 1);
+				var p2 = parseInt($f.find('.p2').val(), 10) || 0;
+				var initialMin = hStart * 60 + mStart;
+				var dayofweek = String($f.attr('i'));
+
+				for (var i = 0; i < n; i++) {
+					var totalMin = initialMin + step * i;
+					if (totalMin >= 24 * 60) break; // Never create invalid times past 23:59
+					var h = Math.floor(totalMin / 60);
+					var m = totalMin % 60;
+					var newObj = { h1: h, m1: m, c: c2, p: p2, min: totalMin };
+					if (dayofweek.length === 1) {
+						me.slotsavail['d' + dayofweek] = msortadd(me.slotsavail['d' + dayofweek], newObj);
+					} else {
+						var ind = parseInt($f.attr('ind'), 10);
+						me.slots_special[ind].slots = msortadd(me.slots_special[ind].slots, newObj);
+					}
+				}
+
+				if (dayofweek.length === 1) {
+					show_day_slots(dayofweek, me.slotsavail['d' + dayofweek]);
+				} else {
+					var indSp = parseInt($f.attr('ind'), 10);
+					show_day_slots(dayofweek, me.slots_special[indSp].slots);
+				}
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			// Quick delete single slot chip
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .wpts-slot-chip-del', function (e) {
+				e.preventDefault();
+				e.stopPropagation();
+				var slotIdx = parseInt($(this).attr('data-slot-index'), 10);
+				var $drawer = $(this).closest('.day_slots');
+				var dayofweek = String($drawer.attr('i'));
+
+				if (dayofweek.length === 1) {
+					me.slotsavail['d' + dayofweek].splice(slotIdx, 1);
+					show_day_slots(dayofweek, me.slotsavail['d' + dayofweek]);
+				} else {
+					var ind = parseInt($drawer.attr('ind'), 10);
+					me.slots_special[ind].slots.splice(slotIdx, 1);
+					show_day_slots(dayofweek, me.slots_special[ind].slots);
+				}
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			// Select / Deselect all slots in a day
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .wpts-select-all-slots', function (e) {
+				e.preventDefault();
+				var $drawer = $(this).closest('.day_slots');
+				var $checks = $drawer.find('.onlySlots input[type="checkbox"]');
+				var allChecked = $checks.length > 0 && $checks.filter(':checked').length === $checks.length;
+				$checks.prop('checked', !allChecked);
+				$(this).text(allChecked ? 'Select all' : 'Unselect all');
+			});
+
+			// Copy slots (deep-cloned so later edits don't mutate clipboard)
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .day_slots .copySlots', function (e) {
+				e.preventDefault();
+				var $btn = $(this);
+				var $drawer = $btn.closest('.day_slots');
+				var dayofweek = String($drawer.attr('i'));
+				var src = (dayofweek.length === 1)
+					? (me.slotsavail['d' + dayofweek] || [])
+					: (me.slots_special[parseInt($drawer.attr('ind'), 10)].slots || []);
+
+				me.tmpCopy = $.map(src, function (item) {
+					return $.extend({}, item);
+				});
+
+				$btn.text('Copied (' + me.tmpCopy.length + ')').addClass('wpts-btn-copied');
+				setTimeout(function () {
+					$btn.text('Copy').removeClass('wpts-btn-copied');
+				}, 1300);
+			});
+
+			// Paste slots
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .day_slots .pasteSlots', function (e) {
+				e.preventDefault();
+				me.tmpCopy = me.tmpCopy || [];
+				if (me.tmpCopy.length === 0) return;
+
+				var $drawer = $(this).closest('.day_slots');
+				var dayofweek = String($drawer.attr('i'));
+				if (dayofweek.length === 1) {
+					for (var i = 0; i < me.tmpCopy.length; i++) {
+						me.slotsavail['d' + dayofweek] = msortadd(me.slotsavail['d' + dayofweek], $.extend({}, me.tmpCopy[i]));
+					}
+					show_day_slots(dayofweek, me.slotsavail['d' + dayofweek]);
+				} else {
+					var ind = parseInt($drawer.attr('ind'), 10);
+					for (var j = 0; j < me.tmpCopy.length; j++) {
+						me.slots_special[ind].slots = msortadd(me.slots_special[ind].slots, $.extend({}, me.tmpCopy[j]));
+					}
+					show_day_slots(dayofweek, me.slots_special[ind].slots);
+				}
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			// Delete marked slots
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .day_slots .deletemarked', function (e) {
+				e.preventDefault();
+				var $drawer = $(this).closest('.day_slots');
+				var dayofweek = String($drawer.attr('i'));
+				var toDeleted = [];
+				$drawer.find('.onlySlots input[type="checkbox"]').each(function (index) {
+					if ($(this).is(':checked')) {
+						toDeleted.push(index);
+					}
+				});
+				if (toDeleted.length === 0) return;
+
+				if (dayofweek.length === 1) {
+					for (var i = toDeleted.length - 1; i >= 0; i--) {
+						me.slotsavail['d' + dayofweek].splice(toDeleted[i], 1);
+					}
+					show_day_slots(dayofweek, me.slotsavail['d' + dayofweek]);
+				} else {
+					var ind = parseInt($drawer.attr('ind'), 10);
+					for (var j = toDeleted.length - 1; j >= 0; j--) {
+						me.slots_special[ind].slots.splice(toDeleted[j], 1);
+					}
+					show_day_slots(dayofweek, me.slots_special[ind].slots);
+				}
+				$.fbuilder.reloadItems({ field: me });
+			});
+
+			// Section collapse toggles inside fslots settings
+			$tabs2.on('click.wptsSlots', '.wpts-fslots-section-toggle', function (e) {
+				e.preventDefault();
+				var $sec = $(this).closest('.wpts-fslots-section');
+				$sec.toggleClass('wpts-section-collapsed');
+			});
+
+			$.fbuilder.controls['ffields'].prototype.editItemEvents.call(this, evt);
+		},
+
+		after_show: function () {
+			function closeOtherDatepicker() {
+				$('#ui-datepicker-div').css('display', 'none');
+			}
+			setTimeout(closeOtherDatepicker, 100);
+
+			var me = this,
+				e = $('#field' + me.form_identifier + '-' + me.index + ' .sbfieldCalendar' + me.name);
+
+			function onChangeDate(d) {
+				var parsed;
+				try {
+					parsed = $.datepicker.parseDate(me.dateFormat, d);
+				} catch (err) {
+					return;
+				}
+				var day = $.datepicker.formatDate('yy-mm-dd', parsed);
+				var ind = -1;
+				for (var i = 0; ind === -1 && i < me.slots_special.length; i++) {
+					if (me.slots_special[i].type === day) ind = i;
+				}
+				var arr = (ind === -1)
+					? me.slotsavail['d' + parsed.getDay()]
+					: me.slots_special[ind].slots;
+
+				var str = '';
+				if (arr && arr.length > 0) {
+					for (var j = 0; j < arr.length; j++) {
+						var capNum = parseInt(arr[j].c, 10) || 1;
+						str += '<div class="wpts-preview-slot-pill">' +
+							'<span>' + $.fbuilder.htmlEncode(me.formattime(parseInt(arr[j].h1, 10) * 60 + parseInt(arr[j].m1, 10))) + '</span>' +
+							(capNum > 1 ? '<small class="wpts-preview-slot-cap">&times;' + capNum + '</small>' : '') +
+						'</div>';
+					}
+				} else {
+					str = '<span class="wpts-preview-no-slots">No available slots for this date</span>';
+				}
+
+				var $s = $('#field' + me.form_identifier + '-' + me.index + ' .slotsCalendar' + me.name);
+				$s.html(
+					'<div class="slots wpts-preview-slots-box">' +
+						'<div class="wpts-preview-slots-hdr">' +
+							'<strong>' + $.fbuilder.htmlEncode(d) + '</strong>' +
+							'<span>' + (arr ? arr.length : 0) + ' available</span>' +
+						'</div>' +
+						'<div class="wpts-preview-slots-list">' + str + '</div>' +
+					'</div>'
+				);
+			}
+
+			if (typeof me.slotsavail === 'undefined') {
+				me.slotsavail = $.extend(true, {}, me.slotsavailInit);
+			}
+
+			for (var i = 0; i < me.prices.length; i++) {
+				me.prices[i].price1 = me.prices[i].price1 || [];
+				me.prices[i].price2 = me.prices[i].price2 || [];
+				me.prices[i].price3 = me.prices[i].price3 || [];
+				me.prices[i].price4 = me.prices[i].price4 || [];
+				me.prices[i].price5 = me.prices[i].price5 || [];
+				for (var j = 0; j < me.prices[i].price1.length; j++) {
+					if (me.prices[i].price3.length <= j) me.prices[i].price3[j] = 0;
+					if (me.prices[i].price4.length <= j) me.prices[i].price4[j] = 0;
+					if (me.prices[i].price5.length <= j) me.prices[i].price5[j] = 0;
+				}
+			}
+
+			var minDateStr = (me.minDate !== null && typeof me.minDate !== 'undefined') ? String(me.minDate) : '';
+			me.minDateTmp = minDateStr;
+			if (minDateStr.toLowerCase().indexOf('h') !== -1) {
+				var h = parseFloat(minDateStr.toLowerCase().replace(/h/gi, '')) || 0;
+				me.minDateTmp = new Date((new Date()).getTime() + h * 60 * 60 * 1000);
+			} else if (minDateStr !== '' && minDateStr == parseInt(minDateStr, 10)) {
+				me.minDateTmp = new Date((new Date()).getTime() + parseInt(minDateStr, 10) * 24 * 60 * 60 * 1000);
+			}
+
+			this.tmpinvalidDates = String(this.invalidDates || '').replace(/\s+/g, '');
+			if (!/^\s*$/.test(this.tmpinvalidDates)) {
+				var dateRegExp = /^\d{1,2}\/\d{1,2}\/\d{4}$/,
+					counter = 0,
+					dates = this.tmpinvalidDates.split(',');
+				this.tmpinvalidDates = [];
+				for (var dI = 0, dH = dates.length; dI < dH; dI++) {
+					var range = dates[dI].split('-');
+					if (range.length === 2 && dateRegExp.test(range[0]) && dateRegExp.test(range[1])) {
+						var fromD = new Date(range[0]),
+							toD = new Date(range[1]);
+						var rangeGuard = 0;
+						while (fromD <= toD && rangeGuard < 1000) {
+							this.tmpinvalidDates[counter++] = fromD;
+							var tmp = new Date(fromD.valueOf());
+							tmp.setDate(tmp.getDate() + 1);
+							fromD = tmp;
+							rangeGuard++;
+						}
+					} else {
+						for (var rJ = 0, rK = range.length; rJ < rK; rJ++) {
+							if (dateRegExp.test(range[rJ])) {
+								this.tmpinvalidDates[counter++] = new Date(range[rJ]);
+							}
+						}
+					}
+				}
+			} else {
+				this.tmpinvalidDates = [];
+			}
+
+			me.special_days = [];
+			for (var spI = 0; spI < me.slots_special.length; spI++) {
+				me.special_days.push(me.slots_special[spI].type);
+			}
+
+			e.datepicker({
+				numberOfMonths: parseInt(me.numberOfMonths, 10) || 1,
+				firstDay: parseInt(me.firstDay, 10) || 0,
+				minDate: me.minDateTmp,
+				maxDate: me.maxDate,
+				dateFormat: me.dateFormat,
+				defaultDate: me.defaultDate,
+				changeMonth: !!me.showDropdown,
+				changeYear: !!me.showDropdown,
+				yearRange: me.showDropdown ? me.dropdownRange : '',
+				onSelect: function (d) {
+					onChangeDate(d);
+				},
+				beforeShowDay: function (d) {
+					var day = $.datepicker.formatDate('yy-mm-dd', d);
+					var c = [day];
+					var isSpecial = ($.inArray(day, me.special_days) !== -1);
+					if (isSpecial) c.push('specialDates');
+					if (!me.working_dates[d.getDay()] && !isSpecial) {
+						c.push('nonworking');
+					}
+					for (var k = 0, l = me.tmpinvalidDates.length; k < l; k++) {
+						if (d.getTime() === me.tmpinvalidDates[k].getTime()) {
+							c.push('nonworking invalidDate');
+						}
+					}
+					return [true, c.join(' ')];
+				}
+			});
+
+			me.tmpinvalidDatestime = [];
+			for (var invI = 0; invI < me.tmpinvalidDates.length; invI++) {
+				me.tmpinvalidDatestime[invI] = me.tmpinvalidDates[invI].getTime();
+			}
+
+			function isDateSelectable(date) {
+				if (!date) return true;
+				var currentdate = date.getTime();
+				if ($.inArray(currentdate, me.tmpinvalidDatestime) > -1) return false;
+				if (!me.working_dates[date.getDay()]) return false;
+				return true;
+			}
+
+			var sum = 0;
+			for (var wI = 0; wI < 7; wI++) {
+				sum += (me.working_dates[wI] ? 1 : 0);
+			}
+			if (sum > 0) {
+				var nextdateAvailable = e.datepicker('getDate') || new Date();
+				var safety = 0;
+				while (!isDateSelectable(nextdateAvailable) && safety < 730) {
+					nextdateAvailable.setDate(nextdateAvailable.getDate() + 1);
+					safety++;
+				}
+				e.datepicker('setDate', nextdateAvailable);
+				me.getD = nextdateAvailable;
+				onChangeDate($.datepicker.formatDate(me.dateFormat, nextdateAvailable));
+			}
+		},
+
+		showSpecialDataInstance: function () {
+			if (typeof this.slotsavail === 'undefined') {
+				this.slotsavail = $.extend(true, {}, this.slotsavailInit);
+			}
+			var dayNames = this._getDayNames();
+			var str = '';
+
+			// SECTION 1: Weekly Schedule & Special Dates
+			str += '<div class="wpts-fslots-section">' +
+				'<div class="wpts-fslots-section-header wpts-fslots-section-toggle">' +
+					'<span class="wpts-fslots-section-title">Weekly Schedule &amp; Special Dates</span>' +
+					'<span class="wpts-fslots-chevron" aria-hidden="true">&#9662;</span>' +
+				'</div>' +
+				'<div class="wpts-fslots-section-body">' +
+					'<div class="sb_working_dates">';
+
+			for (var i = 0; i < 7; i++) {
+				var isWorking = !!this.working_dates[i];
+				var dayArr = this.slotsavail['d' + i] || [];
+				var cnt = dayArr.length;
+				str += '<div class="wpts-day-item ' + (isWorking ? '' : 'wpts-day-disabled') + '">' +
+					'<div class="day_header">' +
+						'<label class="wpts-day-header-left" for="sWD' + i + '">' +
+							'<input name="sWD' + i + '" id="sWD' + i + '" value="' + i + '" type="checkbox" ' + (isWorking ? 'checked' : '') + ' />' +
+							'<span>' + $.fbuilder.htmlEncode(dayNames[i]) + '</span>' +
+						'</label>' +
+						'<div class="wpts-day-header-right">' +
+							'<span class="wpts-day-count ' + (cnt === 0 ? 'wpts-day-count-empty' : '') + '" data-day="' + i + '">' + cnt + (cnt === 1 ? ' slot' : ' slots') + '</span>' +
+							'<a class="openSpecial wpts-day-toggle" href="#" n="' + i + '">Edit</a>' +
+						'</div>' +
+					'</div>' +
+					'<div id="day_slots' + i + '" i="' + i + '" class="day_slots"></div>' +
+				'</div>';
+			}
+
+			str += '<div class="wpts-special-dates-box">' +
+					'<div class="wpts-special-dates-title">Special / Override Dates</div>' +
+					'<div class="wpts-special-add-row">' +
+						'<input class="dateSpecial" type="text" value="" placeholder="Pick a date..." />' +
+						'<button type="button" class="addSpecial wpts-btn-primary-xs">+ Add Date</button>' +
+					'</div>' +
+					'<div id="special_dates"></div>' +
+				'</div>' +
+			'</div>' + // .sb_working_dates
+			'</div></div>'; // .wpts-fslots-section
+
+			// SECTION 2: Booking Limits, Quantities & Pricing
+			str += '<div class="wpts-fslots-section">' +
+				'<div class="wpts-fslots-section-header wpts-fslots-section-toggle">' +
+					'<span class="wpts-fslots-section-title">Booking Limits &amp; Pricing <a class="helpfbuilder" text="Configure how many time slots a customer can select, optional quantity selectors (e.g. Adults / Children), and slot pricing tiers (numbers only, without currency symbols).">?</a></span>' +
+					'<span class="wpts-fslots-chevron" aria-hidden="true">&#9662;</span>' +
+				'</div>' +
+				'<div class="wpts-fslots-section-body">' +
+					'<div class="prices">' +
+						'<div class="wpts-setting-row-2">' +
+							'<div class="wpts-setting-group">' +
+								'<label for="sMin_quantity">Min slots</label>' +
+								'<select class="large" id="sMin_quantity">';
+			for (var j = 1; j <= 99; j++) {
+				str += '<option value="' + j + '" ' + (parseInt(this.min_quantity, 10) === j ? 'selected' : '') + '>' + j + '</option>';
+			}
+			str += '</select></div>' +
+							'<div class="wpts-setting-group">' +
+								'<label for="sMax_quantity">Max slots</label>' +
+								'<select class="large" id="sMax_quantity">';
+			for (var j2 = 1; j2 <= 99; j2++) {
+				str += '<option value="' + j2 + '" ' + (parseInt(this.max_quantity, 10) === j2 ? 'selected' : '') + '>' + j2 + '</option>';
+			}
+			str += '</select></div></div>';
+
+			// Quantities 1-5
+			str += '<div class="max_quantity_scope wpts-qty-stack">' +
+				'<div class="wpts-setting-group">' +
+					'<label for="sQuantity1">Quantity selector #1</label>' +
+					'<select class="large" id="sQuantity1">' + this.showQuantity('sQuantity1', this.quantity1) + '</select>' +
+				'</div>' +
+				'<div class="quantity1_scope wpts-qty-sub" style="display:' + (parseInt(this.quantity1, 10) > 1 ? 'flex' : 'none') + '">' +
+					'<div class="wpts-setting-row-2">' +
+						'<div class="wpts-setting-group"><label for="sQuantity1start">Start at</label><select class="large" id="sQuantity1start">' + this.showStartQuantity('sQuantity1start', this.quantity1start, this.quantity1) + '</select></div>' +
+						'<div class="wpts-setting-group"><label for="sLabel1">Label #1</label><input id="sLabel1" type="text" value="' + $.fbuilder.htmlEncode(this.label1) + '" placeholder="e.g. Adults" /></div>' +
+					'</div>' +
+					'<div class="wpts-setting-group"><label for="sQuantity2">Quantity selector #2</label><select class="large" id="sQuantity2">' + this.showQuantity('sQuantity2', this.quantity2) + '</select></div>' +
+					'<div class="quantity2_scope wpts-qty-sub" style="display:' + (parseInt(this.quantity2, 10) > 1 ? 'flex' : 'none') + '">' +
+						'<div class="wpts-setting-group"><label for="sLabel2">Label #2</label><input id="sLabel2" type="text" value="' + $.fbuilder.htmlEncode(this.label2) + '" placeholder="e.g. Children" /></div>' +
+						'<div class="wpts-setting-group"><label for="sQuantity3">Quantity selector #3</label><select class="large" id="sQuantity3">' + this.showQuantity('sQuantity3', this.quantity3) + '</select></div>' +
+						'<div class="quantity3_scope wpts-qty-sub" style="display:' + (parseInt(this.quantity3, 10) > 1 ? 'flex' : 'none') + '">' +
+							'<div class="wpts-setting-group"><label for="sLabel3">Label #3</label><input id="sLabel3" type="text" value="' + $.fbuilder.htmlEncode(this.label3) + '" placeholder="Label #3" /></div>' +
+							'<div class="wpts-setting-group"><label for="sQuantity4">Quantity selector #4</label><select class="large" id="sQuantity4">' + this.showQuantity('sQuantity4', this.quantity4) + '</select></div>' +
+							'<div class="quantity4_scope wpts-qty-sub" style="display:' + (parseInt(this.quantity4, 10) > 1 ? 'flex' : 'none') + '">' +
+								'<div class="wpts-setting-group"><label for="sLabel4">Label #4</label><input id="sLabel4" type="text" value="' + $.fbuilder.htmlEncode(this.label4) + '" placeholder="Label #4" /></div>' +
+								'<div class="wpts-setting-group"><label for="sQuantity5">Quantity selector #5</label><select class="large" id="sQuantity5">' + this.showQuantity('sQuantity5', this.quantity5) + '</select></div>' +
+								'<div class="quantity5_scope wpts-qty-sub" style="display:' + (parseInt(this.quantity5, 10) > 1 ? 'flex' : 'none') + '">' +
+									'<div class="wpts-setting-group"><label for="sLabel5">Label #5</label><input id="sLabel5" type="text" value="' + $.fbuilder.htmlEncode(this.label5) + '" placeholder="Label #5" /></div>' +
+								'</div>' +
+							'</div>' +
+						'</div>' +
+					'</div>' +
+				'</div>' +
+			'</div>';
+
+			str += '<label class="wpts-checkbox-row wpts-checkbox-card">' +
+				'<input type="checkbox" name="sFlatPrice" id="sFlatPrice" ' + (this.flatPrice ? 'checked' : '') + ' />' +
+				'<span>Flat price per slot (quantity does not multiply price)</span>' +
+			'</label>';
+
+			str += '<div id="slots_prices">' + this.showSlotsPrices() + '</div>';
+			str += '</div></div></div>'; // .prices, .wpts-fslots-section-body, .wpts-fslots-section
+
+			// SECTION 3: Calendar Display & Date Rules
+			var sfirst = '';
+			for (var f = 0; f < 7; f++) {
+				sfirst += '<option value="' + f + '" ' + (f === parseInt(this.firstDay, 10) ? 'selected' : '') + '>' + $.fbuilder.htmlEncode(dayNames[f]) + '</option>';
+			}
+			var snumberOfM = '';
+			for (var nm = 1; nm <= 12; nm++) {
+				snumberOfM += '<option value="' + nm + '" ' + (nm === parseInt(this.numberOfMonths, 10) ? 'selected' : '') + '>' + nm + '</option>';
+			}
+
+			str += '<div class="wpts-fslots-section">' +
+				'<div class="wpts-fslots-section-header wpts-fslots-section-toggle">' +
+					'<span class="wpts-fslots-section-title">Calendar Display &amp; Date Rules</span>' +
+					'<span class="wpts-fslots-chevron" aria-hidden="true">&#9662;</span>' +
+				'</div>' +
+				'<div class="wpts-fslots-section-body">' +
+					'<div class="wpts-setting-row-2">' +
+						'<div class="wpts-setting-group"><label for="sFirstDay">Week starts on</label><select class="large" name="sFirstDay" id="sFirstDay">' + sfirst + '</select></div>' +
+						'<div class="wpts-setting-group"><label for="sNumberOfMonths">Months visible</label><select class="large" name="sNumberOfMonths" id="sNumberOfMonths">' + snumberOfM + '</select></div>' +
+					'</div>' +
+					'<div class="wpts-setting-group">' +
+						'<label for="sMilitaryTime">Time format</label>' +
+						'<select class="large" name="sMilitaryTime" id="sMilitaryTime">' +
+							'<option value="1" ' + (parseInt(this.militaryTime, 10) === 1 ? 'selected' : '') + '>24-hour (e.g. 14:00)</option>' +
+							'<option value="0" ' + (parseInt(this.militaryTime, 10) !== 1 ? 'selected' : '') + '>12-hour AM/PM (e.g. 2:00 PM)</option>' +
+						'</select>' +
+					'</div>' +
+					'<div class="wpts-setting-row-2">' +
+						'<div class="wpts-setting-group">' +
+							'<label for="sMinDate">Min date <a class="helpfbuilder" text="Leave empty for no min date.\n\nUse a fixed date matching the Date Format, a number of days from today (e.g. 0 = today, 2 = in 2 days), hours with &quot;h&quot; (e.g. 6h), or relative periods like &quot;+1m +7d&quot;.">?</a></label>' +
+							'<input class="large" name="sMinDate" id="sMinDate" value="' + $.fbuilder.htmlEncode(this.minDate) + '" placeholder="e.g. 0 or 6h" />' +
+						'</div>' +
+						'<div class="wpts-setting-group">' +
+							'<label for="sMaxDate">Max date <a class="helpfbuilder" text="Leave empty for no max date.\n\nUse a fixed date, a number of days from today (e.g. 30), or relative periods like &quot;+2m&quot;.">?</a></label>' +
+							'<input class="large" name="sMaxDate" id="sMaxDate" value="' + $.fbuilder.htmlEncode(this.maxDate) + '" placeholder="e.g. +3m" />' +
+						'</div>' +
+					'</div>' +
+					'<div class="wpts-setting-group">' +
+						'<label for="sDefaultDate">Default date <a class="helpfbuilder" text="Leave empty for today.\n\nUse a fixed date, a number of days from today (e.g. 2 or -1), or relative periods like &quot;+1m +7d&quot;.">?</a></label>' +
+						'<input class="large" name="sDefaultDate" id="sDefaultDate" value="' + $.fbuilder.htmlEncode(this.defaultDate) + '" placeholder="Optional initial date" />' +
+					'</div>' +
+					'<div class="wpts-setting-group">' +
+						'<label for="sInvalidDates">Blocked / Invalid dates <a class="helpfbuilder" text="Enter dates in mm/dd/yyyy format separated by commas (e.g. 12/25/2026, 01/01/2027) or hyphenated ranges (e.g. 12/20/2026-12/28/2026).">?</a></label>' +
+						'<input class="large" name="sInvalidDates" id="sInvalidDates" value="' + $.fbuilder.htmlEncode(this.invalidDates) + '" placeholder="mm/dd/yyyy, mm/dd/yyyy-mm/dd/yyyy" />' +
+					'</div>' +
+					'<div class="wpts-setting-group wpts-checkbox-stack">' +
+						'<label class="wpts-checkbox-row"><input type="checkbox" name="sShowDropdown" id="sShowDropdown" ' + (this.showDropdown ? 'checked' : '') + ' /><span>Show month &amp; year dropdown selectors</span></label>' +
+						'<div id="divdropdownRange" class="wpts-nested-input" style="display:' + (this.showDropdown ? 'block' : 'none') + '">' +
+							'<label for="sDropdownRange">Year range <a class="helpfbuilder" text="Relative to current year (e.g. &quot;-10:+10&quot;) or absolute years (e.g. &quot;2025:2030&quot;).">?</a></label>' +
+							'<input type="text" class="large" name="sDropdownRange" id="sDropdownRange" value="' + $.fbuilder.htmlEncode(this.dropdownRange) + '" />' +
+						'</div>' +
+						'<label class="wpts-checkbox-row"><input type="checkbox" name="sShowTotalCost" id="sShowTotalCost" ' + (this.showTotalCost ? 'checked' : '') + ' /><span>Show total cost below slots</span></label>' +
+						'<div id="divTotalCostFormat" class="wpts-nested-input" style="display:' + (this.showTotalCost ? 'block' : 'none') + '">' +
+							'<label for="sShowTotalCostFormat">Total cost format <a class="helpfbuilder" text="Keep {0} where the calculated price should appear. Example: $ {0} or {0} EUR">?</a></label>' +
+							'<input type="text" class="large" name="sShowTotalCostFormat" id="sShowTotalCostFormat" value="' + $.fbuilder.htmlEncode(this.showTotalCostFormat) + '" />' +
+						'</div>' +
+						'<label class="wpts-checkbox-row"><input type="checkbox" name="sUsedSlotsCheckbox" id="sUsedSlotsCheckbox" ' + (this.usedSlotsCheckbox ? 'checked' : '') + ' /><span>Show already booked (used) slots</span></label>' +
+					'</div>' +
+				'</div>' +
+			'</div>';
+
+			return str;
+		}
+	}
 );

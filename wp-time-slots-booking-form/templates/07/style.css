@@ -1,28 +1,105 @@
-.sb_m #fbuilder .ui-datepicker table, .sb_m #fbuilder .ui-datepicker thead, .sb_m #fbuilder .ui-datepicker tr, .sb_m #fbuilder .ui-datepicker th, .sb_m #fbuilder .ui-datepicker td {border: 0px;}
-.sb_m #fbuilder .ui-datepicker{box-shadow:none;font:inherit}
-.sb_m #fbuilder .ui-datepicker-header{background:none;padding:0px}
-.sb_m #fbuilder .ui-datepicker-header{text-shadow:none;color:inherit}
-.sb_m #fbuilder .ui-datepicker-calendar .ui-state-default{background:none;box-shadow: none;}
-.sb_m #fbuilder .ui-datepicker-calendar .ui-state-active{box-shadow:none;text-shadow:none;color:#2271b3;border:0px solid}
-.sb_m #fbuilder .ui-datepicker thead{background:none}
-
-.sb_m #fbuilder .dfield.fslots{display: flex;flex-wrap: wrap;}
-.sb_m #fbuilder .usedSlots,.sb_m #fbuilder .totalCost{width: 100%;}  
-.sb_m #fbuilder .sbfieldCalendar,#fbuilder .slotsCalendar{
-    width: auto;
-    display: inline-flex;
-    flex: 1;
-    
+/* Template 07: Modern (Side-by-Side Calendar & Time Slots) */
+.sb_m #fbuilder .ui-datepicker table,
+.sb_m #fbuilder .ui-datepicker thead,
+.sb_m #fbuilder .ui-datepicker tr,
+.sb_m #fbuilder .ui-datepicker th,
+.sb_m #fbuilder .ui-datepicker td {
+	border: 0;
 }
+.sb_m #fbuilder .ui-datepicker {
+	box-shadow: none;
+	font: inherit;
+	border: 1px solid #e2e8f0;
+	border-radius: 10px;
+	background: #ffffff;
+}
+.sb_m #fbuilder .ui-datepicker-header {
+	background: none;
+	padding: 6px 4px;
+	text-shadow: none;
+	color: inherit;
+	border: 0;
+}
+.sb_m #fbuilder .ui-datepicker-calendar .ui-state-default {
+	background: none;
+	box-shadow: none;
+	border-radius: 6px;
+}
+.sb_m #fbuilder .ui-datepicker-calendar .ui-state-active {
+	box-shadow: none;
+	text-shadow: none;
+	color: #ffffff;
+	background: #2271b3;
+	border: 0;
+}
+.sb_m #fbuilder .ui-datepicker thead {
+	background: none;
+}
+
+.sb_m #fbuilder .dfield.fslots {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 14px;
+}
+.sb_m #fbuilder .usedSlots,
+.sb_m #fbuilder .totalCost {
+	width: 100%;
+	flex: 0 0 100%;
+}
+.sb_m #fbuilder .sbfieldCalendar,
+.sb_m #fbuilder .slotsCalendar {
+	width: auto;
+	display: flex;
+	flex: 1 1 280px;
+	min-width: 0;
+}
+.sb_m #fbuilder .ui-datepicker-inline {
+	width: 100%;
+	max-width: 100%;
+}
+.sb_m #fbuilder .slots {
+	margin-top: 0;
+	border: 1px solid #e2e8f0;
+	box-shadow: none;
+}
+
+.sb_m #fbuilder .ui-datepicker-next,
+.sb_m #fbuilder .ui-datepicker-prev {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border: 0;
+	border-top: 2px solid #0f172a;
+	border-right: 2px solid #0f172a;
+	background: none !important;
+	margin: 10px;
+	cursor: pointer;
+}
+.sb_m #fbuilder .ui-datepicker-next {
+	transform: rotate(45deg);
+}
+.sb_m #fbuilder .ui-datepicker-prev {
+	transform: rotate(-135deg);
+}
+.sb_m #fbuilder .ui-datepicker-next span,
+.sb_m #fbuilder .ui-datepicker-prev span {
+	background: none;
+}
+
 @media (max-width: 767px) {
- .sb_m #fbuilder .dfield.fslots{display: block}
- .sb_m #fbuilder .slots{margin:0px;padding:0px}
-
-.sb_m #fbuilder .ui-datepicker-header{padding:0px 3%}
+	.sb_m #fbuilder .dfield.fslots {
+		display: block;
+	}
+	.sb_m #fbuilder .sbfieldCalendar,
+	.sb_m #fbuilder .slotsCalendar {
+		display: block;
+		width: 100%;
+	}
+	.sb_m #fbuilder .slots {
+		margin-top: 12px;
+	}
+	.sb_m #fbuilder .ui-datepicker-header {
+		padding: 6px 3%;
+	}
 }
-.sb_m #fbuilder .ui-datepicker-inline{max-width:calc(97%);}   
-.sb_m #fbuilder .slots{border:0px;box-shadow:none;}	
-
-.sb_m #fbuilder .ui-datepicker-next,.sb_m #fbuilder .ui-datepicker-prev {display: inline-block;width: 10px;height: 10px;border-top: 2px solid #000;border-right: 2px solid #000;background:none;margin:10px;}
-.sb_m #fbuilder .ui-datepicker-next {transform: rotate(45deg);}
-.sb_m #fbuilder .ui-datepicker-prev {transform: rotate(-135deg);}

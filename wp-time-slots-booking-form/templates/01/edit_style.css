@@ -10,7 +10,7 @@
 .cp_cff_letter #fbuilder td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: inherit; background: #f7f7f7;}
 
 .cp_cff_letter #fbuilder .slots div a{background-color: #ededed;padding:4px;}
-.cp_cff_letter #fbuilder .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+.cp_cff_letter #fbuilder .slots div:not(.usedslot)  a:hover{background-color: #f7f7f7;}
 
 .cp_cff_letter #fbuilder .pbSubmit{color:#fff;font-size:13px;font-weight:bold;margin: 10px 10px 0px 0px;padding: 5px 20px;}
 .cp_cff_letter #fbuilder .pbSubmit:hover {color: inherit}

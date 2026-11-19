@@ -11,7 +11,7 @@
 .sb_m2 #fbuilder td:not(.ui-datepicker-unselectable) a.ui-state-default{color:inherit;background-color:inherit;}
 .sb_m2 #fbuilder td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: #FFF; background: #66CCFF;}
 .sb_m2 #fbuilder .slots div a{color:inherit;background-color: #f8f8f8;padding:8px 12px;border-color:#66CCFF}
-.sb_m2 #fbuilder .slots div:not(.htmlUsed)  a:hover{color:#fff;background-color: #66CCFF;}
+.sb_m2 #fbuilder .slots div:not(.usedslot)  a:hover{color:#fff;background-color: #66CCFF;}
 .sb_m2 #fbuilder .pbSubmit {
     background-color: #ccc;
     color: #000;

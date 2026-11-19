@@ -1,5 +1,6 @@
 .cp_cff_professional{border-radius:10px;padding:10px;background: linear-gradient(to bottom,  #5e513e 0%,#423524 100%);}
 .cp_cff_professional #fbuilder{ color:#FFF;text-shadow:0px 1px 0px #000000;}
+.cp_cff_professional #fbuilder .fields > label{ color:#FFF; }
 
 .cp_cff_professional #fbuilder input{
 border-bottom:1px solid #776D5D;
@@ -18,7 +19,7 @@ border-radius:10px;}
 .cp_cff_professional #fbuilder td:not(.ui-datepicker-unselectable) a.ui-state-default{color:#666666;background:#dedede;}
 .cp_cff_professional #fbuilder td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: #666666; background: #f7f7f7;}
 .cp_cff_professional #fbuilder .slots div a{background-color: #ededed;padding:4px;}
-.cp_cff_professional #fbuilder .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+.cp_cff_professional #fbuilder .slots div:not(.usedslot)  a:hover{background-color: #f7f7f7;}
 
 
 .cp_cff_professional #fbuilder .pbSubmit{color:#fff;font-size:13px;font-weight:bold;text-shadow:0px 1px 0px #000;border-radius:5px;}

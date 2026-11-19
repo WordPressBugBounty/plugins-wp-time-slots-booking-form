@@ -891,7 +891,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
             wp_deregister_script( 'tribe-events-bootstrap-datepicker' );
             wp_register_script('tribe-events-bootstrap-datepicker', plugins_url('/js/nope.js', __FILE__));             
             
-            wp_enqueue_script( $this->prefix.'_builder_script', $this->get_site_url( true ).'/?cp_cptslotsb_resources=admin&nc=1',array("jquery","jquery-ui-core","jquery-ui-sortable","jquery-ui-tabs","jquery-ui-droppable","jquery-ui-button","jquery-ui-datepicker") );
+            wp_enqueue_script( $this->prefix.'_builder_script', $this->get_site_url( true ).'/?cp_cptslotsb_resources=admin&nc=1',array("jquery","jquery-ui-core","jquery-ui-draggable","jquery-ui-sortable","jquery-ui-tabs","jquery-ui-droppable","jquery-ui-button","jquery-ui-datepicker") );
 
             if (isset($_GET["calendarview"]) && $_GET["calendarview"] == '1')
             {

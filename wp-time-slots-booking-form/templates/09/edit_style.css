@@ -19,7 +19,7 @@
 	color: #000;
 	padding:8px 12px;
 }
-.ahb_m3 #fbuilder .slots div:not(.htmlUsed)  a:hover {
+.ahb_m3 #fbuilder .slots div:not(.usedslot)  a:hover {
 	background:#66CCFF;
 	color:#fff;
 }
