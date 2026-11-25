@@ -332,6 +332,10 @@ class CP_TimeSlotsBooking_GDPR {
             $processed++;
         }
 
+        if ( is_object( $this->plugin ) && method_exists( $this->plugin, 'purge_legacy_public_ical_files' ) ) {
+            $this->plugin->purge_legacy_public_ical_files();
+        }
+
         return $processed;
     }
 
@@ -403,12 +407,15 @@ class CP_TimeSlotsBooking_GDPR {
      */
     public function cleanup_files_on_delete( $id ) {
         global $wpdb;
+        $id = intval( $id );
+        $this->delete_legacy_ical_files_for_booking( $id );
+
         if ( self::get_setting( 'delete_uploads', '1' ) !== '1' ) {
             return;
         }
 
         $table  = $wpdb->prefix . $this->plugin->table_messages;
-        $posted = $wpdb->get_var( $wpdb->prepare( "SELECT posted_data FROM {$table} WHERE id = %d", intval( $id ) ) );
+        $posted = $wpdb->get_var( $wpdb->prepare( "SELECT posted_data FROM {$table} WHERE id = %d", $id ) );
         if ( ! empty( $posted ) ) {
             $this->delete_uploaded_files( maybe_unserialize( $posted ) );
         }
@@ -433,6 +440,7 @@ class CP_TimeSlotsBooking_GDPR {
         if ( self::get_setting( 'delete_uploads', '1' ) === '1' ) {
             $this->delete_uploaded_files( $posted );
         }
+        $this->delete_legacy_ical_files_for_booking( $row->id );
         $wpdb->delete(
             $wpdb->prefix . $this->plugin->table_messages,
             array( 'id' => intval( $row->id ) ),
@@ -446,6 +454,7 @@ class CP_TimeSlotsBooking_GDPR {
         if ( self::get_setting( 'delete_uploads', '1' ) === '1' ) {
             $this->delete_uploaded_files( $posted );
         }
+        $this->delete_legacy_ical_files_for_booking( $row->id );
 
         $safe_posted = array(
             'gdpr_anonymized'   => current_time( 'mysql' ),
@@ -495,14 +504,53 @@ class CP_TimeSlotsBooking_GDPR {
         if ( ! $base_dir ) {
             return;
         }
+        $base_dir = trailingslashit( wp_normalize_path( $base_dir ) );
 
         foreach ( $posted as $key => $val ) {
             if ( substr( (string) $key, -5 ) === '_link' && is_array( $val ) ) {
                 foreach ( $val as $file_path ) {
                     $real = is_string( $file_path ) ? realpath( $file_path ) : false;
-                    if ( $real && strpos( $real, $base_dir ) === 0 && is_file( $real ) ) {
+                    if ( $real && strpos( wp_normalize_path( $real ), $base_dir ) === 0 && is_file( $real ) ) {
                         wp_delete_file( $real );
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove any legacy publicly-stored iCal files in wp-content/uploads
+     * belonging to a specific booking ID.
+     */
+    private function delete_legacy_ical_files_for_booking( $booking_id ) {
+        $booking_id = intval( $booking_id );
+        if ( $booking_id <= 0 ) {
+            return;
+        }
+
+        $upload_dirs = array();
+        $uploads     = wp_upload_dir();
+        if ( ! empty( $uploads['basedir'] ) ) {
+            $upload_dirs[] = trailingslashit( wp_normalize_path( $uploads['basedir'] ) );
+        }
+        $default_uploads = trailingslashit( wp_normalize_path( WP_CONTENT_DIR . '/uploads' ) );
+        if ( ! in_array( $default_uploads, $upload_dirs, true ) ) {
+            $upload_dirs[] = $default_uploads;
+        }
+
+        $pattern = '/^Appointment_' . $booking_id . '_\d+(?:_admin|_c)?\.ics$/i';
+
+        foreach ( $upload_dirs as $dir ) {
+            if ( ! is_dir( $dir ) ) {
+                continue;
+            }
+            $matches = glob( $dir . 'Appointment_' . $booking_id . '_*.ics' );
+            if ( ! is_array( $matches ) ) {
+                continue;
+            }
+            foreach ( $matches as $file ) {
+                if ( preg_match( $pattern, basename( $file ) ) && is_file( $file ) ) {
+                    wp_delete_file( $file );
                 }
             }
         }

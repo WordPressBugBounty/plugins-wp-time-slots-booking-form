@@ -33,6 +33,14 @@ if (isset($_POST["gotab"]))
             $message = __('All stored IP addresses have been cleared.', 'wp-time-slots-booking-form');
         else if ($gdpr_action === 'run_retention_now')
             $message = __('Data retention cleanup completed.', 'wp-time-slots-booking-form');
+        else if ($gdpr_action === 'purge_legacy_ical') {
+            $purged_count = isset($this->last_purged_ical_count) ? intval($this->last_purged_ical_count) : 0;
+            $message = sprintf(
+                /* translators: %d: number of removed legacy iCal files */
+                __('Legacy public iCal cleanup completed (%d file(s) removed).', 'wp-time-slots-booking-form'),
+                $purged_count
+            );
+        }
         else
             $message = __('GDPR & Privacy settings updated.', 'wp-time-slots-booking-form');
     }
@@ -1070,6 +1078,14 @@ function wptsCopyCssSnippet(btn, elementId) {
                     <input name="gotab" type="hidden" value="gdprarea" />
                     <input name="wpts_gdpr_action" type="hidden" value="run_retention_now" />
                     <button type="submit" class="wpts-btn wpts-btn-soft">⏱️ <?php esc_html_e('Run Retention Cleanup Now', 'wp-time-slots-booking-form'); ?></button>
+                </form>
+
+                <form method="post" action="" onsubmit="return confirm('<?php echo esc_js(__('Remove any legacy Appointment_*.ics files from wp-content/uploads and stale temporary iCal files?', 'wp-time-slots-booking-form')); ?>');">
+                    <input name="nonce" type="hidden" value="<?php echo esc_attr($nonce); ?>" />
+                    <input name="<?php echo esc_attr($cpid); ?>_post_edition" type="hidden" value="1" />
+                    <input name="gotab" type="hidden" value="gdprarea" />
+                    <input name="wpts_gdpr_action" type="hidden" value="purge_legacy_ical" />
+                    <button type="submit" class="wpts-btn wpts-btn-secondary">📅 <?php esc_html_e('Purge Legacy Public iCal Files', 'wp-time-slots-booking-form'); ?></button>
                 </form>
             </div>
         </div>

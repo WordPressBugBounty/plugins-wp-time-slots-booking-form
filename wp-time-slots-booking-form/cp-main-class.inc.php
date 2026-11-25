@@ -14,6 +14,7 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     private $include_user_data_csv = false;
     public $CP_CFPP_global_templates;
     public $gdpr = null;
+    public $last_purged_ical_count = null;
     private $old_css_placeholder = '/* Styles definition here */';
     private $postURL;
     
@@ -1192,7 +1193,12 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
         add_action( 'wp_ajax_cptslotsb_toggle_ai_reply', array( $this, 'handle_toggle_ai_reply_ajax' ) );
         add_action( 'wp_ajax_cptslotsb_generate_ai_reply', array( $this, 'handle_generate_ai_reply_ajax' ) );
-        add_action( 'wp_ajax_cptslotsb_send_reply', array( $this, 'handle_send_reply_ajax' ) );      
+        add_action( 'wp_ajax_cptslotsb_send_reply', array( $this, 'handle_send_reply_ajax' ) );
+
+        if ( is_admin() && get_option( 'cptslotsb_legacy_ical_purged', '' ) === '' ) {
+            $this->purge_legacy_public_ical_files();
+            update_option( 'cptslotsb_legacy_ical_purged', '1' );
+        }      
 
         if(!empty($_REQUEST['cp_slots_action']) && ($_REQUEST['cp_slots_action'] == 'get_slots' || $_REQUEST['cp_slots_action'] == 'mv') && isset($_SERVER['REQUEST_METHOD']) && 'POST' == $_SERVER['REQUEST_METHOD'])            
         {
@@ -1722,9 +1728,15 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         global $wpdb;
 
         $myrows = $wpdb->get_results( $wpdb->prepare("SELECT * FROM ".$wpdb->prefix.$this->table_messages." WHERE id=%d", $itemnumber) );
+        if ( empty( $myrows ) )
+            return;
 
         if (!count($params))
             $params = unserialize($myrows[0]->posted_data);
+        if ( ! is_array( $params ) )
+            $params = array();
+        if ( empty( $params['itemnumber'] ) )
+            $params['itemnumber'] = intval( $itemnumber );
         
         $mycalendarrows = $wpdb->get_results( $wpdb->prepare('SELECT * FROM '.$wpdb->prefix.$this->table_items.' WHERE `id`=%d', $myrows[0]->formid) );
 
@@ -1768,106 +1780,64 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
             $message = str_replace('%INFO%',$buffer,$message);
         $subject = $this->get_option('fp_subject', CP_TSLOTSBOOK_DEFAULT_fp_subject);
 
+        // if is_admin and not required emails end function here (before generating attachments)
+        if (is_admin() && !isset($_POST["sendemails_admin"]) && !$resendonly)
+            return;
+
         /**
 		 *	Attach or modify attached files,
 		 *  Example for adding ical or PDF attachments
 		 */
 		$attachments = apply_filters( 'cptslotsb_email_attachments',  $attachments, $params, $this->item);
-
-        $params["apps"] = $this->get_appointments_text($params["apps"]);
-        foreach ($params as $item => $value)
-        {
-            $message = str_replace('%'.$item.'%',(is_array($value)?(implode(", ",$value)):($value)),$message);
-            $subject = str_replace('%'.$item.'%',(is_array($value)?(implode(", ",$value)):($value)),$subject);
-            if (strpos($item,"_link"))
-            {
-                foreach ($value as $filevalue)
-                    $attachments[] = $filevalue;
-            }
+        if ( ! is_array( $attachments ) ) {
+            $attachments = array();
         }
 
-        $message = str_replace('%itemnumber%',$itemnumber,$message);
-        $subject = str_replace('%itemnumber%',$itemnumber,$subject);
+        $tmp_dir = untrailingslashit( wp_normalize_path( get_temp_dir() ) );
 
-        if (!defined('CP_TSLOTSBOOK_DEFAULT_fp_from_email'))
-        {
-           define('CP_TSLOTSBOOK_DEFAULT_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) );
-           define('CP_TSLOTSBOOK_DEFAULT_fp_destination_emails', CP_TSLOTSBOOK_DEFAULT_fp_from_email);            
-        }
-
-        $from = $this->get_option('fp_from_email', @CP_TSLOTSBOOK_DEFAULT_fp_from_email);
-        $to = explode(",",$this->get_option('fp_destination_emails', @CP_TSLOTSBOOK_DEFAULT_fp_destination_emails));
-        if ('html' == $this->get_option('fp_emailformat', CP_TSLOTSBOOK_DEFAULT_email_format)) $content_type = "Content-Type: text/html; charset=utf-8\n"; else $content_type = "Content-Type: text/plain; charset=utf-8\n";
-
-        $replyto = $myrows[0]->notifyto;
-        if ($this->get_option('fp_emailfrommethod', "fixed") == "customer")
-            $from_1 = $replyto;
-        else
-            $from_1 = $from;
-
-        if ($this->get_option('fp_emailtomethod', "fixed") == 'customer')
-        {
-            $text_addr = $params[$this->get_option('fp_destination_emails_field', "fixed")];
-            if (is_array($text_addr))
-                $text_addr = implode(", ",$text_addr);
-            $pattern = '/[a-zA-Z0-9_\.\+-]+@[A-Za-z0-9_-]+\.([A-Za-z0-9_-][A-Za-z0-9_]+)/'; //regex for pattern of e-mail address
-            preg_match_all($pattern, $text_addr, $matches);
-            if (count($matches[0]) > 0)
-                $to = $matches[0];
-        }
-        $to = array_unique ($to);
-
-        for ($i=0;$i<500;$i++)
-        {
-            $subject = str_replace('%fieldname'.$i.'%',"",$subject);
-            $message = str_replace('%fieldname'.$i.'%',"",$message);
-        }
-
-        // if is_admin and not required emails end function here
-        if (is_admin() && !isset($_POST["sendemails_admin"]) && !$resendonly)
-            return;
-
-        foreach ($to as $item)
-            if (trim($item) != '')
-            {
-                if (!strpos($from_1,">"))
-                    $from_1 = '"'.$from_1.'" <'.$from_1.'>';
-                wp_mail(trim($item), $subject, $message,
-                    "From: ".$from_1."\r\n".
-                    ($replyto!=''?"Reply-To: ".$replyto."\r\n":'').
-                    $content_type.
-                    "X-Mailer: PHP/" . phpversion(), $attachments);
-            }
-
-        if ($mycalendarrows[0]->rep_days == 0 && $mycalendarrows[0]->rep_enable == 'yes')
-        {
-            $this->check_reports(true);
-        }
-
-        // 2- Send copy to user
-        //---------------------------
-        $to = $this->get_option('cu_user_email_field', CP_TSLOTSBOOK_DEFAULT_cu_user_email_field);
-        $_POST[$to] = $myrows[0]->notifyto;
-        if ((trim($_POST[$to]) != '' || $payer_email != '') && 'true' == $this->get_option('cu_enable_copy_to_user', CP_TSLOTSBOOK_DEFAULT_cu_enable_copy_to_user))
-        {
-            $message = str_replace('<'.'%', '%', $this->get_option('cu_message', CP_TSLOTSBOOK_DEFAULT_cu_message));
-            $message = str_replace('%'.'>', '%', $message);
-
-            $subject = str_replace('<'.'%', '%', $this->get_option('cu_subject', CP_TSLOTSBOOK_DEFAULT_cu_subject));
-            $subject = str_replace('%'.'>', '%', $subject);
-            if ('html' == $this->get_option('cu_emailformat', CP_TSLOTSBOOK_DEFAULT_email_format))
-                $message = str_replace('%INFO%',str_replace("\n","<br />",str_replace('<','&lt;',$buffer_A)).'</pre>',$message);
-            else
-                $message = str_replace('%INFO%',$buffer_A,$message);
-
+        try {
+            $params["apps"] = $this->get_appointments_text($params["apps"]);
             foreach ($params as $item => $value)
             {
                 $message = str_replace('%'.$item.'%',(is_array($value)?(implode(", ",$value)):($value)),$message);
                 $subject = str_replace('%'.$item.'%',(is_array($value)?(implode(", ",$value)):($value)),$subject);
+                if (strpos($item,"_link") && is_array($value))
+                {
+                    foreach ($value as $filevalue)
+                        $attachments[] = $filevalue;
+                }
             }
 
             $message = str_replace('%itemnumber%',$itemnumber,$message);
             $subject = str_replace('%itemnumber%',$itemnumber,$subject);
+
+            if (!defined('CP_TSLOTSBOOK_DEFAULT_fp_from_email'))
+            {
+               define('CP_TSLOTSBOOK_DEFAULT_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) );
+               define('CP_TSLOTSBOOK_DEFAULT_fp_destination_emails', CP_TSLOTSBOOK_DEFAULT_fp_from_email);            
+            }
+
+            $from = $this->get_option('fp_from_email', @CP_TSLOTSBOOK_DEFAULT_fp_from_email);
+            $to = explode(",",$this->get_option('fp_destination_emails', @CP_TSLOTSBOOK_DEFAULT_fp_destination_emails));
+            if ('html' == $this->get_option('fp_emailformat', CP_TSLOTSBOOK_DEFAULT_email_format)) $content_type = "Content-Type: text/html; charset=utf-8\n"; else $content_type = "Content-Type: text/plain; charset=utf-8\n";
+
+            $replyto = $myrows[0]->notifyto;
+            if ($this->get_option('fp_emailfrommethod', "fixed") == "customer")
+                $from_1 = $replyto;
+            else
+                $from_1 = $from;
+
+            if ($this->get_option('fp_emailtomethod', "fixed") == 'customer')
+            {
+                $text_addr = $params[$this->get_option('fp_destination_emails_field', "fixed")];
+                if (is_array($text_addr))
+                    $text_addr = implode(", ",$text_addr);
+                $pattern = '/[a-zA-Z0-9_\.\+-]+@[A-Za-z0-9_-]+\.([A-Za-z0-9_-][A-Za-z0-9_]+)/'; //regex for pattern of e-mail address
+                preg_match_all($pattern, $text_addr, $matches);
+                if (count($matches[0]) > 0)
+                    $to = $matches[0];
+            }
+            $to = array_unique ($to);
 
             for ($i=0;$i<500;$i++)
             {
@@ -1875,21 +1845,143 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
                 $message = str_replace('%fieldname'.$i.'%',"",$message);
             }
 
-            if (!strpos($from,">"))
-                $from = '"'.$from.'" <'.$from.'>';
-            if ('html' == $this->get_option('cu_emailformat', CP_TSLOTSBOOK_DEFAULT_email_format)) $content_type = "Content-Type: text/html; charset=utf-8\n"; else $content_type = "Content-Type: text/plain; charset=utf-8\n";
-            if ($_POST[$to] != '')
-                wp_mail(sanitize_email(trim($_POST[$to])), $subject, $message,
-                        "From: ".$from."\r\n".
+            foreach ($to as $item)
+                if (trim($item) != '')
+                {
+                    if (!strpos($from_1,">"))
+                        $from_1 = '"'.$from_1.'" <'.$from_1.'>';
+                    wp_mail(trim($item), $subject, $message,
+                        "From: ".$from_1."\r\n".
+                        ($replyto!=''?"Reply-To: ".$replyto."\r\n":'').
                         $content_type.
                         "X-Mailer: PHP/" . phpversion(), $attachments);
-            if ($_POST[$to] != $payer_email && $payer_email != '')
-                wp_mail(sanitize_email(trim($payer_email)), $subject, $message,
-                        "From: ".$from."\r\n".
-                        $content_type.
-                        "X-Mailer: PHP/" . phpversion(), $attachments);
+                }
+
+            if ($mycalendarrows[0]->rep_days == 0 && $mycalendarrows[0]->rep_enable == 'yes')
+            {
+                $this->check_reports(true);
+            }
+
+            // 2- Send copy to user
+            //---------------------------
+            $to = $this->get_option('cu_user_email_field', CP_TSLOTSBOOK_DEFAULT_cu_user_email_field);
+            $_POST[$to] = $myrows[0]->notifyto;
+            if ((trim($_POST[$to]) != '' || $payer_email != '') && 'true' == $this->get_option('cu_enable_copy_to_user', CP_TSLOTSBOOK_DEFAULT_cu_enable_copy_to_user))
+            {
+                $message = str_replace('<'.'%', '%', $this->get_option('cu_message', CP_TSLOTSBOOK_DEFAULT_cu_message));
+                $message = str_replace('%'.'>', '%', $message);
+
+                $subject = str_replace('<'.'%', '%', $this->get_option('cu_subject', CP_TSLOTSBOOK_DEFAULT_cu_subject));
+                $subject = str_replace('%'.'>', '%', $subject);
+                if ('html' == $this->get_option('cu_emailformat', CP_TSLOTSBOOK_DEFAULT_email_format))
+                    $message = str_replace('%INFO%',str_replace("\n","<br />",str_replace('<','&lt;',$buffer_A)).'</pre>',$message);
+                else
+                    $message = str_replace('%INFO%',$buffer_A,$message);
+
+                foreach ($params as $item => $value)
+                {
+                    $message = str_replace('%'.$item.'%',(is_array($value)?(implode(", ",$value)):($value)),$message);
+                    $subject = str_replace('%'.$item.'%',(is_array($value)?(implode(", ",$value)):($value)),$subject);
+                }
+
+                $message = str_replace('%itemnumber%',$itemnumber,$message);
+                $subject = str_replace('%itemnumber%',$itemnumber,$subject);
+
+                for ($i=0;$i<500;$i++)
+                {
+                    $subject = str_replace('%fieldname'.$i.'%',"",$subject);
+                    $message = str_replace('%fieldname'.$i.'%',"",$message);
+                }
+
+                if (!strpos($from,">"))
+                    $from = '"'.$from.'" <'.$from.'>';
+                if ('html' == $this->get_option('cu_emailformat', CP_TSLOTSBOOK_DEFAULT_email_format)) $content_type = "Content-Type: text/html; charset=utf-8\n"; else $content_type = "Content-Type: text/plain; charset=utf-8\n";
+                if ($_POST[$to] != '')
+                    wp_mail(sanitize_email(trim($_POST[$to])), $subject, $message,
+                            "From: ".$from."\r\n".
+                            $content_type.
+                            "X-Mailer: PHP/" . phpversion(), $attachments);
+                if ($_POST[$to] != $payer_email && $payer_email != '')
+                    wp_mail(sanitize_email(trim($payer_email)), $subject, $message,
+                            "From: ".$from."\r\n".
+                            $content_type.
+                            "X-Mailer: PHP/" . phpversion(), $attachments);
+            }
+        } finally {
+            foreach ( $attachments as $item ) {
+                if ( is_string( $item ) &&
+                     strtolower( pathinfo( $item, PATHINFO_EXTENSION ) ) === 'ics' &&
+                     untrailingslashit( wp_normalize_path( dirname( $item ) ) ) === $tmp_dir ) {
+                    wp_delete_file( $item );
+                }
+            }
         }
 
+    }
+
+
+    /**
+     * Remove legacy publicly-stored iCal attachments from wp-content/uploads
+     * (Appointment_<id>_<counter>_admin.ics / _c.ics / .ics) and stale orphaned
+     * temporary iCal files from the system temp directory.
+     *
+     * @return int Number of deleted files.
+     */
+    public function purge_legacy_public_ical_files() {
+        $deleted = 0;
+
+        // 1. Purge legacy predictable .ics files in public uploads directories
+        $upload_dirs = array();
+        $uploads     = wp_upload_dir();
+        if ( ! empty( $uploads['basedir'] ) ) {
+            $upload_dirs[] = trailingslashit( wp_normalize_path( $uploads['basedir'] ) );
+        }
+        $default_uploads = trailingslashit( wp_normalize_path( WP_CONTENT_DIR . '/uploads' ) );
+        if ( ! in_array( $default_uploads, $upload_dirs, true ) ) {
+            $upload_dirs[] = $default_uploads;
+        }
+
+        foreach ( $upload_dirs as $dir ) {
+            if ( ! is_dir( $dir ) ) {
+                continue;
+            }
+            $matches = glob( $dir . 'Appointment_*.ics' );
+            if ( ! is_array( $matches ) ) {
+                continue;
+            }
+            foreach ( $matches as $file ) {
+                $base = basename( $file );
+                if ( preg_match( '/^Appointment_\d+_\d+(?:_admin|_c)?\.ics$/i', $base ) && is_file( $file ) ) {
+                    wp_delete_file( $file );
+                    if ( ! file_exists( $file ) ) {
+                        $deleted++;
+                    }
+                }
+            }
+        }
+
+        // 2. Purge stale orphaned temporary .ics files (> 1 hour old) in system temp dir
+        $tmp_dir = trailingslashit( wp_normalize_path( get_temp_dir() ) );
+        if ( is_dir( $tmp_dir ) ) {
+            $tmp_matches = glob( $tmp_dir . 'appointment-*.ics' );
+            if ( is_array( $tmp_matches ) ) {
+                $cutoff = time() - HOUR_IN_SECONDS;
+                foreach ( $tmp_matches as $file ) {
+                    $base = basename( $file );
+                    if ( preg_match( '/^appointment-[a-z0-9]{32}(?:-\d+)?\.ics$/i', $base ) && is_file( $file ) ) {
+                        $mtime = @filemtime( $file );
+                        if ( false !== $mtime && $mtime < $cutoff ) {
+                            wp_delete_file( $file );
+                            if ( ! file_exists( $file ) ) {
+                                $deleted++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $deleted;
     }
 
 
@@ -1967,14 +2059,21 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
             }
 
             // Handle one-click utility actions
-            if ( ! empty( $my_POST['wpts_gdpr_action'] ) && $this->gdpr ) {
+            if ( ! empty( $my_POST['wpts_gdpr_action'] ) ) {
                 $util_action = sanitize_text_field( $my_POST['wpts_gdpr_action'] );
-                if ( $util_action === 'purge_ips_anonymize' ) {
-                    $this->gdpr->purge_existing_ips( 'anonymize' );
-                } elseif ( $util_action === 'purge_ips_clear' ) {
-                    $this->gdpr->purge_existing_ips( 'none' );
-                } elseif ( $util_action === 'run_retention_now' ) {
-                    $this->gdpr->run_retention_cleanup();
+                if ( $util_action === 'purge_legacy_ical' ) {
+                    $this->last_purged_ical_count = $this->purge_legacy_public_ical_files();
+                    return;
+                }
+                if ( $this->gdpr ) {
+                    if ( $util_action === 'purge_ips_anonymize' ) {
+                        $this->gdpr->purge_existing_ips( 'anonymize' );
+                    } elseif ( $util_action === 'purge_ips_clear' ) {
+                        $this->gdpr->purge_existing_ips( 'none' );
+                    } elseif ( $util_action === 'run_retention_now' ) {
+                        $this->gdpr->run_retention_cleanup();
+                        $this->purge_legacy_public_ical_files();
+                    }
                 }
                 return;
             }

@@ -30,27 +30,33 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
             $cp_tslotsb_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'default_duration');
 
 			// Insertion in database
-			if(
-				isset( $_REQUEST[ 'cptslotsb_icalexport_id' ] )
-			)
-			{
-			    $wpdb->delete( $wpdb->prefix.$this->form_table, array( 'formid' => $form_id ), array( '%d' ) );
-				$wpdb->insert(
-								$wpdb->prefix.$this->form_table,
-								array(
-									'formid' => $form_id,
+			if (
+				isset( $_POST['cptslotsb_icalexport_id'], $_POST['anonce'] ) &&
+				$cp_tslotsb_plugin->check_current_user_access( $form_id )
+			) {
+				$anonce = sanitize_text_field( wp_unslash( $_POST['anonce'] ) );
+				if (
+					wp_verify_nonce( $anonce, 'cptslotsb_actions_admin' ) ||
+					wp_verify_nonce( $anonce, 'cptslotsb_actions_admin_form_' . intval( $form_id ) )
+				) {
+					$wpdb->delete( $wpdb->prefix.$this->form_table, array( 'formid' => $form_id ), array( '%d' ) );
+					$wpdb->insert(
+									$wpdb->prefix.$this->form_table,
+									array(
+										'formid' => $form_id,
 
-									'observe_day_light'	 => sanitize_text_field($_REQUEST["observe_day_light"]),
-									'ical_daylight_zone'	 => sanitize_text_field($_REQUEST["ical_daylight_zone"]),
-									'cal_time_zone_modify'	 => sanitize_text_field($_REQUEST["cal_time_zone_modify"]),
-                                    'attachical'	 => sanitize_text_field($_REQUEST["attachical"]),
-                                    'base_summary'	 => $cp_tslotsb_plugin->clean_sanitize($_REQUEST["base_summary"]),
-                                    'base_description'	 => $cp_tslotsb_plugin->clean_sanitize($_REQUEST["base_description"]),
-                                    'default_duration'	 => sanitize_text_field($_REQUEST["ical_default_duration"]),
+										'observe_day_light'	 => isset( $_POST['observe_day_light'] ) ? sanitize_text_field( wp_unslash( $_POST['observe_day_light'] ) ) : 'true',
+										'ical_daylight_zone'	 => isset( $_POST['ical_daylight_zone'] ) ? sanitize_text_field( wp_unslash( $_POST['ical_daylight_zone'] ) ) : 'EUROPE',
+										'cal_time_zone_modify'	 => isset( $_POST['cal_time_zone_modify'] ) ? sanitize_text_field( wp_unslash( $_POST['cal_time_zone_modify'] ) ) : '',
+										'attachical'	 => isset( $_POST['attachical'] ) ? sanitize_text_field( wp_unslash( $_POST['attachical'] ) ) : '0',
+										'base_summary'	 => isset( $_POST['base_summary'] ) ? $cp_tslotsb_plugin->clean_sanitize( wp_unslash( $_POST['base_summary'] ) ) : '',
+										'base_description'	 => isset( $_POST['base_description'] ) ? $cp_tslotsb_plugin->clean_sanitize( wp_unslash( $_POST['base_description'] ) ) : '',
+										'default_duration'	 => isset( $_POST['ical_default_duration'] ) ? sanitize_text_field( wp_unslash( $_POST['ical_default_duration'] ) ) : (string) $this->default_duration,
 
-								),
-								array( '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
-							);
+									),
+									array( '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
+								);
+				}
 			}
 
 			$rows = $wpdb->get_results(
@@ -126,7 +132,6 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                           <option value="2" <?php if ($row["attachical"] == '2') echo ' selected'; ?>>Yes - for approved items only</option>
                          </select>
                          <br />
-                         <em>* Important note: The folder "/wp-content/uploads/" must exist and have enough permissions to generate the iCal file to be attached.</em>
                     </td>
                     </tr>
                     <tr valign="top">
@@ -162,6 +167,7 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
 
         private $form_table = 'cptslotsbk_icalexport';
         private $_inserted = false;
+        private $temp_files = array();
 
         /************************ CONSTRUCT *****************************/
 
@@ -175,6 +181,8 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
 
             add_filter( 'cptslotsb_email_attachments', array( &$this, 'attach_ical_file' ), 10, 3 );
 
+            add_action( 'shutdown', array( &$this, 'cleanup_temp_files' ) );
+
             $this->update_database();
 
             $passcode = get_option('CPAHB_PASSCODE',"");
@@ -185,6 +193,16 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
             }
 
         } // End __construct
+
+        public function cleanup_temp_files()
+        {
+            foreach ( $this->temp_files as $file_path ) {
+                if ( file_exists( $file_path ) ) {
+                    wp_delete_file( $file_path );
+                }
+            }
+            $this->temp_files = array();
+        }
 
 
         		/**
@@ -244,8 +262,11 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
             if (!isset($_GET["cptslotsb_app"]) || $_GET["cptslotsb_app"] != 'calfeed')
                 return;
 
-            if (isset($_GET["id"]) && isset($_GET["verify"]) && substr(md5($_GET["id"].get_option('CPAHB_PASSCODE',"")),0,10) == $_GET["verify"])
-                $this->export_iCal($_GET["id"]);
+            $feed_id  = isset( $_GET['id'] ) ? intval( $_GET['id'] ) : 0;
+            $verify   = isset( $_GET['verify'] ) ? sanitize_text_field( wp_unslash( $_GET['verify'] ) ) : '';
+            $expected = substr( md5( $feed_id . get_option( 'CPAHB_PASSCODE', '' ) ), 0, 10 );
+            if ( isset( $_GET['id'], $_GET['verify'] ) && hash_equals( $expected, $verify ) )
+                $this->export_iCal( $feed_id );
             else
                 echo 'Access denied - verify value is not correct.';
             exit ();
@@ -255,8 +276,8 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
 		{
             global $wpdb, $cp_tslotsb_plugin;
 
-            header("Content-type: application/octet-stream");
-            header("Content-Disposition: attachment; filename=events".date("Y-M-D_H.i.s").".ics");
+            header("Content-Type: text/calendar; charset=utf-8");
+            header("Content-Disposition: attachment; filename=\"events_".gmdate("Y-m-d_H-i-s").".ics\"");
 
             echo "BEGIN:VCALENDAR\n";
             echo "PRODID:-//CodePeople//WP Time Slots Booking Form for WordPress//EN\n";
@@ -265,6 +286,18 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
             $icalSettings = $wpdb->get_results(
 						$wpdb->prepare( "SELECT * FROM ".$wpdb->prefix.$this->form_table." WHERE formid=%d", $form_id )
 					);
+
+            if ( empty( $icalSettings ) ) {
+                $default_settings = new stdClass();
+                $default_settings->observe_day_light    = 'true';
+                $default_settings->ical_daylight_zone   = 'EUROPE';
+                $default_settings->cal_time_zone_modify = '';
+                $default_settings->attachical           = '0';
+                $default_settings->base_summary         = 'Booking for %email%';
+                $default_settings->base_description     = 'Booking for %email%';
+                $default_settings->default_duration     = $this->default_duration;
+                $icalSettings = array( $default_settings );
+            }
 
             $from = date("Y-m-d",strtotime($date_from));
             $to = date("Y-m-d",strtotime($date_to));
@@ -275,6 +308,8 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                 if ($item->ipaddr != 'remote-ical-file')
                 {
                     $data = unserialize($item->posted_data);
+                    if ( ! is_array( $data ) ) $data = array();
+                    if ( empty( $data["apps"] ) || ! is_array( $data["apps"] ) ) continue;
                     $ct = 0;
                     foreach($data["apps"] as $app)
                         if ($app["date"] >= $from && $app["date"] <= $to)
@@ -284,7 +319,7 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                             $datetime = $app["date"]." ".trim($time[0]);
                             $duration = " +". (intval($icalSettings[0]->default_duration)?$icalSettings[0]->default_duration:$this->default_duration)." minutes";
                             $submissiontime = strtotime($item->time);
-                            if ($icalSettings[0]->observe_day_light)
+                            if ( isset($icalSettings[0]->observe_day_light) && $icalSettings[0]->observe_day_light === 'true' )
                             {
                                 $full_date = gmdate("Ymd",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify));
                                 $year = substr($full_date,0,4);
@@ -293,8 +328,8 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                                     $dst_start = strtotime('last Sunday GMT', strtotime("1 April $year GMT"));
                                     $dst_stop = strtotime('last Sunday GMT', strtotime("1 November $year GMT"));
                                 } else { // USA
-                                    $dst_start = strtotime('first Sunday GMT', strtotime("1 April $year GMT"));
-                                    $dst_stop = strtotime('last Sunday GMT', strtotime("1 November $year GMT"));
+                                    $dst_start = strtotime('second Sunday GMT', strtotime("1 March $year GMT"));
+                                    $dst_stop = strtotime('first Sunday GMT', strtotime("1 November $year GMT"));
                                 }
                                 if ($full_date >= gmdate("Ymd",$dst_start) && $full_date < gmdate("Ymd",$dst_stop))
                                     $datetime = date("Y-m-d H:i",strtotime($datetime." -1 hour"));
@@ -306,8 +341,12 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                             $base_description = str_replace('%apps%', $cp_tslotsb_plugin->get_appointments_text($data["apps"]), $base_description);
                             foreach ($data as $itemgt => $value)
                             {
-                                $base_summary = str_replace('%'.$itemgt.'%',(is_array($value)?(implode(", ",$value)):($value)),$base_summary);
-                                $base_description = str_replace('%'.$itemgt.'%',(is_array($value)?(implode(", ",$value)):($value)),$base_description);
+                                if ( $itemgt === 'apps' ) continue;
+                                $val_str = is_array( $value )
+                                    ? ( method_exists( $cp_tslotsb_plugin, 'recursive_implode' ) ? $cp_tslotsb_plugin->recursive_implode( ", ", $value ) : implode( ", ", array_map( 'strval', array_filter( $value, 'is_scalar' ) ) ) )
+                                    : ( is_scalar( $value ) ? (string) $value : '' );
+                                $base_summary = str_replace('%'.$itemgt.'%', $val_str, $base_summary);
+                                $base_description = str_replace('%'.$itemgt.'%', $val_str, $base_description);
                             }
 
                             $base_summary = str_replace("<br>",'\n',str_replace("<br />",'\n',str_replace("\r",'',str_replace("\n",'\n',$base_summary)) ));
@@ -342,20 +381,23 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
 						$wpdb->prepare( "SELECT * FROM ".$wpdb->prefix.$this->form_table." WHERE formid=%d", $form_id )
 					);
 
-            if (!count($icalSettings)) return;
-
-            if ($icalSettings[0]->attachical != '1' && $icalSettings[0]->attachical != '2')
+            if ( empty( $icalSettings ) || ( $icalSettings[0]->attachical != '1' && $icalSettings[0]->attachical != '2' ) )
                 return $attachments;
 
             $data = $params;
+            if ( empty( $data["apps"] ) || ! is_array( $data["apps"] ) )
+                return $attachments;
+
             $ct = 0;
             foreach($data["apps"] as $app)
+            {
+                $app_status = isset($app["cancelled"]) ? strtolower($app["cancelled"]) : '';
                 if
                   (
-                   (strtolower($app["cancelled"]) != 'cancelled') &&
-                   (strtolower($app["cancelled"]) != 'Cancelled by customer') &&
-                   (strtolower($app["cancelled"]) != 'Rejected') &&
-                   ($icalSettings[0]->attachical != '2' || $app["cancelled"] == '' || strtolower($app["cancelled"]) == 'approved')
+                   ($app_status != 'cancelled') &&
+                   ($app_status != 'cancelled by customer') &&
+                   ($app_status != 'rejected') &&
+                   ($icalSettings[0]->attachical != '2' || $app_status == '' || $app_status == 'approved')
                   )
                 {
                     $ct++;
@@ -363,7 +405,7 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                     $datetime = $app["date"]." ".trim($time[0]);
                     $duration = " +".(intval($icalSettings[0]->default_duration)?$icalSettings[0]->default_duration:$this->default_duration)." minutes";
                     $submissiontime = time();
-                    if ($icalSettings[0]->observe_day_light)
+                    if ( isset($icalSettings[0]->observe_day_light) && $icalSettings[0]->observe_day_light === 'true' )
                     {
                         $full_date = gmdate("Ymd",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify));
                         $year = substr($full_date,0,4);
@@ -372,8 +414,8 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                             $dst_start = strtotime('last Sunday GMT', strtotime("1 April $year GMT"));
                             $dst_stop = strtotime('last Sunday GMT', strtotime("1 November $year GMT"));
                         } else { // USA
-                            $dst_start = strtotime('first Sunday GMT', strtotime("1 April $year GMT"));
-                            $dst_stop = strtotime('last Sunday GMT', strtotime("1 November $year GMT"));
+                            $dst_start = strtotime('second Sunday GMT', strtotime("1 March $year GMT"));
+                            $dst_stop = strtotime('first Sunday GMT', strtotime("1 November $year GMT"));
                         }
                         if ($full_date >= gmdate("Ymd",$dst_start) && $full_date < gmdate("Ymd",$dst_stop))
                             $datetime = date("Y-m-d H:i",strtotime($datetime." -1 hour"));
@@ -385,12 +427,21 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                     $base_description = str_replace('%apps%', $cp_tslotsb_plugin->get_appointments_text($data["apps"]), $base_description);
                     foreach ($data as $itemgt => $value)
                     {
-                        $base_summary = str_replace('%'.$itemgt.'%',(is_array($value)?($cp_tslotsb_plugin->recursive_implode(", ",$value)):($value)),$base_summary);
-                        $base_description = str_replace('%'.$itemgt.'%',(is_array($value)?($cp_tslotsb_plugin->recursive_implode(", ",$value)):($value)),$base_description);
+                        if ( $itemgt === 'apps' ) continue;
+                        $val_str = is_array( $value )
+                            ? ( method_exists( $cp_tslotsb_plugin, 'recursive_implode' ) ? $cp_tslotsb_plugin->recursive_implode( ", ", $value ) : implode( ", ", array_map( 'strval', array_filter( $value, 'is_scalar' ) ) ) )
+                            : ( is_scalar( $value ) ? (string) $value : '' );
+                        $base_summary = str_replace('%'.$itemgt.'%', $val_str, $base_summary);
+                        $base_description = str_replace('%'.$itemgt.'%', $val_str, $base_description);
                     }
 
-                    $base_summary = str_replace("<br>",'\n',str_replace("<br />",'\n',str_replace("\r",'',str_replace("\n",'\n',$base_summary)) ));
-                    $base_description = str_replace("<br>",'\n',str_replace("<br />",'\n',str_replace("\r",'',str_replace("\n",'\n',$base_description)) ));
+                    $base_summary = str_replace("<br>",'\n',str_replace("<br />",'\n',str_replace("\r",'',str_replace("\n",'\n',wp_strip_all_tags($base_summary))) ));
+                    $base_description = str_replace("<br>",'\n',str_replace("<br />",'\n',str_replace("\r",'',str_replace("\n",'\n',wp_strip_all_tags($base_description))) ));
+
+                    $item_num    = isset( $params["itemnumber"] ) ? intval( $params["itemnumber"] ) : 0;
+                    $server_name = isset( $_SERVER["SERVER_NAME"] ) ? sanitize_text_field( wp_unslash( $_SERVER["SERVER_NAME"] ) ) : '';
+                    $http_host   = isset( $_SERVER["HTTP_HOST"] ) ? str_replace( array( '"', "\r", "\n" ), '', sanitize_text_field( wp_unslash( $_SERVER["HTTP_HOST"] ) ) ) : '';
+                    $from_email  = sanitize_email( $cp_tslotsb_plugin->get_option('fp_from_email') );
 
                     $buffer  = "BEGIN:VCALENDAR\n";
                     $buffer .= "PRODID:-//CodePeople//WP Time Slots Booking Form for WordPress//EN\n";
@@ -401,26 +452,36 @@ if( !class_exists( 'cptslotsb_iCalExport' ) )
                     $buffer .= "DTSTART:".gmdate("Ymd",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify))."T".gmdate("His",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify))."Z\n";
                     $buffer .= "DTEND:".gmdate("Ymd",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify.$duration))."T".gmdate("His",strtotime($datetime." ".$icalSettings[0]->cal_time_zone_modify.$duration))."Z\n";
                     $buffer .= "DTSTAMP:".gmdate("Ymd",$submissiontime)."T".gmdate("His",$submissiontime)."Z\n";
-                    $buffer .= "UID:uid".$params["itemnumber"].'_'.$ct."@".$_SERVER["SERVER_NAME"]."\n";
+                    $buffer .= "UID:uid".$item_num.'_'.$ct."@".$server_name."\n";
                     $buffer .= "DESCRIPTION:".$base_description."\n";
                     $buffer .= "LAST-MODIFIED:".gmdate("Ymd",$submissiontime)."T".gmdate("His",$submissiontime)."Z\n";
                     $buffer .= "LOCATION:\n";
                     $buffer .= "SEQUENCE:0\n";
                     $buffer .= "STATUS:CONFIRMED\n";
-                    $buffer .= "ORGANIZER;CN=\"".$_SERVER["HTTP_HOST"]."\":MAILTO:".$cp_tslotsb_plugin->get_option('fp_from_email')."\r\n";
+                    $buffer .= "ORGANIZER;CN=\"".$http_host."\":MAILTO:".$from_email."\r\n";
                     $buffer .= "SUMMARY:".$base_summary."\n";
                     $buffer .= "TRANSP:OPAQUE\n";
                     $buffer .= "END:VEVENT\n";
 
                     $buffer .= 'END:VCALENDAR';
 
-                    $filename1 = sanitize_file_name('Appointment'.'_'.intval($params["itemnumber"]).'_'.$ct.'_admin.ics');
-                    $filename1 = WP_CONTENT_DIR . '/uploads/'.$filename1;
-                    $handle = fopen($filename1, 'w');
-                    fwrite($handle,$buffer);
-                    fclose($handle);
-                    $attachments[] = $filename1;
+                    try {
+                        $rand_token = bin2hex( random_bytes( 16 ) );
+                    } catch ( Exception $e ) {
+                        $rand_token = strtolower( wp_generate_password( 32, false, false ) );
+                    }
+
+                    $tmp_dir   = trailingslashit( get_temp_dir() );
+                    $filename1 = sanitize_file_name( 'appointment-' . $rand_token . '.ics' );
+                    $file_path = $tmp_dir . wp_unique_filename( $tmp_dir, $filename1 );
+
+                    if ( file_put_contents( $file_path, $buffer ) !== false ) {
+                        @chmod( $file_path, 0600 );
+                        $this->temp_files[] = $file_path;
+                        $attachments[]      = $file_path;
+                    }
                 }
+            }
 
             return $attachments;
         }
