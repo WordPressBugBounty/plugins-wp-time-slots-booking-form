@@ -1313,7 +1313,7 @@ $shortcode_str  = '[' . $this->shorttag . ' id="' . intval($this->item) . '"]';
                             <div class="wpts-subbox" style="margin-top:0;text-align:center;padding:28px;">
                                 <label class="wpts-label" style="margin-bottom:14px;"><?php esc_html_e('Preview','wp-time-slots-booking-form'); ?>:</label>
                                 <div style="display:inline-block;padding:16px;background:#ffffff;border:1px solid var(--wpts-border);border-radius:var(--wpts-radius-sm);box-shadow:var(--wpts-shadow);">
-                                    <img src="<?php echo esc_url($this->get_site_url(true).'/?'.$this->prefix).'_captcha=captcha&inAdmin=1'; ?>" id="captchaimg" alt="security code" border="0" style="display:block;" />
+                                    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" id="captchaimg" alt="security code" border="0" style="display:block;" />
                                 </div>
                                 <div style="margin-top:14px;">
                                     <button type="button" class="wpts-btn wpts-btn-secondary" onclick="generateCaptcha();">
@@ -1526,7 +1526,7 @@ function generateCaptcha()
     qs += "&font="+f.cv_font.options[f.cv_font.selectedIndex].value;
     qs += "&r="+(randcaptcha++);
     
-    document.getElementById("captchaimg").src= "<?php echo esc_js($this->get_site_url(true).'/?'.$this->prefix).'_captcha=captcha&inAdmin=1'; ?>"+qs;
+    document.getElementById("captchaimg").src = <?php echo wp_json_encode( esc_url_raw( $this->get_site_url(true).'/?'.$this->prefix.'_captcha=captcha&inAdmin=1&preview=1' ) ); ?> + qs;
 }
 generateCaptcha();
 

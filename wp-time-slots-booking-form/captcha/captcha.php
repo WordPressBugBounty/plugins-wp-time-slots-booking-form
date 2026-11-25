@@ -48,7 +48,23 @@ function cpcff_similarColors($c1, $c2)
    return sqrt( pow($c1["r"]-$c2["r"],2) + pow($c1["g"]-$c2["g"],2) + pow($c1["b"]-$c2["b"],2)) < 125;
 }
 
-if (function_exists('session_start')) @session_start();
+$wpts_is_admin_preview   = ( ! empty( $_GET['preview'] ) && is_user_logged_in() );
+$wpts_cookieless_captcha = ( class_exists( 'CP_TimeSlotsBooking_GDPR' ) && CP_TimeSlotsBooking_GDPR::get_setting( 'captcha_cookieless', '1' ) === '1' );
+$ctoken                  = isset( $_GET['ctoken'] ) ? sanitize_text_field( wp_unslash( $_GET['ctoken'] ) ) : '';
+$use_cookieless          = ( $wpts_cookieless_captcha && isset( $_GET['ctoken'] ) );
+
+if ( ! $wpts_is_admin_preview ) {
+    if ( $use_cookieless ) {
+        if ( ! preg_match( '/^[a-f0-9]{16,32}$/', $ctoken ) ) {
+            status_header( 400 );
+            exit;
+        }
+    } else {
+        if ( function_exists( 'session_start' ) && session_status() === PHP_SESSION_NONE ) {
+            @session_start();
+        }
+    }
+}
 
 function cpcff_make_seed() {
     list($usec, $sec) = explode(' ', microtime());
@@ -60,13 +76,21 @@ $randval = mt_rand();
 $str = "";
 $length = 0;
 for ($i = 0; $i < $letter_count; $i++) {
-	 $str .= chr(mt_rand(97, 122))." ";
+    $str .= chr(mt_rand(97, 122))." ";
 }
-$_SESSION['rand_code'.sanitize_key($_GET["ps"])] = str_replace(" ", "", $str);
+$clean_code = strtolower( str_replace( " ", "", $str ) );
 
-$uidt = uniqid();
-set_transient( "cpeople-captcha-".$uidt , str_replace(" ", "", $str) , 1800 );
-setCookie('rand_code'.sanitize_key($_GET["ps"]), $uidt, time()+36000,"/");
+if ( ! $wpts_is_admin_preview ) {
+    if ( $use_cookieless ) {
+        set_transient( 'wpts_cap_' . $ctoken, wp_hash( $clean_code ), 1800 );
+    } else {
+        $_SESSION['rand_code'.sanitize_key($_GET["ps"])] = $clean_code;
+
+        $uidt = uniqid();
+        set_transient( "cpeople-captcha-".$uidt, $clean_code, 1800 );
+        setCookie('rand_code'.sanitize_key($_GET["ps"]), $uidt, time()+36000, "/");
+    }
+}
 
 if (!function_exists('imagecreatetruecolor'))
 {

@@ -25,6 +25,17 @@ if (isset($_POST["gotab"]))
         $message = __('Custom CSS updated.', 'wp-time-slots-booking-form');
     else if ($gotab == 'js')
         $message = __('Custom JavaScript updated.', 'wp-time-slots-booking-form');
+    else if ($gotab == 'gdprarea') {
+        $gdpr_action = isset($_POST["wpts_gdpr_action"]) ? sanitize_text_field($_POST["wpts_gdpr_action"]) : '';
+        if ($gdpr_action === 'purge_ips_anonymize')
+            $message = __('All stored IP addresses have been anonymized.', 'wp-time-slots-booking-form');
+        else if ($gdpr_action === 'purge_ips_clear')
+            $message = __('All stored IP addresses have been cleared.', 'wp-time-slots-booking-form');
+        else if ($gdpr_action === 'run_retention_now')
+            $message = __('Data retention cleanup completed.', 'wp-time-slots-booking-form');
+        else
+            $message = __('GDPR & Privacy settings updated.', 'wp-time-slots-booking-form');
+    }
 } 
 else if (isset($_GET["gotab"]))
 {
@@ -268,6 +279,26 @@ else if (isset($_GET["gotab"]))
     }
     .wpts-card-body {
         padding: 24px;
+    }
+
+    .wpts-section-divider {
+        margin: 26px 0 18px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--wpts-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .wpts-section-divider:first-child {
+        margin-top: 0;
+    }
+    .wpts-section-divider h4 {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--wpts-primary-hover);
     }
 
     .wpts-grid {
@@ -583,6 +614,9 @@ function wptsCopyCssSnippet(btn, elementId) {
         <a href="javascript:void(0);" class="nav-tab<?php if ($gotab == 'fixarea') echo ' nav-tab-active'; ?>" data-tab="2">
             🛠️ <?php esc_html_e('Troubleshoot Area', 'wp-time-slots-booking-form'); ?>
         </a>
+        <a href="javascript:void(0);" class="nav-tab<?php if ($gotab == 'gdprarea') echo ' nav-tab-active'; ?>" data-tab="5">
+            🔒 <?php esc_html_e('GDPR & Privacy', 'wp-time-slots-booking-form'); ?>
+        </a>
         <a href="javascript:void(0);" class="nav-tab<?php if ($gotab == 'css') echo ' nav-tab-active'; ?>" data-tab="3">
             🎨 <?php esc_html_e('Edit Styles (CSS)', 'wp-time-slots-booking-form'); ?>
         </a>
@@ -877,6 +911,166 @@ function wptsCopyCssSnippet(btn, elementId) {
                         <?php esc_html_e("Inserting raw JavaScript directly inside the plugin settings is no longer allowed for security reasons. Please enqueue or insert your custom scripts via your child theme or a dedicated code-snippets plugin.", 'wp-time-slots-booking-form'); ?>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         TAB 5: GDPR & PRIVACY CONTROLS
+         ========================================== -->
+    <div class="ahb-tab<?php if ($gotab == 'gdprarea') echo ' tab-active'; ?>" data-tab="5">
+        <?php
+        $gdpr_ip_mode            = CP_TimeSlotsBooking_GDPR::get_setting('ip_mode', 'anonymize');
+        $gdpr_retention_days     = intval(CP_TimeSlotsBooking_GDPR::get_setting('retention_days', 0));
+        $gdpr_retention_action   = CP_TimeSlotsBooking_GDPR::get_setting('retention_action', 'anonymize');
+        $gdpr_erasure_action     = CP_TimeSlotsBooking_GDPR::get_setting('erasure_action', 'anonymize');
+        $gdpr_delete_uploads     = CP_TimeSlotsBooking_GDPR::get_setting('delete_uploads', '1');
+        $gdpr_ai_mode            = CP_TimeSlotsBooking_GDPR::get_setting('ai_gdpr_mode', 'redact');
+        $gdpr_captcha_cookieless = CP_TimeSlotsBooking_GDPR::get_setting('captcha_cookieless', '1');
+        ?>
+        <div class="wpts-card">
+            <div class="wpts-card-header">
+                <div>
+                    <h3 class="wpts-card-title">🔒 <?php esc_html_e('GDPR & Privacy Controls', 'wp-time-slots-booking-form'); ?></h3>
+                    <p class="wpts-card-desc"><?php esc_html_e('Manage IP anonymization, automated data retention, WordPress personal data export/erasure, cookie-less CAPTCHA, and external AI privacy.', 'wp-time-slots-booking-form'); ?></p>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <a href="<?php echo esc_url(admin_url('export-personal-data.php')); ?>" class="wpts-btn wpts-btn-secondary">
+                        📤 <?php esc_html_e('WP Data Export', 'wp-time-slots-booking-form'); ?>
+                    </a>
+                    <a href="<?php echo esc_url(admin_url('erase-personal-data.php')); ?>" class="wpts-btn wpts-btn-secondary">
+                        🧹 <?php esc_html_e('WP Data Erasure', 'wp-time-slots-booking-form'); ?>
+                    </a>
+                    <a href="<?php echo esc_url(admin_url('options-privacy.php')); ?>" class="wpts-btn wpts-btn-soft">
+                        📄 <?php esc_html_e('WP Privacy Guide', 'wp-time-slots-booking-form'); ?>
+                    </a>
+                </div>
+            </div>
+
+            <div class="wpts-card-body">
+                <form method="post" action="" name="cpformconf_gdpr">
+                    <input name="nonce" type="hidden" value="<?php echo esc_attr($nonce); ?>" />
+                    <input name="<?php echo esc_attr($cpid); ?>_post_edition" type="hidden" value="1" />
+                    <input name="gotab" type="hidden" value="gdprarea" />
+
+                    <div class="wpts-section-divider">
+                        <h4><?php esc_html_e('Data Minimization & IP Handling', 'wp-time-slots-booking-form'); ?></h4>
+                    </div>
+                    <div class="wpts-grid wpts-cols-2">
+                        <div class="wpts-field">
+                            <label for="gdpr_ip_mode"><?php esc_html_e('Visitor IP Address Storage', 'wp-time-slots-booking-form'); ?></label>
+                            <select id="gdpr_ip_mode" name="gdpr_ip_mode">
+                                <option value="anonymize" <?php selected($gdpr_ip_mode, 'anonymize'); ?>><?php esc_html_e('Anonymize IP (Recommended — masks last octet / IPv6 suffix)', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="none" <?php selected($gdpr_ip_mode, 'none'); ?>><?php esc_html_e('Do Not Store IP Addresses', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="full" <?php selected($gdpr_ip_mode, 'full'); ?>><?php esc_html_e('Store Full IP Address (Legacy)', 'wp-time-slots-booking-form'); ?></option>
+                            </select>
+                            <span class="wpts-help"><?php esc_html_e('Uses WordPress wp_privacy_anonymize_ip() before saving bookings or sending admin notifications.', 'wp-time-slots-booking-form'); ?></span>
+                        </div>
+
+                        <div class="wpts-field">
+                            <label for="gdpr_ai_mode"><?php esc_html_e('AI Reply Assistant Privacy (Pollinations.ai)', 'wp-time-slots-booking-form'); ?></label>
+                            <select id="gdpr_ai_mode" name="gdpr_ai_mode">
+                                <option value="redact" <?php selected($gdpr_ai_mode, 'redact'); ?>><?php esc_html_e('Redact emails, phones & IPs before sending (Recommended)', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="block" <?php selected($gdpr_ai_mode, 'block'); ?>><?php esc_html_e('Block external AI transmission completely', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="allow" <?php selected($gdpr_ai_mode, 'allow'); ?>><?php esc_html_e('Send full booking message without redaction', 'wp-time-slots-booking-form'); ?></option>
+                            </select>
+                            <span class="wpts-help"><?php esc_html_e('Prevents customer PII from being transmitted in third-party AI API requests.', 'wp-time-slots-booking-form'); ?></span>
+                        </div>
+                    </div>
+
+                    <div class="wpts-section-divider">
+                        <h4><?php esc_html_e('Automated Data Retention & Right to Erasure', 'wp-time-slots-booking-form'); ?></h4>
+                    </div>
+                    <div class="wpts-grid wpts-cols-3">
+                        <div class="wpts-field">
+                            <label for="gdpr_retention_days"><?php esc_html_e('Auto-Cleanup After (Days)', 'wp-time-slots-booking-form'); ?></label>
+                            <input type="number" min="0" id="gdpr_retention_days" name="gdpr_retention_days" value="<?php echo esc_attr($gdpr_retention_days); ?>" />
+                            <span class="wpts-help"><?php esc_html_e('Set to 0 to disable. Bookings with upcoming future appointment dates are never purged early.', 'wp-time-slots-booking-form'); ?></span>
+                        </div>
+
+                        <div class="wpts-field">
+                            <label for="gdpr_retention_action"><?php esc_html_e('Retention Cleanup Action', 'wp-time-slots-booking-form'); ?></label>
+                            <select id="gdpr_retention_action" name="gdpr_retention_action">
+                                <option value="anonymize" <?php selected($gdpr_retention_action, 'anonymize'); ?>><?php esc_html_e('Anonymize PII (Keep slot & stats)', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="delete" <?php selected($gdpr_retention_action, 'delete'); ?>><?php esc_html_e('Permanently Delete Records', 'wp-time-slots-booking-form'); ?></option>
+                            </select>
+                        </div>
+
+                        <div class="wpts-field">
+                            <label for="gdpr_erasure_action"><?php esc_html_e('WP Personal Data Eraser Behavior', 'wp-time-slots-booking-form'); ?></label>
+                            <select id="gdpr_erasure_action" name="gdpr_erasure_action">
+                                <option value="anonymize" <?php selected($gdpr_erasure_action, 'anonymize'); ?>><?php esc_html_e('Anonymize PII (Preserve slot availability)', 'wp-time-slots-booking-form'); ?></option>
+                                <option value="delete" <?php selected($gdpr_erasure_action, 'delete'); ?>><?php esc_html_e('Permanently Delete Booking Rows', 'wp-time-slots-booking-form'); ?></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="wpts-field" style="margin-bottom:18px;">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500;">
+                            <input type="checkbox" name="gdpr_delete_uploads" value="1" <?php checked($gdpr_delete_uploads, '1'); ?> />
+                            <?php esc_html_e('Also delete customer-uploaded files from wp-content/uploads when erasing or anonymizing bookings', 'wp-time-slots-booking-form'); ?>
+                        </label>
+                    </div>
+
+                    <div class="wpts-section-divider">
+                        <h4><?php esc_html_e('CAPTCHA Privacy & Consent Note', 'wp-time-slots-booking-form'); ?></h4>
+                    </div>
+                    <div class="wpts-grid wpts-cols-2">
+                        <div class="wpts-field">
+                            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                                <input type="checkbox" name="gdpr_captcha_cookieless" value="1" <?php checked($gdpr_captcha_cookieless, '1'); ?> />
+                                <?php esc_html_e('Enable Cookie-less CAPTCHA Mode (Transient-based)', 'wp-time-slots-booking-form'); ?>
+                            </label>
+                            <span class="wpts-help"><?php esc_html_e('Validates CAPTCHA submissions using short-lived hashed WordPress transients and per-load client tokens—no PHPSESSID or rand_code cookies are set, and full-page caching stays intact.', 'wp-time-slots-booking-form'); ?></span>
+                        </div>
+
+                        <div class="wpts-field">
+                            <label><?php esc_html_e('GDPR Consent Checkboxes', 'wp-time-slots-booking-form'); ?></label>
+                            <span class="wpts-help"><?php esc_html_e('Add optional or required acceptance/GDPR checkboxes directly inside each booking form using the Form Builder. Their submitted values are automatically included in WordPress Personal Data Exports and erased/anonymized upon GDPR erasure requests.', 'wp-time-slots-booking-form'); ?></span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--wpts-border);display:flex;justify-content:flex-end;">
+                        <button type="submit" class="wpts-btn wpts-btn-primary">
+                            💾 <?php esc_html_e('Save Privacy Settings', 'wp-time-slots-booking-form'); ?>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- One-Click Privacy Maintenance Card -->
+        <div class="wpts-card">
+            <div class="wpts-card-header">
+                <div>
+                    <h3 class="wpts-card-title">🛠️ <?php esc_html_e('Privacy Maintenance Utilities', 'wp-time-slots-booking-form'); ?></h3>
+                    <p class="wpts-card-desc"><?php esc_html_e('Apply privacy rules retroactively to existing bookings in the database.', 'wp-time-slots-booking-form'); ?></p>
+                </div>
+            </div>
+            <div class="wpts-card-body" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+                <form method="post" action="" onsubmit="return confirm('<?php echo esc_js(__('Anonymize all stored IP addresses in existing bookings?', 'wp-time-slots-booking-form')); ?>');">
+                    <input name="nonce" type="hidden" value="<?php echo esc_attr($nonce); ?>" />
+                    <input name="<?php echo esc_attr($cpid); ?>_post_edition" type="hidden" value="1" />
+                    <input name="gotab" type="hidden" value="gdprarea" />
+                    <input name="wpts_gdpr_action" type="hidden" value="purge_ips_anonymize" />
+                    <button type="submit" class="wpts-btn wpts-btn-secondary">🛡️ <?php esc_html_e('Anonymize All Stored IPs', 'wp-time-slots-booking-form'); ?></button>
+                </form>
+
+                <form method="post" action="" onsubmit="return confirm('<?php echo esc_js(__('Permanently clear all IP addresses from existing bookings?', 'wp-time-slots-booking-form')); ?>');">
+                    <input name="nonce" type="hidden" value="<?php echo esc_attr($nonce); ?>" />
+                    <input name="<?php echo esc_attr($cpid); ?>_post_edition" type="hidden" value="1" />
+                    <input name="gotab" type="hidden" value="gdprarea" />
+                    <input name="wpts_gdpr_action" type="hidden" value="purge_ips_clear" />
+                    <button type="submit" class="wpts-btn wpts-btn-secondary">🗑️ <?php esc_html_e('Clear All Stored IPs', 'wp-time-slots-booking-form'); ?></button>
+                </form>
+
+                <form method="post" action="" onsubmit="return confirm('<?php echo esc_js(__('Run the configured retention cleanup right now?', 'wp-time-slots-booking-form')); ?>');">
+                    <input name="nonce" type="hidden" value="<?php echo esc_attr($nonce); ?>" />
+                    <input name="<?php echo esc_attr($cpid); ?>_post_edition" type="hidden" value="1" />
+                    <input name="gotab" type="hidden" value="gdprarea" />
+                    <input name="wpts_gdpr_action" type="hidden" value="run_retention_now" />
+                    <button type="submit" class="wpts-btn wpts-btn-soft">⏱️ <?php esc_html_e('Run Retention Cleanup Now', 'wp-time-slots-booking-form'); ?></button>
+                </form>
             </div>
         </div>
     </div>

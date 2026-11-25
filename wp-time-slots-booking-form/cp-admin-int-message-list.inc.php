@@ -79,6 +79,14 @@ else if (isset($_GET['ld']) && $_GET['ld'] != '')
     $wpdb->query( $wpdb->prepare('DELETE FROM `'.$wpdb->prefix.$this->table_messages.'` WHERE id=%d', intval($_GET['ld'])) );
     $message = __('Item deleted','wp-time-slots-booking-form');
 }
+else if (isset($_GET['an']) && $_GET['an'] != '')
+{
+    $this->verify_nonce(sanitize_text_field($_GET["anonce"]), 'cptslotsb_actions_booking');
+    if (isset($this->gdpr) && method_exists($this->gdpr, 'anonymize_booking_by_id')) {
+        $this->gdpr->anonymize_booking_by_id(intval($_GET['an']));
+    }
+    $message = __('Booking personal data anonymized','wp-time-slots-booking-form');
+}
 else if (isset($_GET['ud']) && $_GET['ud'] != '')
 {
     $this->verify_nonce(sanitize_text_field($_GET["anonce"]), 'cptslotsb_actions_booking');
@@ -918,6 +926,17 @@ function cp_resendMessageItem(id, element) {
     }
 } 
 
+function cp_anonymizeMessageItem(id, element) {
+    if (confirm('<?php echo esc_js(__('Anonymize all personal data (name, email, phone, IP, and uploaded files) for this booking while keeping the time slot intact? This cannot be undone.', 'wp-time-slots-booking-form')); ?>')) {
+        var url = 'admin.php?page=<?php echo esc_js($this->menu_parameter); ?>&anonce=<?php echo esc_js($nonce); ?>&cal=<?php echo intval($_GET["cal"]); ?>&list=1&an=' + id + '&r=' + Math.random();
+        var $link = jQuery(element);
+        $link.text('<?php echo esc_js(__('Anonymizing...', 'wp-time-slots-booking-form')); ?>').css({'pointer-events': 'none', 'opacity': '0.5'});
+        jQuery.get(url, function() {
+            location.reload();
+        });
+    }
+}
+
 function cp_deleteMessageItem(id, element) {
     if (confirm('<?php echo esc_js(__('Are you sure that you want to delete this item?','wp-time-slots-booking-form')); ?>')) {
         var url = 'admin.php?page=<?php echo esc_js($this->menu_parameter); ?>&anonce=<?php echo esc_js($nonce); ?>&cal=<?php echo intval($_GET["cal"]); ?>&list=1&ld='+id+'&r='+Math.random();
@@ -1177,6 +1196,7 @@ function do_dexapp_print() {
                         if (empty($display_email) && $events[$i]->notifyto != $blocked_indicator && preg_match('/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/', $raw_data, $matches)) {
                             $display_email = sanitize_email($matches[0]);
                         }
+                        $is_anonymized = ( is_array( $posted_data ) && ! empty( $posted_data['gdpr_anonymized'] ) );
                     ?>
                     <tr class="<?php if ($cancelled && $status != 'Attended') { echo 'cptslotsb_cancelled '; } ?>" valign="top">
                         <th scope="row" class="check-column" style="text-align:center;">
@@ -1190,7 +1210,9 @@ function do_dexapp_print() {
                             <span style="font-size:12px;color:var(--wpts-text-muted);"><?php echo esc_html(date("H:i",strtotime($events[$i]->time))); ?></span>
                         </td>
                         <td>
-                            <?php if ($display_email) : ?>
+                            <?php if ( $is_anonymized ) : ?>
+                                <span class="wpts-badge-unpaid" title="<?php echo esc_attr( $posted_data['gdpr_anonymized'] ); ?>">🔒 <?php esc_html_e('Anonymized', 'wp-time-slots-booking-form'); ?></span>
+                            <?php elseif ($display_email) : ?>
                                 <a class="wpts-email-pill" href="mailto:<?php echo esc_attr($display_email); ?>">
                                     ✉️ <?php echo esc_html($display_email); ?>
                                 </a>
@@ -1273,7 +1295,7 @@ function do_dexapp_print() {
                                 <?php $this->render_status_box('sb'.intval($events[$i]->id), $status); ?>
                             </div>
                             <div class="wpts-action-pills">
-                                <?php if ($events[$i]->notifyto != $blocked_indicator) { ?>
+                                <?php if (!$is_anonymized && $events[$i]->notifyto != $blocked_indicator) { ?>
                                     <a href="javascript:void(0);" class="wpts-mini-action reply-btn"
                                        data-id="<?php echo intval($events[$i]->id); ?>"
                                        data-email="<?php echo esc_attr($display_email); ?>"
@@ -1285,9 +1307,16 @@ function do_dexapp_print() {
                                 <a href="javascript:void(0);" class="wpts-mini-action" onclick="cp_updateMessageItem(<?php echo intval($events[$i]->id); ?>,<?php echo ($is_paid ? '0' : '1'); ?>, this);">
                                     💳 <?php esc_html_e('Toggle Payment','wp-time-slots-booking-form'); ?>
                                 </a>
-                                <a href="javascript:void(0);" class="wpts-mini-action" onclick="cp_resendMessageItem(<?php echo intval($events[$i]->id); ?>, this);">
-                                    ✉️ <?php esc_html_e('Resend Email','wp-time-slots-booking-form'); ?>
-                                </a>
+                                <?php if (!$is_anonymized) { ?>
+                                    <a href="javascript:void(0);" class="wpts-mini-action" onclick="cp_resendMessageItem(<?php echo intval($events[$i]->id); ?>, this);">
+                                        ✉️ <?php esc_html_e('Resend Email','wp-time-slots-booking-form'); ?>
+                                    </a>
+                                    <?php if ($events[$i]->notifyto != $blocked_indicator) { ?>
+                                        <a href="javascript:void(0);" class="wpts-mini-action" onclick="cp_anonymizeMessageItem(<?php echo intval($events[$i]->id); ?>, this);">
+                                            🛡️ <?php esc_html_e('Anonymize','wp-time-slots-booking-form'); ?>
+                                        </a>
+                                    <?php } ?>
+                                <?php } ?>
                                 <a href="javascript:void(0);" class="wpts-mini-action delete-btn" onclick="cp_deleteMessageItem(<?php echo intval($events[$i]->id); ?>, this);">
                                     🗑️ <?php esc_html_e('Delete','wp-time-slots-booking-form'); ?>
                                 </a>
@@ -1354,6 +1383,10 @@ $j(function() {
                 <textarea id="cptslotsb-reply-original" rows="3" style="background:var(--wpts-bg);color:var(--wpts-text-muted);" readonly></textarea>
             </div>
 
+            <?php
+            $ai_gdpr_mode = class_exists( 'CP_TimeSlotsBooking_GDPR' ) ? CP_TimeSlotsBooking_GDPR::get_setting( 'ai_gdpr_mode', 'redact' ) : 'redact';
+            if ( $ai_gdpr_mode !== 'block' ) :
+            ?>
             <div class="cptslotsb-ai-box">
                 <div class="cptslotsb-ai-header">
                     <strong style="color:var(--wpts-text);font-size:13.5px;">✨ <?php esc_html_e('AI Reply Assistant','wp-time-slots-booking-form'); ?></strong>
@@ -1367,7 +1400,11 @@ $j(function() {
                 </div>
 
                 <p class="cptslotsb-ai-notice">
-                    <?php esc_html_e('Privacy Notice: When enabled, clicking "Generate with AI" sends your site name, the Original Submission shown above, and your instructions to the external AI service text.pollinations.ai to generate a draft reply.','wp-time-slots-booking-form'); ?>
+                    <?php if ( $ai_gdpr_mode === 'redact' ) : ?>
+                        <?php esc_html_e('Privacy Notice: When enabled, clicking "Generate with AI" sends your site name, the Original Submission (with email addresses, phone numbers, and IPs automatically redacted), and your instructions to text.pollinations.ai to generate a draft reply.', 'wp-time-slots-booking-form'); ?>
+                    <?php else : ?>
+                        <?php esc_html_e('Privacy Notice: When enabled, clicking "Generate with AI" sends your site name, the Original Submission shown above, and your instructions to the external AI service text.pollinations.ai to generate a draft reply.', 'wp-time-slots-booking-form'); ?>
+                    <?php endif; ?>
                 </p>
 
                 <div id="cptslotsb-ai-controls" class="cptslotsb-ai-controls" style="<?php echo $ai_reply_enabled ? '' : 'display:none;'; ?>">
@@ -1380,6 +1417,7 @@ $j(function() {
                     </div>
                 </div>
             </div>
+            <?php endif; ?>
 
             <div class="cptslotsb-modal-field">
                 <label for="cptslotsb-reply-subject"><?php esc_html_e('Subject:','wp-time-slots-booking-form'); ?></label>

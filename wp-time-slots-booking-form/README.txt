@@ -4,11 +4,11 @@ Donate link: https://wptimeslot.dwbooster.com/download
 Tags: booking, booking calendar, appointment booking, time slots, reservation
 Requires at least: 3.0.5
 Tested up to: 7.1
-Stable tag: 1.2.59
+Stable tag: 1.2.60
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Booking calendar and appointment booking form to reserve time slots on specific dates—now with a free, keyless AI email reply assistant.
+Booking calendar and appointment booking form to reserve time slots on specific dates, with built-in GDPR privacy controls and free AI replies.
 
 == Description ==
 
@@ -16,9 +16,20 @@ Booking calendar and appointment booking form to reserve time slots on specific 
 
 Upon booking completion, notification emails are automatically sent to the administrator, ensuring you stay informed of every **calendar booking**. Additionally, a customizable confirmation email can be dispatched to the customer, enhancing their overall booking experience.
 
-= ✨ NEW: Free AI-Assisted Booking Replies (No API Key Required!) =
+= 🔒 NEW: Built-In GDPR & Privacy Controls =
 
-Save hours on customer communication! You can now reply directly to any booking from the **Booking Orders** list using our built-in **AI Reply Assistant**—completely free, with **no API key or external account setup required**. Simply enter optional instructions (e.g., *"Confirm the booking for Tuesday at 10 AM and remind them to arrive 10 minutes early"*), click **Generate with AI**, review the automatically drafted reply in your customer's language, and send it with one click. Every sent reply is automatically logged inside the booking record for easy tracking.
+Manage customer data responsibly with dedicated privacy controls under **General Settings → GDPR & Privacy**:
+
+* **IP Address Minimization**: Automatically anonymize visitor IP addresses using WordPress privacy functions, disable IP storage completely, or retroactively anonymize/clear previously stored IPs with one click.
+* **Cookie-less Anti-Spam CAPTCHA**: Validate human submissions using short-lived, hashed server-side tokens instead of `PHPSESSID` or verification cookies—improving privacy compliance and keeping full-page caching intact.
+* **WordPress Personal Data Export & Erasure**: Seamlessly integrates with WordPress core **Export Personal Data** and **Erase Personal Data** tools, plus dynamic **Privacy Policy Guide** text.
+* **Automated Data Retention**: Schedule automatic daily cleanup to anonymize or permanently delete old booking records after a configurable number of days, while safely protecting bookings with upcoming appointments.
+* **One-Click Booking Anonymization**: Anonymize individual customer records directly from the **Booking Orders** list while keeping booked time slots and calendar availability intact.
+* **AI Reply Privacy**: Automatically redact customer emails, phone numbers, and IP addresses before sending booking text to the optional AI Reply Assistant—or block external AI transmission altogether.
+
+= ✨ Free AI-Assisted Booking Replies (No API Key Required!) =
+
+Save hours on customer communication! You can reply directly to any booking from the **Booking Orders** list using our built-in **AI Reply Assistant**—completely free, with **no API key or external account setup required**. Simply enter optional instructions (e.g., *"Confirm the booking for Tuesday at 10 AM and remind them to arrive 10 minutes early"*), click **Generate with AI**, review the automatically drafted reply in your customer's language, and send it with one click. Every sent reply is automatically logged inside the booking record for easy tracking.
 
 = Who Is This Booking Calendar For? =
 
@@ -52,16 +63,17 @@ In the **booking calendar**, you can easily set up:
 
 In addition to these **calendar booking** capabilities, the plugin includes:
 
-* **NEW! AI-Assisted Email Replies**: Draft and send personalized replies to customer bookings directly from the dashboard using free, keyless AI
+* **NEW! GDPR & Privacy Controls**: IP anonymization, cookie-less CAPTCHA, automated data retention, one-click booking anonymization, AI PII redaction, and native WordPress data export/erasure support
+* **AI-Assisted Email Replies**: Draft and send personalized replies to customer bookings directly from the dashboard using free, keyless AI
 * **Visual Styles Editor**: Customize 10+ calendar templates with a sleek, modern aesthetic in just a few clicks
 * A modern, mobile-friendly, and fully responsive booking form design
-* A drag-and-drop visual form builder for effortless customization
+* A drag-and-drop visual form builder for effortless customization (including optional acceptance/GDPR checkboxes)
 * Multi-language support for global accessibility
 * Automated notification and confirmation emails
 * Built-in anti-spam protection (Captcha) to block unwanted submissions
 * Automated email reports and CSV exports for data analysis
 * A usage and statistics dashboard for booking insights
-* A centralized **Booking Orders** management list with one-click status updates, email resending, and direct replies
+* A centralized **Booking Orders** management list with one-click status updates, email resending, anonymization, and direct replies
 * A printable schedule list for offline reference
 * A visual multi-view schedule calendar for viewing daily, weekly, and monthly bookings
 * Native integration with **Gutenberg**, **Elementor**, and classic WordPress editors
@@ -101,9 +113,13 @@ To install **WP Time Slots Booking Form**, follow these steps:
 
 == Frequently Asked Questions ==
 
-= Q: How does the new AI-assisted reply feature work? Do I need an OpenAI API key? =
+= Q: Does the plugin include GDPR & Privacy controls? =
 
-A: No API key or paid account is required! In the **Booking Orders** list, click the **Reply** link next to any booking to open the reply modal. You can type a manual message or enter brief instructions (for example, *"Confirm the appointment and ask them to bring their ID"*) and click **Generate with AI**. The assistant will draft a polite, context-aware email reply in the customer's language that you can edit and send immediately.
+A: Yes! Go to **WP Time Slots Booking Form → General Settings → GDPR & Privacy** to configure IP address anonymization or disable IP logging, enable cookie-less CAPTCHA verification, set automated data retention periods, and control PII redaction for the optional AI Reply Assistant. The plugin also integrates natively with WordPress's **Export Personal Data**, **Erase Personal Data**, and **Privacy Policy Guide** tools, lets you anonymize individual bookings in one click from the **Booking Orders** list, and allows adding acceptance/GDPR checkboxes directly inside any form via the Form Builder.
+
+= Q: How does the AI-assisted reply feature work? Do I need an OpenAI API key? =
+
+A: No API key or paid account is required! In the **Booking Orders** list, click the **Reply** link next to any booking to open the reply modal. You can type a manual message or enter brief instructions (for example, *"Confirm the appointment and ask them to bring their ID"*) and click **Generate with AI**. The assistant is opt-in, redacts customer emails, phone numbers, and IP addresses by default under **GDPR & Privacy**, and drafts a polite, context-aware email reply in the customer's language that you can edit and send immediately.
 
 = Q: Where can I find the complete WP Time Slots Booking Form plugin documentation? =
 
@@ -983,7 +999,10 @@ You can also use this area to change the JavaScript loading method if a third-pa
 = 1.2.59 =
 * Form builder modernized
 
+= 1.2.60 =
+* Added GDPR & Privacy controls (IP anonymization, cookie-less CAPTCHA, automated data retention, WP export/erasure, and booking anonymization)
+
 == Upgrade Notice ==
 
-= 1.2.59 =
-* Form builder modernized
+= 1.2.60 =
+* Added built-in GDPR & Privacy controls, cookie-less CAPTCHA, and WordPress personal data export/erasure support.

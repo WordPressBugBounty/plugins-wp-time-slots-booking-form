@@ -13,11 +13,13 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
     public $print_counter = 1;
     private $include_user_data_csv = false;
     public $CP_CFPP_global_templates;
+    public $gdpr = null;
     private $old_css_placeholder = '/* Styles definition here */';
     private $postURL;
     
     protected $paid_statuses = array('Pending','Cancelled','Rejected');
     public $shorttag = 'CP_TIME_SLOTS_BOOKING';
+    public $blocked_by_admin_indicator = 'BLOCKED@BY.ADMIN';
     
 
     protected $tags_allowed = array(
@@ -438,17 +440,36 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
             catch (e) 
             {
             }
-            $dexQuery = jQuery.noConflict();<?php if (!is_admin() && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != 'false') { ?>
+            $dexQuery = jQuery.noConflict();<?php if (!is_admin() && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != 'false' && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != false) { ?>
             if (!cp_tslotsbk_overbooking_handler<?php echo esc_js($this->print_counter-1); ?>) {
-                if (document.<?php echo esc_js($this->prefix); ?>_pform<?php echo '_'.esc_js($this->print_counter); ?>.hdcaptcha_<?php echo esc_js($this->prefix); ?>_post.value == '') { setTimeout( "<?php echo esc_js($this->prefix); ?>_cerror<?php echo '_'.esc_js($this->print_counter); ?>()", 100); return false; }
-                var result = $dexQuery.ajax({ type: "GET", url: "<?php echo esc_js($this->get_site_url()); ?>/?ps=<?php echo '_'.esc_js($this->print_counter); ?>&<?php echo esc_js($this->prefix); ?>_pform_process=2&<?php echo esc_js($this->prefix); ?>_id=<?php echo esc_js($this->item); ?>&inAdmin=1&ps=<?php echo '_'.esc_js($this->print_counter); ?>&hdcaptcha_<?php echo esc_js($this->prefix); ?>_post="+document.<?php echo esc_js($this->prefix); ?>_pform<?php echo '_'.esc_js($this->print_counter); ?>.hdcaptcha_<?php echo esc_js($this->prefix); ?>_post.value, async: false }).responseText;
+                var $captchaInput = $dexQuery("#<?php echo esc_js($this->prefix); ?>_pform<?php echo '_'.esc_js($this->print_counter); ?> input[name='hdcaptcha_<?php echo esc_js($this->prefix); ?>_post']:visible");
+                var captchaVal = $captchaInput.length ? $captchaInput.val() : (document.<?php echo esc_js($this->prefix); ?>_pform<?php echo '_'.esc_js($this->print_counter); ?>.hdcaptcha_<?php echo esc_js($this->prefix); ?>_post ? document.<?php echo esc_js($this->prefix); ?>_pform<?php echo '_'.esc_js($this->print_counter); ?>.hdcaptcha_<?php echo esc_js($this->prefix); ?>_post.value : '');
+                if (captchaVal == '') { setTimeout( "<?php echo esc_js($this->prefix); ?>_cerror<?php echo '_'.esc_js($this->print_counter); ?>()", 100); return false; }
+                var ctokenParam = "";
+                var ctokenEl = document.getElementById("cptslotsb_ctoken<?php echo '_'.esc_js($this->print_counter); ?>");
+                if (ctokenEl && ctokenEl.value) {
+                    ctokenParam = "&cptslotsb_ctoken=" + encodeURIComponent(ctokenEl.value);
+                }
+                var result = $dexQuery.ajax({
+                    type: "GET",
+                    url: <?php echo wp_json_encode( esc_url_raw( $this->get_site_url() . '/?ps=_' . $this->print_counter . '&' . $this->prefix . '_pform_process=2&' . $this->prefix . '_id=' . $this->item . '&inAdmin=1&hdcaptcha_' . $this->prefix . '_post=' ) ); ?> + encodeURIComponent(captchaVal) + ctokenParam,
+                    async: false
+                }).responseText;
             }
             if (!cp_tslotsbk_overbooking_handler<?php echo esc_js($this->print_counter-1); ?> && result.indexOf("captchafailed") != -1) {
-                $dexQuery("#captchaimg<?php echo '_'.esc_js($this->print_counter); ?>").attr('src', $dexQuery("#captchaimg<?php echo '_'.esc_js($this->print_counter); ?>").attr('src')+'&'+Date());
+                if (typeof window.wptsRefreshCaptcha<?php echo '_'.esc_js($this->print_counter); ?> === "function") {
+                    window.wptsRefreshCaptcha<?php echo '_'.esc_js($this->print_counter); ?>();
+                } else {
+                    $dexQuery("img[id='captchaimg<?php echo '_'.esc_js($this->print_counter); ?>'], img.wpts-captcha-img<?php echo '_'.esc_js($this->print_counter); ?>").each(function(){
+                        var s = $dexQuery(this).attr('src') || '';
+                        $dexQuery(this).attr('src', s.replace(/&t=\d+$/, '') + '&t=' + Date.now());
+                    });
+                }
                 setTimeout( "<?php echo esc_js($this->prefix); ?>_cerror<?php echo '_'.esc_js($this->print_counter); ?>()", 100);
                 return false;
             } else <?php } ?>
             {
+                $dexQuery("#<?php echo esc_js($this->prefix); ?>_pform<?php echo '_'.esc_js($this->print_counter); ?>").find("[id='hdcaptcha_error<?php echo '_'.esc_js($this->print_counter); ?>']").hide();
                 var cpefb_error = 0;
                 $dexQuery("#<?php echo esc_js($this->prefix) ?>_pform<?php echo '_'.esc_js($this->print_counter); ?>").find(".cpefb_error").each(function(index){
                     if ($dexQuery(this).css("display")!="none")
@@ -1278,29 +1299,54 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 
         if ($this->get_param($this->prefix.'_id')) $this->item = intval($this->get_param($this->prefix.'_id'));
 
-        @session_start();
-        if (isset($_GET["ps"])) $sequence = sanitize_text_field($_GET["ps"]); else if (isset($_POST["cp_pform_psequence"])) $sequence = sanitize_text_field($_POST["cp_pform_psequence"]);
-        
-        $captcha_tr = '';
-        if (!empty($_COOKIE['rand_code'.$sequence])) $captcha_tr = get_transient( "cpeople-captcha-".sanitize_key($_COOKIE['rand_code'.$sequence]));
-        
-        if (
-               !apply_filters( 'cptslotsb_valid_submission', true) ||
-               (
-                   (!is_admin() && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != 'false') &&
-                   ( (strtolower($this->get_param('hdcaptcha_'.$this->prefix.'_post')) != strtolower($_SESSION['rand_code'.$sequence])) ||
-                     ($_SESSION['rand_code'.$sequence] == '')
-                   )
-                   &&
-                   ( ((strtolower($this->get_param('hdcaptcha_'.$this->prefix.'_post'))) != ($captcha_tr)) ||
-                     ($captcha_tr == '')
-                   )
-               )
-           )
-        {
+        $sequence = '';
+        if ( isset( $_GET['ps'] ) ) {
+            $sequence = sanitize_key( $_GET['ps'] );
+        } elseif ( isset( $_POST['cp_pform_psequence'] ) ) {
+            $sequence = sanitize_key( $_POST['cp_pform_psequence'] );
+        }
+
+        $captcha_enabled    = ( ! is_admin() && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != 'false' && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != false );
+        $cookieless_captcha = ( class_exists( 'CP_TimeSlotsBooking_GDPR' ) && CP_TimeSlotsBooking_GDPR::get_setting( 'captcha_cookieless', '1' ) === '1' );
+        $use_cookieless     = ( $cookieless_captcha && isset( $_REQUEST['cptslotsb_ctoken'] ) );
+
+        $captcha_valid = true;
+        if ( $captcha_enabled ) {
+            $submitted_code = strtolower( trim( (string) $this->get_param( 'hdcaptcha_' . $this->prefix . '_post' ) ) );
+
+            if ( $use_cookieless ) {
+                $ctoken        = isset( $_REQUEST['cptslotsb_ctoken'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['cptslotsb_ctoken'] ) ) : '';
+                $captcha_valid = false;
+
+                if ( $submitted_code !== '' && preg_match( '/^[a-f0-9]{16,32}$/', $ctoken ) ) {
+                    $stored_hash = get_transient( 'wpts_cap_' . $ctoken );
+                    if ( is_string( $stored_hash ) && $stored_hash !== '' && hash_equals( $stored_hash, wp_hash( $submitted_code ) ) ) {
+                        $captcha_valid = true;
+                    } else {
+                        // Invalidate token immediately on failed guess to block brute-force attempts
+                        delete_transient( 'wpts_cap_' . $ctoken );
+                    }
+                }
+            } else {
+                if ( function_exists( 'session_start' ) && session_status() === PHP_SESSION_NONE ) {
+                    @session_start();
+                }
+                $session_code     = isset( $_SESSION['rand_code' . $sequence] ) ? strtolower( (string) $_SESSION['rand_code' . $sequence] ) : '';
+                $cookie_val       = isset( $_COOKIE['rand_code' . $sequence] ) ? sanitize_text_field( wp_unslash( $_COOKIE['rand_code' . $sequence] ) ) : '';
+                $transient_code   = ( $cookie_val !== '' ) ? strtolower( (string) get_transient( 'cpeople-captcha-' . sanitize_key( $cookie_val ) ) ) : '';
+
+                $session_match    = ( $session_code !== '' && $submitted_code === $session_code );
+                $transient_match  = ( $transient_code !== '' && $submitted_code === $transient_code );
+                $md5_cookie_match = ( $cookie_val !== '' && md5( $submitted_code ) === $cookie_val );
+
+                $captcha_valid = ( $session_match || $transient_match || $md5_cookie_match );
+            }
+        }
+
+        if ( ! apply_filters( 'cptslotsb_valid_submission', true ) || ! $captcha_valid ) {
             echo 'captchafailed';
             exit;
-        }        
+        }
         
     	// if this isn't the real post (it was the captcha verification) then echo ok and exit
         if ( 'POST' != $_SERVER['REQUEST_METHOD'] || ! isset( $_POST[$this->prefix.'_pform_process'] ) )
@@ -1438,13 +1484,27 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
         $wpdb->query("ALTER TABLE ".$wpdb->prefix.$this->table_messages." CHANGE `ipaddr` `ipaddr` VARCHAR(250)");
         
         // clear captcha
-        $_SESSION['rand_code'.$sequence] = '';
-        if (!empty($_COOKIE['rand_code'.$sequence])) set_transient( "cpeople-captcha-".sanitize_key($_COOKIE['rand_code'.$sequence]) , '' , 1800 ); 
+        if ( $use_cookieless ) {
+            $ctoken = isset( $_POST['cptslotsb_ctoken'] ) ? sanitize_text_field( wp_unslash( $_POST['cptslotsb_ctoken'] ) ) : '';
+            if ( preg_match( '/^[a-f0-9]{16,32}$/', $ctoken ) ) {
+                delete_transient( 'wpts_cap_' . $ctoken );
+            }
+        } else {
+            if ( isset( $_SESSION['rand_code' . $sequence] ) ) {
+                $_SESSION['rand_code' . $sequence] = '';
+            }
+            if ( ! empty( $_COOKIE['rand_code' . $sequence] ) ) {
+                delete_transient( 'cpeople-captcha-' . sanitize_key( wp_unslash( $_COOKIE['rand_code' . $sequence] ) ) );
+                setCookie( 'rand_code' . $sequence, '', time() - 3600, "/" );
+            }
+        }
         
         $to = $this->get_option('cu_user_email_field', CP_TSLOTSBOOK_DEFAULT_cu_user_email_field);
         $rows_affected = $wpdb->insert( $wpdb->prefix.$this->table_messages, array( 'formid' => $this->item,
                                                                                     'time' => current_time('mysql'),
-                                                                                    'ipaddr' => (CP_TSLOTSBOOK_DEFAULT_track_IP?$_SERVER['REMOTE_ADDR']:''),
+                                                                                    'ipaddr' => ( CP_TSLOTSBOOK_DEFAULT_track_IP && class_exists( 'CP_TimeSlotsBooking_GDPR' )
+                                                                                        ? CP_TimeSlotsBooking_GDPR::get_processed_ip()
+                                                                                        : ( CP_TSLOTSBOOK_DEFAULT_track_IP ? $_SERVER['REMOTE_ADDR'] : '' ) ),
                                                                                     'notifyto' => sanitize_email((@$my_POST[$to.$sequence]?$my_POST[$to.$sequence]:'')),
                                                                                     'posted_data' => serialize($params),
                                                                                     'data' =>$buffer_A,
@@ -1678,8 +1738,11 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
             $buffer .="ADDITIONAL INFORMATION\n"
                   ."*********************************\n";
 
-            $basic_data = "IP: ".$myrows[0]->ipaddr."\n"
-              ."Server Time:  ".date("Y-m-d H:i:s")."\n";
+            $basic_data = '';
+            if ( ! empty( $myrows[0]->ipaddr ) ) {
+                $basic_data .= "IP: " . $myrows[0]->ipaddr . "\n";
+            }
+            $basic_data .= "Server Time: " . date( "Y-m-d H:i:s" ) . "\n";
 
 		    /**
 		     *	Includes additional information to the email's message,
@@ -1895,6 +1958,50 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
 	                    }
 	                }
                 }
+            }
+        }
+        else if ( @$my_POST["gotab"] == 'gdprarea' )
+        {
+            if ( ! current_user_can( 'manage_options' ) ) {
+                wp_die( esc_html__( 'You do not have permission to change privacy settings.', 'wp-time-slots-booking-form' ) );
+            }
+
+            // Handle one-click utility actions
+            if ( ! empty( $my_POST['wpts_gdpr_action'] ) && $this->gdpr ) {
+                $util_action = sanitize_text_field( $my_POST['wpts_gdpr_action'] );
+                if ( $util_action === 'purge_ips_anonymize' ) {
+                    $this->gdpr->purge_existing_ips( 'anonymize' );
+                } elseif ( $util_action === 'purge_ips_clear' ) {
+                    $this->gdpr->purge_existing_ips( 'none' );
+                } elseif ( $util_action === 'run_retention_now' ) {
+                    $this->gdpr->run_retention_cleanup();
+                }
+                return;
+            }
+
+            $allowed_ip_modes = array( 'full', 'anonymize', 'none' );
+            $allowed_actions  = array( 'anonymize', 'delete' );
+            $allowed_ai_modes = array( 'redact', 'block', 'allow' );
+
+            $ip_mode          = isset( $my_POST['gdpr_ip_mode'] ) && in_array( $my_POST['gdpr_ip_mode'], $allowed_ip_modes, true ) ? $my_POST['gdpr_ip_mode'] : 'anonymize';
+            $retention_action = isset( $my_POST['gdpr_retention_action'] ) && in_array( $my_POST['gdpr_retention_action'], $allowed_actions, true ) ? $my_POST['gdpr_retention_action'] : 'anonymize';
+            $erasure_action   = isset( $my_POST['gdpr_erasure_action'] ) && in_array( $my_POST['gdpr_erasure_action'], $allowed_actions, true ) ? $my_POST['gdpr_erasure_action'] : 'anonymize';
+            $ai_gdpr_mode     = isset( $my_POST['gdpr_ai_mode'] ) && in_array( $my_POST['gdpr_ai_mode'], $allowed_ai_modes, true ) ? $my_POST['gdpr_ai_mode'] : 'redact';
+
+            $gdpr_settings = array(
+                'ip_mode'            => $ip_mode,
+                'retention_days'     => max( 0, intval( isset( $my_POST['gdpr_retention_days'] ) ? $my_POST['gdpr_retention_days'] : 0 ) ),
+                'retention_action'   => $retention_action,
+                'erasure_action'     => $erasure_action,
+                'delete_uploads'     => ! empty( $my_POST['gdpr_delete_uploads'] ) ? '1' : '0',
+                'ai_gdpr_mode'       => $ai_gdpr_mode,
+                'captcha_cookieless' => ! empty( $my_POST['gdpr_captcha_cookieless'] ) ? '1' : '0',
+            );
+
+            update_option( 'cp_wpts_gdpr_settings', $gdpr_settings );
+
+            if ( $this->gdpr ) {
+                $this->gdpr->sync_cron_schedule();
             }
         }
     }
@@ -2918,6 +3025,13 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
             wp_send_json_error( __( 'AI Reply Assistant is disabled. Please turn it on first.', 'wp-time-slots-booking-form' ) );
         }
 
+        if ( class_exists( 'CP_TimeSlotsBooking_GDPR' ) ) {
+            $ai_gdpr_mode = CP_TimeSlotsBooking_GDPR::get_setting( 'ai_gdpr_mode', 'redact' );
+            if ( $ai_gdpr_mode === 'block' ) {
+                wp_send_json_error( __( 'External AI transmission is disabled in GDPR & Privacy Settings.', 'wp-time-slots-booking-form' ) );
+            }
+        }
+
         $original_message = isset( $_POST['original_message'] ) ? sanitize_textarea_field( wp_unslash( $_POST['original_message'] ) ) : '';
         $instructions     = isset( $_POST['instructions'] ) && trim( $_POST['instructions'] ) !== ''
             ? sanitize_text_field( wp_unslash( $_POST['instructions'] ) )
@@ -2933,7 +3047,11 @@ class CP_TimeSlotsBookingPlugin extends CP_TSLOTSBOOK_BaseClass {
                        . "Follow the same language used by the customer unless instructed otherwise. "
                        . "Output ONLY the email body text without a 'Subject:' line.";
 
-        $user_prompt = "Customer Booking Submission:\n{$original_message}\n\nAdmin Instructions for Reply:\n{$instructions}";
+        $prompt_message = $original_message;
+        if ( class_exists( 'CP_TimeSlotsBooking_GDPR' ) && CP_TimeSlotsBooking_GDPR::get_setting( 'ai_gdpr_mode', 'redact' ) === 'redact' ) {
+            $prompt_message = CP_TimeSlotsBooking_GDPR::sanitize_for_ai( $original_message );
+        }
+        $user_prompt = "Customer Booking Submission:\n{$prompt_message}\n\nAdmin Instructions for Reply:\n{$instructions}";
 
         $url = 'https://text.pollinations.ai/' . rawurlencode( $system_prompt . "\n\n" . $user_prompt );
 
