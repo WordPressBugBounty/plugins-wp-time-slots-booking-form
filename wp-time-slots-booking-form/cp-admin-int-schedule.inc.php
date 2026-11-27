@@ -40,119 +40,7 @@ $has_active_filters = (!empty($_GET["dfrom"]) || !empty($_GET["dto"]) || !empty(
 ?>
 
 <style type="text/css">
-    :root {
-        --wpts-primary: #0d9488;
-        --wpts-primary-hover: #0f766e;
-        --wpts-primary-light: #f0fdfa;
-        --wpts-primary-border: #99f6e4;
-        --wpts-accent: #0284c7;
-        --wpts-accent-light: #f0f9ff;
-        --wpts-accent-border: #bae6fd;
-        --wpts-success: #10b981;
-        --wpts-success-bg: #ecfdf5;
-        --wpts-warning: #f59e0b;
-        --wpts-warning-bg: #fffbeb;
-        --wpts-danger: #ef4444;
-        --wpts-danger-bg: #fef2f2;
-        --wpts-surface: #ffffff;
-        --wpts-bg: #f8fafc;
-        --wpts-border: #e2e8f0;
-        --wpts-text: #0f172a;
-        --wpts-text-muted: #64748b;
-        --wpts-radius: 14px;
-        --wpts-radius-sm: 8px;
-        --wpts-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
-    }
-
-    .wpts-admin-wrap {
-        max-width: 1360px;
-        margin: 20px auto 40px;
-        padding-right: 20px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
-        color: var(--wpts-text);
-        box-sizing: border-box;
-    }
-    .wpts-admin-wrap *, .wpts-admin-wrap *::before, .wpts-admin-wrap *::after {
-        box-sizing: border-box;
-    }
-
-    /* Top Header Card */
-    .wpts-header {
-        background: var(--wpts-surface);
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius);
-        padding: 20px 24px;
-        margin-bottom: 18px;
-        box-shadow: var(--wpts-shadow);
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 65%);
-    }
-    .wpts-header-left {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-    }
-    .wpts-back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 14px;
-        background: #ffffff;
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius-sm);
-        color: var(--wpts-text);
-        font-size: 13px;
-        font-weight: 600;
-        text-decoration: none;
-        cursor: pointer;
-        transition: all 0.15s ease;
-    }
-    .wpts-back-btn:hover {
-        background: var(--wpts-primary-light);
-        border-color: var(--wpts-primary-border);
-        color: var(--wpts-primary-hover);
-    }
-    .wpts-title-group h1 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--wpts-text);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 0;
-        line-height: 1.3;
-    }
-    .wpts-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: var(--wpts-primary-light);
-        color: var(--wpts-primary-hover);
-        font-size: 12px;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 999px;
-        border: 1px solid var(--wpts-primary-border);
-    }
-    .wpts-subtitle {
-        margin: 4px 0 0;
-        font-size: 13px;
-        color: var(--wpts-text-muted);
-    }
-    .wpts-header-actions {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    /* Segmented View Switcher */
+/* Page-specific styles: Schedule View Switcher, Orders Banner & Schedule List Grid */
     .wpts-view-switcher {
         display: inline-flex;
         background: var(--wpts-bg);
@@ -181,66 +69,6 @@ $has_active_filters = (!empty($_GET["dfrom"]) || !empty($_GET["dto"]) || !empty(
         color: #ffffff;
         box-shadow: 0 1px 2px rgba(13, 148, 136, 0.25);
     }
-
-    /* Buttons */
-    .wpts-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 8px 14px;
-        border-radius: var(--wpts-radius-sm);
-        font-size: 12.5px;
-        font-weight: 600;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.15s ease;
-        border: 1px solid transparent;
-        line-height: 1.2;
-        white-space: nowrap;
-    }
-    .wpts-btn-primary {
-        background: var(--wpts-primary);
-        color: #ffffff;
-        box-shadow: 0 1px 2px rgba(13, 148, 136, 0.25);
-    }
-    .wpts-btn-primary:hover {
-        background: var(--wpts-primary-hover);
-        color: #ffffff;
-        transform: translateY(-1px);
-    }
-    .wpts-btn-accent {
-        background: var(--wpts-accent);
-        color: #ffffff;
-        box-shadow: 0 1px 2px rgba(2, 132, 199, 0.25);
-    }
-    .wpts-btn-accent:hover {
-        background: #0369a1;
-        color: #ffffff;
-        transform: translateY(-1px);
-    }
-    .wpts-btn-soft {
-        background: var(--wpts-primary-light);
-        color: var(--wpts-primary-hover);
-        border-color: var(--wpts-primary-border);
-    }
-    .wpts-btn-soft:hover {
-        background: var(--wpts-primary);
-        color: #ffffff;
-        border-color: var(--wpts-primary);
-    }
-    .wpts-btn-secondary {
-        background: #ffffff;
-        border-color: var(--wpts-border);
-        color: var(--wpts-text);
-    }
-    .wpts-btn-secondary:hover {
-        background: var(--wpts-bg);
-        border-color: #cbd5e1;
-        color: var(--wpts-primary);
-    }
-
-    /* Booking Orders Administration Callout Bar */
     .wpts-orders-banner {
         background: var(--wpts-accent-light);
         border: 1px solid var(--wpts-accent-border);
@@ -262,115 +90,6 @@ $has_active_filters = (!empty($_GET["dfrom"]) || !empty($_GET["dto"]) || !empty(
         font-weight: 700;
         text-decoration: underline;
     }
-
-    /* Cards */
-    .wpts-card {
-        background: var(--wpts-surface);
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius);
-        box-shadow: var(--wpts-shadow);
-        margin-bottom: 24px;
-        overflow: hidden;
-    }
-    .wpts-card-header {
-        padding: 15px 24px;
-        border-bottom: 1px solid var(--wpts-border);
-        background: #fcfcfd;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-    .wpts-card-title {
-        margin: 0;
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--wpts-text);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .wpts-card-body {
-        padding: 20px 24px;
-    }
-
-    /* Filter Bar & Quick Date Presets */
-    .wpts-filter-bar {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-end;
-        gap: 12px;
-    }
-    .wpts-filter-field {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-    }
-    .wpts-filter-field label {
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--wpts-text-muted);
-    }
-    .wpts-filter-actions {
-        margin-left: auto;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-    .wpts-presets-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-top: 14px;
-        padding-top: 12px;
-        border-top: 1px solid #f1f5f9;
-        flex-wrap: wrap;
-    }
-    .wpts-preset-pill {
-        background: var(--wpts-bg);
-        border: 1px solid var(--wpts-border);
-        border-radius: 999px;
-        padding: 4px 10px;
-        font-size: 11.5px;
-        font-weight: 600;
-        color: var(--wpts-text-muted);
-        cursor: pointer;
-        transition: all 0.15s ease;
-    }
-    .wpts-preset-pill:hover {
-        background: var(--wpts-primary-light);
-        color: var(--wpts-primary-hover);
-        border-color: var(--wpts-primary-border);
-    }
-
-    /* Inputs & Selects (with right-padding arrow fix) */
-    .wpts-admin-wrap input[type="text"],
-    .wpts-admin-wrap select {
-        padding: 7px 11px;
-        font-size: 13px;
-        line-height: 1.4;
-        color: var(--wpts-text);
-        background-color: #ffffff;
-        border: 1px solid #cbd5e1;
-        border-radius: var(--wpts-radius-sm);
-        transition: border-color 0.15s ease, box-shadow 0.15s ease;
-        box-shadow: none;
-        min-height: 36px;
-    }
-    .wpts-admin-wrap select {
-        padding-right: 32px !important;
-        background-position: right 8px center;
-    }
-    .wpts-admin-wrap input[type="text"]:focus,
-    .wpts-admin-wrap select:focus {
-        border-color: var(--wpts-primary);
-        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.14);
-        outline: none;
-    }
-
-    /* Schedule List View Modern CSS Grid Table */
     .wpts-schedule-table-wrap {
         width: 100%;
         overflow-x: auto;
@@ -416,8 +135,6 @@ $has_active_filters = (!empty($_GET["dfrom"]) || !empty($_GET["dto"]) || !empty(
         background: transparent !important;
         padding: 13px 16px !important;
     }
-
-    /* Field-specific styling inside Schedule List rows */
     #dex_printable_contents .cpapp_no_wrap:not(:first-of-type) .cptslotsb_field_0 {
         font-weight: 700;
         color: var(--wpts-text);
@@ -431,8 +148,6 @@ $has_active_filters = (!empty($_GET["dfrom"]) || !empty($_GET["dto"]) || !empty(
         color: #94a3b8 !important;
         text-decoration: line-through;
     }
-
-    /* Dynamic Badges injected into List View */
     .wpts-slot-pill {
         display: inline-flex;
         align-items: center;
@@ -547,7 +262,7 @@ $has_active_filters = (!empty($_GET["dfrom"]) || !empty($_GET["dto"]) || !empty(
             </div>
 
             <!-- Primary Link to Booking Orders Page -->
-            <a href="<?php echo esc_url($booking_orders_url); ?>" class="wpts-btn wpts-btn-accent">
+            <a href="<?php echo esc_url($booking_orders_url); ?>" class="wpts-btn wpts-btn-accent-solid">
                 📋 <?php esc_html_e('Manage Booking Orders', 'wp-time-slots-booking-form'); ?>
             </a>
 

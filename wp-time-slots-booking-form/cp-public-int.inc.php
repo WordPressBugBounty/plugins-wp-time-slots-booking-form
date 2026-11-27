@@ -66,28 +66,64 @@ if ( $wpts_cookieless_captcha ) {
     <div class="clearer"></div>
  </div><!--addons-payment-fields-->
 <?php if (!is_admin() && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != 'false' && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != false) { ?>
-  <?php _e("Security Code",'wp-time-slots-booking-form'); ?>:<br />
   <?php
+  $wpts_seq = '_' . intval($this->print_counter);
+  $wpts_captcha_input_id = 'hdcaptcha_' . $this->prefix . '_post' . $wpts_seq;
   $wpts_captcha_base_url = $this->get_site_url().'/?'.$this->prefix.'_captcha=captcha&ps=_'.$this->print_counter.'&inAdmin=1&width='.$this->get_option('cv_width', CP_TSLOTSBOOK_DEFAULT_cv_width).'&height='.$this->get_option('cv_height', CP_TSLOTSBOOK_DEFAULT_cv_height).'&letter_count='.$this->get_option('cv_chars', CP_TSLOTSBOOK_DEFAULT_cv_chars).'&min_size='.$this->get_option('cv_min_font_size', CP_TSLOTSBOOK_DEFAULT_cv_min_font_size).'&max_size='.$this->get_option('cv_max_font_size', CP_TSLOTSBOOK_DEFAULT_cv_max_font_size).'&noise='.$this->get_option('cv_noise', CP_TSLOTSBOOK_DEFAULT_cv_noise).'&noiselength='.$this->get_option('cv_noise_length', CP_TSLOTSBOOK_DEFAULT_cv_noise_length).'&bcolor='.$this->get_option('cv_background', CP_TSLOTSBOOK_DEFAULT_cv_background).'&border='.$this->get_option('cv_border', CP_TSLOTSBOOK_DEFAULT_cv_border).'&font='.$this->get_option('cv_font', CP_TSLOTSBOOK_DEFAULT_cv_font);
   ?>
-  <?php if ( $wpts_cookieless_captcha ) : ?>
-  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" id="captchaimg<?php echo '_'.esc_attr($this->print_counter); ?>" class="skip-lazy wpts-captcha-img<?php echo '_'.esc_attr($this->print_counter); ?>" alt="security code" border="0" />
-  <?php else : ?>
-  <img src="<?php echo esc_url( $wpts_captcha_base_url ); ?>" id="captchaimg<?php echo '_'.esc_attr($this->print_counter); ?>" class="skip-lazy wpts-captcha-img<?php echo '_'.esc_attr($this->print_counter); ?>" alt="security code" border="0" />
-  <?php endif; ?>
-  <br /><?php _e("Please enter the security code",'wp-time-slots-booking-form'); ?>:<br />
-  <div class="dfield"><input type="text" size="20" name="hdcaptcha_<?php echo esc_attr($this->prefix); ?>_post" id="hdcaptcha_<?php echo esc_attr($this->prefix); ?>_post<?php echo '_'.esc_attr($this->print_counter); ?>" value="" />
-  <div class="cpefb_error message" id="hdcaptcha_error<?php echo '_'.esc_attr($this->print_counter); ?>" generated="true" style="display:none;position: absolute; left: 0px; top: 25px;"><?php echo esc_attr($this->translate_dynamic($this->get_option('cv_text_enter_valid_captcha', CP_TSLOTSBOOK_DEFAULT_cv_text_enter_valid_captcha))); ?></div>
-  </div><br />
+  <div class="wpts-captcha-box">
+    <label class="wpts-captcha-label" for="<?php echo esc_attr($wpts_captcha_input_id); ?>">
+      <svg class="wpts-captcha-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+      <span><?php esc_html_e("Security Code",'wp-time-slots-booking-form'); ?></span><span class="r">*</span>
+    </label>
+    <div class="wpts-captcha-row">
+      <div class="wpts-captcha-media">
+        <?php if ( $wpts_cookieless_captcha ) : ?>
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" id="captchaimg<?php echo esc_attr($wpts_seq); ?>" class="skip-lazy wpts-captcha-img<?php echo esc_attr($wpts_seq); ?>" data-seq="<?php echo esc_attr($wpts_seq); ?>" onclick="if(window.wptsRefreshCaptchaBtn)window.wptsRefreshCaptchaBtn(this);" alt="<?php esc_attr_e('Security code','wp-time-slots-booking-form'); ?>" border="0" />
+        <?php else : ?>
+        <img src="<?php echo esc_url( $wpts_captcha_base_url ); ?>" id="captchaimg<?php echo esc_attr($wpts_seq); ?>" class="skip-lazy wpts-captcha-img<?php echo esc_attr($wpts_seq); ?>" data-seq="<?php echo esc_attr($wpts_seq); ?>" onclick="if(window.wptsRefreshCaptchaBtn)window.wptsRefreshCaptchaBtn(this);" alt="<?php esc_attr_e('Security code','wp-time-slots-booking-form'); ?>" border="0" />
+        <?php endif; ?>
+        <button type="button" class="wpts-captcha-refresh" data-seq="<?php echo esc_attr($wpts_seq); ?>" title="<?php esc_attr_e('Refresh security code','wp-time-slots-booking-form'); ?>" aria-label="<?php esc_attr_e('Refresh security code','wp-time-slots-booking-form'); ?>" onclick="if(window.wptsRefreshCaptchaBtn)window.wptsRefreshCaptchaBtn(this);return false;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        </button>
+      </div>
+      <div class="dfield wpts-captcha-input-wrap">
+        <input type="text" class="wpts-captcha-input" size="20" name="hdcaptcha_<?php echo esc_attr($this->prefix); ?>_post" id="<?php echo esc_attr($wpts_captcha_input_id); ?>" value="" autocomplete="off" spellcheck="false" placeholder="<?php esc_attr_e('Enter the security code','wp-time-slots-booking-form'); ?>" aria-label="<?php esc_attr_e('Please enter the security code','wp-time-slots-booking-form'); ?>" />
+        <div class="cpefb_error message" id="hdcaptcha_error<?php echo esc_attr($wpts_seq); ?>" generated="true" style="display:none;position: absolute; left: 0px; top: 25px;"><?php echo esc_html($this->translate_dynamic($this->get_option('cv_text_enter_valid_captcha', CP_TSLOTSBOOK_DEFAULT_cv_text_enter_valid_captcha))); ?></div>
+        <span class="uh wpts-captcha-help"><?php esc_html_e("Please enter the security code",'wp-time-slots-booking-form'); ?></span>
+      </div>
+    </div>
+  </div>
 <?php } ?><!-- rcadon -->
 </div>
 </div>
 <div id="cp_subbtn<?php echo '_'.esc_attr($this->print_counter); ?>" class="cp_subbtn"><?php echo esc_html($button_label); ?></div>
 <div style="clear:both;"></div>
 </form>
-<?php if ( ! is_admin() && $wpts_cookieless_captcha && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != 'false' && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != false ) : ?>
+<?php if ( ! is_admin() && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != 'false' && $this->get_option('cv_enable_captcha', CP_TSLOTSBOOK_DEFAULT_cv_enable_captcha) != false ) : ?>
 <!--noptimize--><script type="text/javascript">
 (function(){
+    if (typeof window.wptsRefreshCaptchaBtn !== 'function') {
+        window.wptsRefreshCaptchaBtn = function(el) {
+            var seq = (el && el.getAttribute) ? (el.getAttribute('data-seq') || '') : '';
+            if (seq && typeof window['wptsRefreshCaptcha' + seq] === 'function') {
+                window['wptsRefreshCaptcha' + seq]();
+                return;
+            }
+            var box = (el && el.closest) ? el.closest('.wpts-captcha-box') : null;
+            var imgs = box
+                ? box.querySelectorAll('img')
+                : document.querySelectorAll('img[id="captchaimg' + seq + '"], img.wpts-captcha-img' + seq);
+            for (var k = 0; imgs.length > k; k++) {
+                var src = imgs[k].getAttribute('src') || '';
+                if (src) {
+                    src = src.replace(/([?&])t=\d+/g, '$1').replace(/[?&]$/, '');
+                    imgs[k].setAttribute('src', src + (src.indexOf('?') === -1 ? '?' : '&') + 't=' + Date.now());
+                }
+            }
+        };
+    }
+    <?php if ( $wpts_cookieless_captcha ) : ?>
     var baseSrc = <?php echo wp_json_encode( esc_url_raw( $wpts_captcha_base_url ) ); ?>;
     var seq = "<?php echo '_'.intval( $this->print_counter ); ?>";
     function wptsGenToken() {
@@ -112,6 +148,7 @@ if ( $wpts_cookieless_captcha ) {
         }
     };
     window['wptsRefreshCaptcha' + seq]();
+    <?php endif; ?>
 })();
 </script><!--/noptimize-->
 <?php endif; ?>

@@ -28,7 +28,8 @@
 	align-items: stretch;
 	width: 100%;
 	min-width: 720px;
-	height: 700px;
+	height: clamp(540px, calc(100vh - 220px), 760px);
+	min-height: 540px;
 	background: #ffffff;
 	border: 1px solid #e2e8f0;
 	border-radius: 12px;
@@ -45,8 +46,8 @@
 
 .form-builder .ctrlsColumn {
 	float: none;
-	flex: 0 0 370px;
-	width: 370px;
+	flex: 0 0 410px;
+	width: 410px;
 	display: flex;
 	flex-direction: column;
 	background: #ffffff;
@@ -1173,149 +1174,10 @@ a.helpfbuilder:hover {
 .choicesSet .labelF { width: 62px; float: left; }
 .choicesSet.openhours, .choicesSet.slotsavail { max-height: 400px; overflow: auto; }
 
-/* Time Slots Preview & Settings (.sb_working_dates, .slots, .prices) */
-.slots {
-	border: 1px solid #e2e8f0;
-	border-radius: 8px;
-	width: 100%;
-	padding: 10px;
-	background: #f8fafc;
-}
-
-.slots div {
-	display: inline-block;
-	border: 1px solid #cbd5e1;
-	border-radius: 6px;
-	padding: 5px 9px;
-	background: #ffffff;
-	margin: 4px;
-	font-size: 12px;
-	font-weight: 500;
-	color: #0f172a;
-}
-
-.sb_working_dates {
-	border: 1px solid #e2e8f0;
-	border-radius: 8px;
-	overflow: hidden;
-	background: #ffffff;
-	margin: 8px 0;
-}
-
-.sb_working_dates input[type="checkbox"] { width: auto; }
-
-.sb_working_dates .day_header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 8px 10px;
-	background: #f8fafc;
-	border-bottom: 1px solid #e2e8f0;
-	margin: 0;
-	font-weight: 600;
-	color: #1e293b;
-}
-
-.sb_working_dates .day_header.open {
-	background: #f0fdfa;
-	color: #0f766e;
-	border-bottom-color: #99f6e4;
-}
-
-.sb_working_dates .day_header a {
-	float: right;
-	color: #0d9488;
-	font-weight: 600;
-	text-decoration: none;
-}
-
-.sb_working_dates .day_header a.deleteSpecial {
-	float: left;
-	padding-right: 12px;
-	color: #dc2626;
-}
-
-.sb_working_dates .day_slots {
-	display: none;
-	background: #ffffff;
-	padding: 10px;
-	border-bottom: 1px solid #e2e8f0;
-}
-
-.sb_working_dates .day_slots .s {
-	border: 1px solid #99f6e4;
-	border-radius: 6px;
-	padding: 3px 8px;
-	margin: 3px;
-	background: #f0fdfa;
-	color: #0f766e;
-	font-size: 12px;
-	font-weight: 500;
-	display: inline-block;
-}
-.sb_working_dates .day_slots .wpts-slot-gen-box,.sb_working_dates .day_slots .wpts-slot-gen-title {
-	width:100%;
-}
-.sb_working_dates .day_slots .add_slots_f div {
-	display: inline-block;
-	margin-right: 6px;
-}
-
-.sb_working_dates .day_slots .add_slots_f input[type="text"] {
-	width: 44px !important;
-	height: 30px;
-	padding: 4px 6px !important;
-	text-align: center;
-}
-
-.prices {
-	border: 1px solid #e2e8f0;
-	border-radius: 8px;
-	background: #f8fafc;
-	margin: 10px 0;
-	padding: 10px;
-}
-
-.prices input[type="text"] { width: 100%; }
-
-.slotspricediv {
-	padding: 6px 8px;
-	border-radius: 6px;
-}
-
-.slotspricediv.odd {
-	background: #f1f5f9;
-}
-
-.slotspricediv .addSlotsprice {
-	float: right;
-	color: #0d9488;
-	font-weight: 600;
-	text-decoration: none;
-}
-
-/* Booking Lists & Status Utilities (preserved for other admin views) */
+/* Status Utility Classes (shared across admin views) */
 .cpappsoft { color: #94a3b8; }
 .cpapp_break { clear: both; }
 .cpapp_no_wrap { display: inline-flex; }
-.cptslotsb_field_0, .cptslotsb_field_1,
-.cptslotsb_field_2, .cptslotsb_field_3,
-.cptslotsb_field_4, .cptslotsb_field_5,
-.cptslotsb_field_6, .cptslotsb_field_7,
-.cptslotsb_field_9, .cptslotsb_field_10,
-.cptslotsb_field_11 {
-	float: left;
-	min-width: 85px;
-	padding: 5px 11px 5px 5px;
-	border-bottom: 1px dotted #cbd5e1;
-	margin: 2px 2px 2px 1px;
-}
-.cptslotsb_field_0 { color: #0f766e; font-weight: bold; width: 60px !important; }
-.cptslotsb_field_1 { color: #b45309; font-weight: bold; }
-.cptslotsb_field_3 { width: 220px; overflow: hidden; }
-.cptslotsb_field_4 { text-align: left !important; white-space: pre-wrap; min-width: 250px; }
-.cptslotsb_field_5 { white-space: pre-wrap; min-width: 150px; }
-.cptslotsb_field_header { font-weight: bold; background-color: #f1f5f9; }
 .cptslotsb_cancelled { opacity: 0.6; color: #dc2626; }
 .cptslotsb_cancelled input, .cpappb_cancelled select, div.row-actions { opacity: 1 !important; color: #dc2626 !important; }
 .cptslotsb_attended { color: #059669; }
@@ -1327,6 +1189,7 @@ a.helpfbuilder:hover {
 		flex-direction: column;
 		min-width: 0;
 		height: auto;
+		min-height: 0;
 	}
 	.form-builder .ctrlsColumn {
 		flex: none;
@@ -1377,11 +1240,6 @@ a.helpfbuilder:hover {
 	padding: 18px;
 	min-height: 0;
 	overflow: hidden;
-}
-
-.form-builder .ctrlsColumn {
-	flex: 0 0 410px;
-	width: 410px;
 }
 
 /* Override cp-admin-int.inc.php generic .ui-state-active for builder tabs & calendar */
@@ -1676,6 +1534,8 @@ a.helpfbuilder:hover {
 }
 
 /* Weekly Schedule Day Accordion */
+.sb_working_dates input[type="checkbox"] { width: auto; }
+
 .wpts-fslots-section-body .sb_working_dates {
 	border: 0;
 	margin: 0;
@@ -1791,6 +1651,7 @@ a.helpfbuilder:hover {
 
 /* Day Drawer Body (.day_slots) */
 .wpts-day-item .day_slots {
+	display: none;
 	padding: 10px;
 	background: #f8fafc;
 	border-bottom: 0;
@@ -2191,4 +2052,204 @@ a.helpfbuilder:hover {
 .wpts-nested-input label {
 	display: block;
 	margin-bottom: 4px;
+}
+/* ==========================================================================
+   Phase 2: Advanced Field Drawer, Pro Palette Drawer & Range Slot Generator
+   ========================================================================== */
+
+/* Pro Fields Collapsible Drawer in #tabs-1 */
+.wpts-pro-palette-drawer {
+	margin-top: 12px;
+	border: 1px dashed #cbd5e1;
+	border-radius: 9px;
+	background: #f8fafc;
+	overflow: hidden;
+}
+.wpts-pro-palette-toggle {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	border: 0;
+	background: transparent;
+	color: #475569;
+	font-size: 11.5px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+.wpts-pro-palette-toggle:hover {
+	background: #f1f5f9;
+	color: #0f172a;
+}
+.wpts-pro-count-pill {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 5px;
+	padding: 1px 6px;
+	border-radius: 999px;
+	background: #e2e8f0;
+	color: #475569;
+	font-size: 10px;
+	font-weight: 700;
+}
+.wpts-pro-palette-body {
+	padding: 0 10px 10px;
+}
+.wpts-pro-palette-drawer.wpts-section-collapsed .wpts-pro-palette-body {
+	display: none;
+}
+.wpts-pro-palette-drawer.wpts-section-collapsed .wpts-fslots-chevron {
+	transform: rotate(-90deg);
+}
+
+/* Advanced Field Options Collapsible Drawer in #tabs-2 */
+.wpts-advanced-drawer {
+	border: 1px solid #e2e8f0;
+	border-radius: 9px;
+	background: #ffffff;
+	overflow: hidden;
+}
+.wpts-advanced-drawer-toggle {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 9px 12px;
+	border: 0;
+	background: #f8fafc;
+	border-bottom: 1px solid #e2e8f0;
+	color: #475569;
+	font-size: 11.5px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	cursor: pointer;
+	transition: background-color 0.15s ease, color 0.15s ease;
+}
+.wpts-advanced-drawer-toggle:hover {
+	background: #f1f5f9;
+	color: #0f172a;
+}
+.wpts-advanced-drawer.wpts-section-collapsed .wpts-advanced-drawer-toggle {
+	border-bottom: 0;
+}
+.wpts-advanced-drawer.wpts-section-collapsed .wpts-advanced-drawer-body {
+	display: none;
+}
+.wpts-advanced-drawer.wpts-section-collapsed .wpts-fslots-chevron {
+	transform: rotate(-90deg);
+}
+.wpts-advanced-drawer-body {
+	padding: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+/* Section Header Right Summary Badge (Free / Pricing On / 24h / 12h) */
+.wpts-fslots-header-right {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+.wpts-fslots-section-meta {
+	font-size: 10.5px;
+	font-weight: 700;
+	padding: 2px 7px;
+	border-radius: 999px;
+	background: #f0fdfa;
+	color: #0f766e;
+	border: 1px solid #ccfbf1;
+}
+
+/* Batch Slot Generator Mode Switcher & Live Count */
+.wpts-slot-gen-hdr {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
+	margin-bottom: 7px;
+}
+.wpts-slot-gen-hdr .wpts-slot-gen-title {
+	margin-bottom: 0;
+}
+.wpts-gen-mode-tabs {
+	display: inline-flex;
+	background: #f1f5f9;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	padding: 2px;
+	gap: 2px;
+}
+.wpts-gen-mode-btn {
+	border: 0;
+	background: transparent;
+	color: #64748b;
+	font-size: 10.5px;
+	font-weight: 600;
+	padding: 2px 7px;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.12s ease;
+}
+.wpts-gen-mode-btn.is-active {
+	background: #ffffff;
+	color: #0f766e;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+.wpts-gen-preview-count {
+	opacity: 0.85;
+	font-weight: 500;
+}
+
+/* Soft Teal XS Button ("Apply to working days") */
+.wpts-btn-soft-xs {
+	padding: 4px 8px;
+	border: 1px solid #99f6e4;
+	border-radius: 5px;
+	background: #f0fdfa;
+	color: #0f766e;
+	font-size: 11px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+.wpts-btn-soft-xs:hover,
+.wpts-btn-soft-xs.wpts-btn-copied {
+	background: #0d9488;
+	border-color: #0d9488;
+	color: #ffffff;
+}
+
+/* Pricing Matrix Wrapper */
+.wpts-pricing-matrix-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+/* Label + Quick Action Link (Acceptance Privacy Policy button) */
+.wpts-label-action-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+.wpts-link-action-btn {
+	border: 0;
+	background: transparent;
+	padding: 0;
+	color: #0d9488;
+	font-size: 11px;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: underline;
+}
+.wpts-link-action-btn:hover {
+	color: #0f766e;
 }

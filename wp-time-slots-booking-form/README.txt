@@ -4,11 +4,11 @@ Donate link: https://wptimeslot.dwbooster.com/download
 Tags: booking, booking calendar, appointment booking, time slots, reservation
 Requires at least: 3.0.5
 Tested up to: 7.1
-Stable tag: 1.2.62
+Stable tag: 1.2.63
 License: GPLv2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Booking calendar and appointment booking form to reserve time slots on specific dates, with built-in GDPR privacy controls and free AI replies.
+Booking calendar & appointment form for time slot reservations, featuring a Quick Start Wizard, GDPR privacy controls, and free AI replies.
 
 == Description ==
 
@@ -16,7 +16,16 @@ Booking calendar and appointment booking form to reserve time slots on specific 
 
 Upon booking completion, notification emails are automatically sent to the administrator, ensuring you stay informed of every **calendar booking**. Additionally, a customizable confirmation email can be dispatched to the customer, enhancing their overall booking experience.
 
-= 🔒 NEW: Built-In GDPR & Privacy Controls =
+= 🚀 NEW: 2-Minute Quick Start Wizard =
+
+Get a working booking calendar live in minutes with the built-in **Quick Start Wizard** (**WP Time Slots Booking Form → Guided Setup**):
+
+* **Ready-to-Use Presets**: Start from 1-on-1 Free Appointments, Paid Services, Group Classes / Workshops, or Timed Entry Tickets.
+* **Automatic Schedule Generator**: Toggle your working days, set First/Last slot times, interval, and optional midday break with a live preview of daily time slots.
+* **Smart WordPress Defaults**: New calendars automatically inherit your WordPress date format, start of week, and 12h/24h time format.
+* **Email Test & One-Click Publish**: Verify email delivery inline, auto-create a Confirmation / Thank You page, and publish your booking form onto a new or existing page in one flow.
+
+= 🔒 Built-In GDPR & Privacy Controls =
 
 Manage customer data responsibly with dedicated privacy controls under **General Settings → GDPR & Privacy**:
 
@@ -63,14 +72,15 @@ In the **booking calendar**, you can easily set up:
 
 In addition to these **calendar booking** capabilities, the plugin includes:
 
-* **NEW! GDPR & Privacy Controls**: IP anonymization, cookie-less CAPTCHA, automated data retention, one-click booking anonymization, AI PII redaction, and native WordPress data export/erasure support
+* **NEW! Quick Start Wizard**: Launch a complete booking form in 4 guided steps with presets, automatic schedule generation, email delivery check, and one-click publishing
+* **GDPR & Privacy Controls**: IP anonymization, cookie-less CAPTCHA, automated data retention, one-click booking anonymization, AI PII redaction, and native WordPress data export/erasure support
 * **AI-Assisted Email Replies**: Draft and send personalized replies to customer bookings directly from the dashboard using free, keyless AI
 * **Visual Styles Editor**: Customize 10+ calendar templates with a sleek, modern aesthetic in just a few clicks
 * A modern, mobile-friendly, and fully responsive booking form design
-* A drag-and-drop visual form builder for effortless customization (including optional acceptance/GDPR checkboxes)
+* A streamlined drag-and-drop visual form builder with a Start–End slot generator, one-click "Apply to working days", and optional acceptance/GDPR checkboxes
 * Multi-language support for global accessibility
 * Automated notification and confirmation emails
-* Built-in anti-spam protection (Captcha) to block unwanted submissions
+* Modern built-in anti-spam protection (Captcha) with difficulty presets and one-click code refresh to block unwanted submissions
 * Automated email reports and CSV exports for data analysis
 * A usage and statistics dashboard for booking insights
 * A centralized **Booking Orders** management list with one-click status updates, email resending, anonymization, and direct replies
@@ -107,11 +117,15 @@ To install **WP Time Slots Booking Form**, follow these steps:
 1. Download and unzip the **WP Time Slots Booking Form** plugin.
 2. Upload the entire `wp-time-slots-booking-form/` directory to the `/wp-content/plugins/` directory.
 3. Activate the **WP Time Slots Booking Form** plugin through the **Plugins** menu in WordPress.
-4. Configure your calendar and form settings under **WP Time Slots Booking Form** in your WordPress admin menu.
-5. Publish the booking form on any page or post using the built-in **Publish Wizard**, the Gutenberg block, the Elementor widget, or the shortcode `[CP_TIME_SLOTS_BOOKING id="1"]`.
+4. Open **WP Time Slots Booking Form** in your WordPress admin menu and launch the **Quick Start Wizard** (*Guided Setup*) to configure your schedule, emails, and confirmation page in minutes—or fine-tune manually in the full editor.
+5. Publish the booking form directly from the wizard or anytime using the **Publish Wizard**, the Gutenberg block, the Elementor widget, or the shortcode `[CP_TIME_SLOTS_BOOKING id="1"]`.
 
 
 == Frequently Asked Questions ==
+
+= Q: Is there a fast way to set up my first booking calendar? =
+
+A: Yes! Go to **WP Time Slots Booking Form** and click **Guided Setup** (or the welcome card on fresh installs) to launch the 4-step **Quick Start Wizard**. Choose a booking preset, generate your weekly time slots with a live preview, test your notification emails, and publish the form onto a page in about 2 minutes.
 
 = Q: Does the plugin include GDPR & Privacy controls? =
 
@@ -1006,9 +1020,12 @@ You can also use this area to change the JavaScript loading method if a third-pa
 * Added GDPR & Privacy controls (IP anonymization, cookie-less CAPTCHA, automated data retention, WP export/erasure, and booking anonymization) - fix included
 
 = 1.2.62 =
-* Improved iCal Export add-on settings handling and temporary email attachment cleanup.
+* Improved iCal Export add-on settings handling and temporary email attachment cleanup. Thanks to Mike Reavey for reporting.
+
+= 1.2.63 =
+* Added a 4-step Quick Start Wizard, streamlined form builder & schedule controls, modernized public CAPTCHA styling, and consolidated admin CSS.
 
 == Upgrade Notice ==
 
-= 1.2.62 =
-* Improved iCal Export add-on settings handling and temporary email attachment cleanup.
+= 1.2.63 =
+* Added a 4-step Quick Start Wizard, streamlined form builder & schedule controls, modernized public CAPTCHA styling, and consolidated admin CSS.

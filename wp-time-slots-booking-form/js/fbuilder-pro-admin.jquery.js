@@ -195,7 +195,11 @@
 			}
 
 			if (typeof cat['typeList'] !== 'undefined' && cat.typeList.length > 0) {
-				var $grid = $('<div class="wpts-palette-grid"></div>');
+				var $availGrid = $('<div class="wpts-palette-grid"></div>');
+				var $lockedGrid = $('<div class="wpts-palette-grid"></div>');
+				var availCount = 0;
+				var lockedCount = 0;
+
 				for (var j = 0, k = cat.typeList.length; j < k; j++) {
 					var index = cat.typeList[j];
 					var typeObj = typeList[index];
@@ -211,6 +215,8 @@
 								'<span class="wpts-pro-badge">PRO</span>' +
 							'</div>'
 						);
+						$lockedGrid.append($btn);
+						lockedCount++;
 					} else {
 						$btn = $(
 							'<div class="button itemForm wpts-palette-item" id="' + $.fbuilder.htmlEncode(typeObj.id) + '" data-ftype="' + $.fbuilder.htmlEncode(typeObj.id) + '" title="Drag onto canvas or click to add ' + $.fbuilder.htmlEncode(typeObj.name) + '">' +
@@ -221,14 +227,37 @@
 								'</span>' +
 							'</div>'
 						);
+						$availGrid.append($btn);
+						availCount++;
 					}
-					$grid.append($btn);
 				}
-				$catWrap.append($grid);
+
+				if (availCount > 0) {
+					$catWrap.append($availGrid);
+				}
+				if (lockedCount > 0) {
+					var $proDrawer = $(
+						'<div class="wpts-pro-palette-drawer wpts-section-collapsed">' +
+							'<button type="button" class="wpts-pro-palette-toggle" aria-expanded="false">' +
+								'<span>Pro Fields <span class="wpts-pro-count-pill">' + lockedCount + '</span></span>' +
+								'<span class="wpts-fslots-chevron" aria-hidden="true">&#9662;</span>' +
+							'</button>' +
+							'<div class="wpts-pro-palette-body"></div>' +
+						'</div>'
+					);
+					$proDrawer.find('.wpts-pro-palette-body').append($lockedGrid);
+					$catWrap.append($proDrawer);
+				}
 			}
 			$tabs1.append($catWrap);
 		}
 		$tabs1.append('<div class="clearer"></div>');
+		$tabs1.off('click.wptsProDrawer').on('click.wptsProDrawer', '.wpts-pro-palette-toggle', function (evt) {
+			evt.preventDefault();
+			var $drawer = $(this).closest('.wpts-pro-palette-drawer');
+			var collapsed = $drawer.toggleClass('wpts-section-collapsed').hasClass('wpts-section-collapsed');
+			$(this).attr('aria-expanded', collapsed ? 'false' : 'true');
+		});
 
 		// Create items state
 		var items = [],
@@ -620,12 +649,9 @@
 
 		var theForm = new fform();
 
+		/* Keep active field settings open when clicking empty canvas whitespace */
 		$('#fbuilder').on('click', function (evt) {
 			evt.stopPropagation();
-			selected = -2;
-			$('.fform').removeClass('ui-selected');
-			$('#fieldlist' + opt.identifier + ' .ui-selected').removeClass('ui-selected');
-			$('#tabs').tabs('option', 'active', 0);
 		});
 
 		var targetListSelector = '#fieldlist' + opt.identifier;
@@ -857,6 +883,24 @@
 						theForm = new fform();
 						theForm = $.extend(theForm, structure[1][0]);
 						$.fbuilder.reloadItems();
+
+						// Auto-select the Time Slots calendar field on load so schedule controls are immediately visible
+						if (items.length > 0) {
+							var initialIdx = 0;
+							for (var sIdx = 0; sIdx < items.length; sIdx++) {
+								if (items[sIdx].ftype === 'fslots') {
+									initialIdx = sIdx;
+									break;
+								}
+							}
+							selected = initialIdx;
+							$.fbuilder.editItem(initialIdx);
+							$('#fieldlist' + opt.identifier + ' .ui-selected').removeClass('ui-selected');
+							$('#field' + opt.identifier + '-' + initialIdx).addClass('ui-selected');
+							if ($('#tabs').hasClass('ui-tabs')) {
+								$('#tabs').tabs('option', 'active', 1);
+							}
+						}
 					}
 				}
 
@@ -1067,6 +1111,13 @@
 				evt.stopPropagation();
 				$.fbuilder.showHelpPopover($(this));
 			});
+
+			$('#tabs-2').off('click.wptsAdvDrawer').on('click.wptsAdvDrawer', '.wpts-advanced-drawer-toggle', function (evt) {
+				evt.preventDefault();
+				var $drawer = $(this).closest('.wpts-advanced-drawer');
+				var collapsed = $drawer.toggleClass('wpts-section-collapsed').hasClass('wpts-section-collapsed');
+				$(this).attr('aria-expanded', collapsed ? 'false' : 'true');
+			});
 		},
 
 		showSpecialData: function () {
@@ -1145,22 +1196,37 @@
 		},
 
 		showAllSettings: function () {
-			return '<div class="wpts-settings-panel">' +
-				this.showFieldType() +
-				this.showTitle() +
+			var advancedHtml =
 				this.showShortLabel() +
 				this.showName() +
 				this.showSize() +
 				this.showLayout() +
-				this.showFormat() +
-				this.showRange() +
-				this.showRequired() +
-				this.showSpecialData() +
 				this.showEqualTo() +
 				this.showPredefined() +
-				this.showChoice() +
 				this.showUserhelp() +
-				this.showCsslayout() +
+				this.showCsslayout();
+
+			var advancedDrawer = '';
+			if (advancedHtml && advancedHtml.trim() !== '') {
+				advancedDrawer =
+					'<div class="wpts-advanced-drawer wpts-section-collapsed">' +
+						'<button type="button" class="wpts-advanced-drawer-toggle" aria-expanded="false">' +
+							'<span>Advanced Field Options</span>' +
+							'<span class="wpts-fslots-chevron" aria-hidden="true">&#9662;</span>' +
+						'</button>' +
+						'<div class="wpts-advanced-drawer-body">' + advancedHtml + '</div>' +
+					'</div>';
+			}
+
+			return '<div class="wpts-settings-panel">' +
+				this.showFieldType() +
+				this.showTitle() +
+				this.showRequired() +
+				this.showFormat() +
+				this.showRange() +
+				this.showChoice() +
+				this.showSpecialData() +
+				advancedDrawer +
 			'</div>';
 		},
 

@@ -32,218 +32,7 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_list' );
 ?>
 
 <style type="text/css">
-    :root {
-        --wpts-primary: #0d9488;
-        --wpts-primary-hover: #0f766e;
-        --wpts-primary-light: #f0fdfa;
-        --wpts-primary-border: #99f6e4;
-        --wpts-accent: #0284c7;
-        --wpts-accent-light: #f0f9ff;
-        --wpts-accent-border: #bae6fd;
-        --wpts-success: #10b981;
-        --wpts-success-bg: #ecfdf5;
-        --wpts-warning: #f59e0b;
-        --wpts-warning-bg: #fffbeb;
-        --wpts-danger: #ef4444;
-        --wpts-danger-bg: #fef2f2;
-        --wpts-surface: #ffffff;
-        --wpts-bg: #f8fafc;
-        --wpts-border: #e2e8f0;
-        --wpts-text: #0f172a;
-        --wpts-text-muted: #64748b;
-        --wpts-radius: 14px;
-        --wpts-radius-sm: 8px;
-        --wpts-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
-    }
-
-    .wpts-admin-wrap {
-        max-width: 1360px;
-        margin: 20px auto 40px;
-        padding-right: 20px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
-        color: var(--wpts-text);
-        box-sizing: border-box;
-    }
-    .wpts-admin-wrap *, .wpts-admin-wrap *::before, .wpts-admin-wrap *::after {
-        box-sizing: border-box;
-    }
-
-    /* Toast Notification */
-    .wpts-toast {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: var(--wpts-success-bg);
-        border: 1px solid #a7f3d0;
-        border-left: 4px solid var(--wpts-success);
-        color: #065f46;
-        padding: 14px 20px;
-        border-radius: var(--wpts-radius-sm);
-        margin-bottom: 20px;
-        font-size: 13.5px;
-        font-weight: 500;
-        box-shadow: var(--wpts-shadow);
-        animation: wptsSlideDown 0.25s ease-out;
-    }
-    @keyframes wptsSlideDown {
-        from { opacity: 0; transform: translateY(-8px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Top Hero & Sub-Navigation Hub */
-    .wpts-hero-shell {
-        background: var(--wpts-surface);
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius);
-        box-shadow: var(--wpts-shadow);
-        margin-bottom: 24px;
-        overflow: hidden;
-    }
-    .wpts-hero-top {
-        padding: 20px 26px;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 65%);
-    }
-    .wpts-brand-group {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-    .wpts-brand-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        background: var(--wpts-primary);
-        color: #ffffff;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
-        flex-shrink: 0;
-    }
-    .wpts-title-group h1 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--wpts-text);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 0;
-        line-height: 1.3;
-    }
-    .wpts-badge {
-        display: inline-flex;
-        align-items: center;
-        background: var(--wpts-primary-light);
-        color: var(--wpts-primary-hover);
-        border: 1px solid var(--wpts-primary-border);
-        font-size: 12px;
-        font-weight: 700;
-        padding: 3px 10px;
-        border-radius: 999px;
-    }
-    .wpts-subtitle {
-        margin: 4px 0 0;
-        font-size: 13px;
-        color: var(--wpts-text-muted);
-    }
-
-    /* Quick-Access Sub-Navigation Bar */
-    .wpts-subnav {
-        padding: 10px 26px;
-        background: var(--wpts-bg);
-        border-top: 1px solid var(--wpts-border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-    .wpts-nav-links {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-    .wpts-nav-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 7px 13px;
-        border-radius: var(--wpts-radius-sm);
-        font-size: 12.5px;
-        font-weight: 600;
-        color: var(--wpts-text-muted);
-        text-decoration: none;
-        transition: all 0.15s ease;
-    }
-    .wpts-nav-link:hover {
-        background: #ffffff;
-        color: var(--wpts-primary);
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-    }
-    .wpts-nav-link.active {
-        background: #ffffff;
-        color: var(--wpts-primary);
-        border: 1px solid var(--wpts-border);
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-    }
-
-    /* Buttons */
-    .wpts-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 9px 16px;
-        border-radius: var(--wpts-radius-sm);
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.15s ease;
-        border: 1px solid transparent;
-        line-height: 1.2;
-        white-space: nowrap;
-    }
-    .wpts-btn-primary {
-        background: var(--wpts-primary);
-        color: #ffffff;
-        box-shadow: 0 1px 2px rgba(13, 148, 136, 0.25);
-    }
-    .wpts-btn-primary:hover {
-        background: var(--wpts-primary-hover);
-        color: #ffffff;
-        transform: translateY(-1px);
-    }
-    .wpts-btn-soft {
-        background: var(--wpts-primary-light);
-        color: var(--wpts-primary-hover);
-        border-color: var(--wpts-primary-border);
-    }
-    .wpts-btn-soft:hover {
-        background: var(--wpts-primary);
-        color: #ffffff;
-        border-color: var(--wpts-primary);
-    }
-    .wpts-btn-secondary {
-        background: #ffffff;
-        border-color: var(--wpts-border);
-        color: var(--wpts-text);
-    }
-    .wpts-btn-secondary:hover {
-        background: var(--wpts-bg);
-        border-color: #cbd5e1;
-        color: var(--wpts-primary);
-    }
-
-    /* Section Group Banner */
+/* Page-specific styles: Add-Ons Directory Grid & Commercial Cards */
     .wpts-group-banner {
         display: flex;
         align-items: center;
@@ -266,44 +55,10 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_list' );
         align-items: center;
         gap: 8px;
     }
-
-    /* Category Cards */
-    .wpts-card {
-        background: var(--wpts-surface);
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius);
-        box-shadow: var(--wpts-shadow);
-        margin-bottom: 24px;
-        overflow: hidden;
-    }
-    .wpts-card-header {
-        padding: 15px 24px;
-        border-bottom: 1px solid var(--wpts-border);
-        background: #fcfcfd;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
     .wpts-card-header.is-free {
         background: linear-gradient(90deg, #f0fdfa 0%, #fcfcfd 100%);
         border-bottom-color: var(--wpts-primary-border);
     }
-    .wpts-card-title {
-        margin: 0;
-        font-size: 15px;
-        font-weight: 700;
-        color: var(--wpts-text);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .wpts-card-body {
-        padding: 20px 24px;
-    }
-
-    /* Add-Ons Grid & Items */
     .wpts-addons-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -401,25 +156,6 @@ $nonce = wp_create_nonce( 'cptslotsb_actions_list' );
         border-color: var(--wpts-primary);
         color: #ffffff;
     }
-
-    /* Sticky Bottom Save Bar */
-    .wpts-sticky-footer {
-        position: sticky;
-        bottom: 16px;
-        z-index: 90;
-        background: rgba(255, 255, 255, 0.92);
-        backdrop-filter: blur(8px);
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius);
-        padding: 14px 24px;
-        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-        margin-top: 28px;
-    }
 </style>
 
 <script type="text/javascript">
@@ -479,25 +215,7 @@ function wptsToggleAddonCard(checkbox)
             </div>
         </div>
 
-        <div class="wpts-subnav">
-            <div class="wpts-nav-links">
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter)); ?>" class="wpts-nav-link">
-                    🗓️ <?php esc_html_e('Calendars List', 'wp-time-slots-booking-form'); ?>
-                </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'&cal=0&list=1')); ?>" class="wpts-nav-link">
-                    📋 <?php esc_html_e('All Booking Orders', 'wp-time-slots-booking-form'); ?>
-                </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_settings')); ?>" class="wpts-nav-link">
-                    ⚙️ <?php esc_html_e('General Settings', 'wp-time-slots-booking-form'); ?>
-                </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_addons')); ?>" class="wpts-nav-link active">
-                    🧩 <?php esc_html_e('Add-Ons', 'wp-time-slots-booking-form'); ?>
-                </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_csseditor_page')); ?>" class="wpts-nav-link">
-                    🎨 <?php esc_html_e('Styles Editor', 'wp-time-slots-booking-form'); ?>
-                </a>
-            </div>
-        </div>
+        <?php $this->render_admin_subnav('addons'); ?>
     </div>
 
     <a id="addons-section"></a>

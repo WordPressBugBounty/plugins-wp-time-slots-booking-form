@@ -364,12 +364,39 @@ $.extend(
 					'<option value="420">7 hours</option>' +
 					'<option value="480">8 hours</option>';
 
+				var endHourOpts = '';
+				for (var eh = 0; eh < 24; eh++) {
+					endHourOpts += '<option ' + (eh === 17 ? 'selected' : '') + ' value="' + eh + '">' + (eh < 10 ? '0' : '') + eh + '</option>';
+				}
+
 				var countOpts = '';
 				for (var c = 1; c < 100; c++) {
 					countOpts += '<option ' + (c === 4 ? 'selected' : '') + ' value="' + c + '">' + c + '</option>';
 				}
 
-				var str = '<div class="add_slots_f" i="' + i + '" ind="' + ind + '">' +
+				var isWeeklyDay = (String(i).length === 1);
+
+				var str = '<div class="add_slots_f" i="' + i + '" ind="' + ind + '" data-gen-mode="range">' +
+					'<div class="wpts-slot-gen-box">' +
+						'<div class="wpts-slot-gen-hdr">' +
+							'<span class="wpts-slot-gen-title">Generate multiple slots</span>' +
+							'<div class="wpts-gen-mode-tabs">' +
+								'<button type="button" class="wpts-gen-mode-btn is-active" data-mode="range">End time</button>' +
+								'<button type="button" class="wpts-gen-mode-btn" data-mode="count">Count</button>' +
+							'</div>' +
+						'</div>' +
+						'<div class="wpts-slot-gen-row">' +
+							'<div class="wpts-mini-field"><span class="wpts-mini-lbl">Start</span><div class="wpts-time-pair"><select class="h2">' + hourOpts + '</select><span class="wpts-time-sep">:</span><select class="m2">' + minOptsBatch + '</select></div></div>' +
+							'<div class="wpts-mini-field wpts-gen-end-wrap"><span class="wpts-mini-lbl">End</span><div class="wpts-time-pair"><select class="eh2">' + endHourOpts + '</select><span class="wpts-time-sep">:</span><select class="em2">' + minOptsBatch + '</select></div></div>' +
+							'<div class="wpts-mini-field wpts-mini-cap wpts-gen-count-wrap" style="display:none;"><span class="wpts-mini-lbl">Count</span><select class="n2">' + countOpts + '</select></div>' +
+						'</div>' +
+						'<div class="wpts-slot-gen-row wpts-slot-gen-row-bottom">' +
+							'<div class="wpts-mini-field"><span class="wpts-mini-lbl">Every</span><select class="s2">' + stepOpts + '</select></div>' +
+							'<div class="wpts-mini-field wpts-mini-cap"><span class="wpts-mini-lbl">Capacity</span><input type="text" class="c2" value="1" /></div>' +
+							'<div class="wpts-mini-field wpts-mini-price"><span class="wpts-mini-lbl">Price</span><select class="p2">' + priceOpts + '</select></div>' +
+							'<div class="wpts-mini-action"><button type="button" class="add2 wpts-btn-primary-xs">+ Generate <span class="wpts-gen-preview-count">(19)</span></button></div>' +
+						'</div>' +
+					'</div>' +
 					'<div class="wpts-slot-gen-box">' +
 						'<div class="wpts-slot-gen-title">Add single time slot</div>' +
 						'<div class="wpts-slot-gen-row">' +
@@ -377,19 +404,6 @@ $.extend(
 							'<div class="wpts-mini-field wpts-mini-cap"><span class="wpts-mini-lbl">Capacity</span><input type="text" class="c1" value="1" /></div>' +
 							'<div class="wpts-mini-field wpts-mini-price"><span class="wpts-mini-lbl">Price</span><select class="p1">' + priceOpts + '</select></div>' +
 							'<div class="wpts-mini-action"><button type="button" class="add1 wpts-btn-primary-xs">+ Add</button></div>' +
-						'</div>' +
-					'</div>' +
-					'<div class="wpts-slot-gen-box">' +
-						'<div class="wpts-slot-gen-title">Generate multiple slots</div>' +
-						'<div class="wpts-slot-gen-row">' +
-							'<div class="wpts-mini-field"><span class="wpts-mini-lbl">Start</span><div class="wpts-time-pair"><select class="h2">' + hourOpts + '</select><span class="wpts-time-sep">:</span><select class="m2">' + minOptsBatch + '</select></div></div>' +
-							'<div class="wpts-mini-field"><span class="wpts-mini-lbl">Every</span><select class="s2">' + stepOpts + '</select></div>' +
-							'<div class="wpts-mini-field wpts-mini-cap"><span class="wpts-mini-lbl">Count</span><select class="n2">' + countOpts + '</select></div>' +
-						'</div>' +
-						'<div class="wpts-slot-gen-row wpts-slot-gen-row-bottom">' +
-							'<div class="wpts-mini-field wpts-mini-cap"><span class="wpts-mini-lbl">Capacity</span><input type="text" class="c2" value="1" /></div>' +
-							'<div class="wpts-mini-field wpts-mini-price"><span class="wpts-mini-lbl">Price</span><select class="p2">' + priceOpts + '</select></div>' +
-							'<div class="wpts-mini-action"><button type="button" class="add2 wpts-btn-primary-xs">+ Generate</button></div>' +
 						'</div>' +
 					'</div>' +
 				'</div>' +
@@ -400,6 +414,7 @@ $.extend(
 						'<button type="button" class="deletemarked wpts-btn-danger-xs">Delete marked</button>' +
 					'</div>' +
 					'<div class="wpts-slot-bulk-right">' +
+						(isWeeklyDay ? '<button type="button" class="wpts-apply-all-days wpts-btn-soft-xs" title="Replace all other enabled working days with this day\'s slots">Apply to working days</button>' : '') +
 						'<button type="button" class="copySlots wpts-btn-ghost-xs" title="Copy this day\'s slots">Copy</button>' +
 						'<button type="button" class="pasteSlots wpts-btn-ghost-xs" title="Paste copied slots into this day">Paste</button>' +
 					'</div>' +
@@ -603,6 +618,10 @@ $.extend(
 						for (var sp = 0; sp < me.slots_special.length; sp++) {
 							show_day_slots(me.slots_special[sp].type, me.slots_special[sp].slots);
 						}
+						var $tPill = $('#tabs-2 .wpts-time-mode-pill');
+						if ($tPill.length) {
+							$tPill.text(me.militaryTime === 0 ? '12h AM/PM' : '24h');
+						}
 						return me.militaryTime;
 					}
 				},
@@ -619,6 +638,11 @@ $.extend(
 					f: function (el) {
 						var v = el.is(':checked');
 						$('#divTotalCostFormat')[v ? 'show' : 'hide']();
+						$('#wpts_pricing_matrix_wrap')[v ? 'show' : 'hide']();
+						var $pill = $('#tabs-2 .wpts-pricing-mode-pill');
+						if ($pill.length) {
+							$pill.text(v ? 'Pricing On' : 'Free');
+						}
 						return v;
 					}
 				},
@@ -794,20 +818,71 @@ $.extend(
 				$.fbuilder.reloadItems({ field: me });
 			});
 
-			// Generate multiple slots
+			function computeBatchSlotCount($f) {
+				var mode = $f.attr('data-gen-mode') || 'range';
+				var step = Math.max(1, parseInt($f.find('.s2').val(), 10) || 30);
+				var hStart = parseInt($f.find('.h2').val(), 10) || 0;
+				var mStart = parseInt($f.find('.m2').val(), 10) || 0;
+				var initialMin = hStart * 60 + mStart;
+
+				if (mode === 'count') {
+					var n = parseInt($f.find('.n2').val(), 10) || 1;
+					var validCount = 0;
+					for (var k = 0; k < n; k++) {
+						if (initialMin + step * k >= 24 * 60) break;
+						validCount++;
+					}
+					return validCount;
+				}
+
+				var hEnd = parseInt($f.find('.eh2').val(), 10) || 0;
+				var mEnd = parseInt($f.find('.em2').val(), 10) || 0;
+				var endMin = hEnd * 60 + mEnd;
+				if (endMin < initialMin) return 0;
+				return Math.floor((endMin - initialMin) / step) + 1;
+			}
+
+			function updateBatchPreview($f) {
+				var cnt = computeBatchSlotCount($f);
+				$f.find('.wpts-gen-preview-count').text('(' + cnt + ')');
+			}
+
+			// Toggle between End-time range mode and Count mode
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .wpts-gen-mode-btn', function (e) {
+				e.preventDefault();
+				var mode = $(this).attr('data-mode');
+				var $f = $(this).closest('.add_slots_f');
+				$f.attr('data-gen-mode', mode);
+				$f.find('.wpts-gen-mode-btn').removeClass('is-active');
+				$(this).addClass('is-active');
+				$f.find('.wpts-gen-end-wrap')[mode === 'range' ? 'show' : 'hide']();
+				$f.find('.wpts-gen-count-wrap')[mode === 'count' ? 'show' : 'hide']();
+				updateBatchPreview($f);
+			});
+
+			// Live update slot count preview when range/interval changes
+			$tabs2.on('change.wptsSlots', '.sb_working_dates .add_slots_f .h2, .sb_working_dates .add_slots_f .m2, .sb_working_dates .add_slots_f .eh2, .sb_working_dates .add_slots_f .em2, .sb_working_dates .add_slots_f .s2, .sb_working_dates .add_slots_f .n2', function () {
+				updateBatchPreview($(this).closest('.add_slots_f'));
+			});
+
+			// Generate multiple slots (supports Start->End range and Count modes)
 			$tabs2.on('click.wptsSlots', '.sb_working_dates .add_slots_f .add2', function (e) {
 				e.preventDefault();
 				var $f = $(this).closest('.add_slots_f');
-				var n = parseInt($f.find('.n2').val(), 10) || 1;
-				var step = parseInt($f.find('.s2').val(), 10) || 30;
+				var step = Math.max(1, parseInt($f.find('.s2').val(), 10) || 30);
 				var hStart = parseInt($f.find('.h2').val(), 10) || 0;
 				var mStart = parseInt($f.find('.m2').val(), 10) || 0;
 				var c2 = Math.max(1, parseInt($f.find('.c2').val(), 10) || 1);
 				var p2 = parseInt($f.find('.p2').val(), 10) || 0;
 				var initialMin = hStart * 60 + mStart;
 				var dayofweek = String($f.attr('i'));
+				var countToGen = computeBatchSlotCount($f);
+				if (countToGen <= 0) return;
 
-				for (var i = 0; i < n; i++) {
+				// Safety cap at 200 slots per click
+				countToGen = Math.min(countToGen, 200);
+
+				for (var i = 0; i < countToGen; i++) {
 					var totalMin = initialMin + step * i;
 					if (totalMin >= 24 * 60) break; // Never create invalid times past 23:59
 					var h = Math.floor(totalMin / 60);
@@ -828,6 +903,45 @@ $.extend(
 					show_day_slots(dayofweek, me.slots_special[indSp].slots);
 				}
 				$.fbuilder.reloadItems({ field: me });
+			});
+
+			// One-click Apply to all enabled working days (replaces slots on other checked days)
+			$tabs2.on('click.wptsSlots', '.sb_working_dates .day_slots .wpts-apply-all-days', function (e) {
+				e.preventDefault();
+				var $btn = $(this);
+				var $drawer = $btn.closest('.day_slots');
+				var srcDay = String($drawer.attr('i'));
+				if (srcDay.length !== 1) return;
+
+				var srcSlots = me.slotsavail['d' + srcDay] || [];
+				var appliedCount = 0;
+				for (var d = 0; d < 7; d++) {
+					if (String(d) === srcDay) continue;
+					if (me.working_dates[d]) {
+						me.slotsavail['d' + d] = $.map(srcSlots, function (item) {
+							return $.extend({}, item);
+						});
+						show_day_slots(d, me.slotsavail['d' + d]);
+						appliedCount++;
+					}
+				}
+
+				$.fbuilder.reloadItems({ field: me });
+
+				var origLabel = $btn.attr('data-orig-label') || $btn.text();
+				$btn.attr('data-orig-label', origLabel);
+				$btn.text(appliedCount > 0 ? ('✓ Applied to ' + appliedCount + (appliedCount === 1 ? ' day' : ' days')) : 'No other working days').addClass('wpts-btn-copied');
+				setTimeout(function () {
+					$btn.text(origLabel).removeClass('wpts-btn-copied');
+				}, 1800);
+			});
+
+			// Keep dateFormat aligned when Step 2's Date Format select changes
+			$(document).off('wptsDateFormatChanged.wptsSlotsGlobal').on('wptsDateFormatChanged.wptsSlotsGlobal', function (e, newFmt) {
+				if (newFmt && typeof newFmt === 'string') {
+					me.dateFormat = newFmt;
+					$.fbuilder.reloadItems({ field: me });
+				}
 			});
 
 			// Quick delete single slot chip
@@ -1158,11 +1272,11 @@ $.extend(
 			'</div>' + // .sb_working_dates
 			'</div></div>'; // .wpts-fslots-section
 
-			// SECTION 2: Booking Limits, Quantities & Pricing
-			str += '<div class="wpts-fslots-section">' +
+			// SECTION 2: Booking Limits, Quantities & Pricing (collapsed by default)
+			str += '<div class="wpts-fslots-section wpts-section-collapsed">' +
 				'<div class="wpts-fslots-section-header wpts-fslots-section-toggle">' +
 					'<span class="wpts-fslots-section-title">Booking Limits &amp; Pricing <a class="helpfbuilder" text="Configure how many time slots a customer can select, optional quantity selectors (e.g. Adults / Children), and slot pricing tiers (numbers only, without currency symbols).">?</a></span>' +
-					'<span class="wpts-fslots-chevron" aria-hidden="true">&#9662;</span>' +
+					'<span class="wpts-fslots-header-right"><span class="wpts-fslots-section-meta wpts-pricing-mode-pill">' + (this.showTotalCost ? 'Pricing On' : 'Free') + '</span><span class="wpts-fslots-chevron" aria-hidden="true">&#9662;</span></span>' +
 				'</div>' +
 				'<div class="wpts-fslots-section-body">' +
 					'<div class="prices">' +
@@ -1213,11 +1327,22 @@ $.extend(
 			'</div>';
 
 			str += '<label class="wpts-checkbox-row wpts-checkbox-card">' +
-				'<input type="checkbox" name="sFlatPrice" id="sFlatPrice" ' + (this.flatPrice ? 'checked' : '') + ' />' +
-				'<span>Flat price per slot (quantity does not multiply price)</span>' +
+				'<input type="checkbox" name="sShowTotalCost" id="sShowTotalCost" ' + (this.showTotalCost ? 'checked' : '') + ' />' +
+				'<span>Enable pricing &amp; show total cost below slots</span>' +
 			'</label>';
 
-			str += '<div id="slots_prices">' + this.showSlotsPrices() + '</div>';
+			str += '<div id="divTotalCostFormat" class="wpts-nested-input" style="display:' + (this.showTotalCost ? 'block' : 'none') + '">' +
+				'<label for="sShowTotalCostFormat">Total cost format <a class="helpfbuilder" text="Keep {0} where the calculated price should appear. Example: $ {0} or {0} EUR">?</a></label>' +
+				'<input type="text" class="large" name="sShowTotalCostFormat" id="sShowTotalCostFormat" value="' + $.fbuilder.htmlEncode(this.showTotalCostFormat) + '" />' +
+			'</div>';
+
+			str += '<div id="wpts_pricing_matrix_wrap" class="wpts-pricing-matrix-wrap" style="display:' + (this.showTotalCost ? 'flex' : 'none') + '">' +
+				'<label class="wpts-checkbox-row wpts-checkbox-card">' +
+					'<input type="checkbox" name="sFlatPrice" id="sFlatPrice" ' + (this.flatPrice ? 'checked' : '') + ' />' +
+					'<span>Flat price per slot (quantity does not multiply price)</span>' +
+				'</label>' +
+				'<div id="slots_prices">' + this.showSlotsPrices() + '</div>' +
+			'</div>';
 			str += '</div></div></div>'; // .prices, .wpts-fslots-section-body, .wpts-fslots-section
 
 			// SECTION 3: Calendar Display & Date Rules
@@ -1230,10 +1355,10 @@ $.extend(
 				snumberOfM += '<option value="' + nm + '" ' + (nm === parseInt(this.numberOfMonths, 10) ? 'selected' : '') + '>' + nm + '</option>';
 			}
 
-			str += '<div class="wpts-fslots-section">' +
+			str += '<div class="wpts-fslots-section wpts-section-collapsed">' +
 				'<div class="wpts-fslots-section-header wpts-fslots-section-toggle">' +
 					'<span class="wpts-fslots-section-title">Calendar Display &amp; Date Rules</span>' +
-					'<span class="wpts-fslots-chevron" aria-hidden="true">&#9662;</span>' +
+					'<span class="wpts-fslots-header-right"><span class="wpts-fslots-section-meta wpts-time-mode-pill">' + (parseInt(this.militaryTime, 10) === 0 ? '12h AM/PM' : '24h') + '</span><span class="wpts-fslots-chevron" aria-hidden="true">&#9662;</span></span>' +
 				'</div>' +
 				'<div class="wpts-fslots-section-body">' +
 					'<div class="wpts-setting-row-2">' +
@@ -1270,11 +1395,6 @@ $.extend(
 						'<div id="divdropdownRange" class="wpts-nested-input" style="display:' + (this.showDropdown ? 'block' : 'none') + '">' +
 							'<label for="sDropdownRange">Year range <a class="helpfbuilder" text="Relative to current year (e.g. &quot;-10:+10&quot;) or absolute years (e.g. &quot;2025:2030&quot;).">?</a></label>' +
 							'<input type="text" class="large" name="sDropdownRange" id="sDropdownRange" value="' + $.fbuilder.htmlEncode(this.dropdownRange) + '" />' +
-						'</div>' +
-						'<label class="wpts-checkbox-row"><input type="checkbox" name="sShowTotalCost" id="sShowTotalCost" ' + (this.showTotalCost ? 'checked' : '') + ' /><span>Show total cost below slots</span></label>' +
-						'<div id="divTotalCostFormat" class="wpts-nested-input" style="display:' + (this.showTotalCost ? 'block' : 'none') + '">' +
-							'<label for="sShowTotalCostFormat">Total cost format <a class="helpfbuilder" text="Keep {0} where the calculated price should appear. Example: $ {0} or {0} EUR">?</a></label>' +
-							'<input type="text" class="large" name="sShowTotalCostFormat" id="sShowTotalCostFormat" value="' + $.fbuilder.htmlEncode(this.showTotalCostFormat) + '" />' +
 						'</div>' +
 						'<label class="wpts-checkbox-row"><input type="checkbox" name="sUsedSlotsCheckbox" id="sUsedSlotsCheckbox" ' + (this.usedSlotsCheckbox ? 'checked' : '') + ' /><span>Show already booked (used) slots</span></label>' +
 					'</div>' +

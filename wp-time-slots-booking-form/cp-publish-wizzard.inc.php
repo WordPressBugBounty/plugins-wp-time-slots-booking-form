@@ -15,167 +15,7 @@ if ( empty( $this->item ) && ! empty( $myrows ) ) {
 ?>
 
 <style type="text/css">
-    :root {
-        --wpts-primary: #0d9488;
-        --wpts-primary-hover: #0f766e;
-        --wpts-primary-light: #f0fdfa;
-        --wpts-primary-border: #99f6e4;
-        --wpts-accent: #0284c7;
-        --wpts-accent-light: #f0f9ff;
-        --wpts-accent-border: #bae6fd;
-        --wpts-success: #10b981;
-        --wpts-success-bg: #ecfdf5;
-        --wpts-warning: #f59e0b;
-        --wpts-warning-bg: #fffbeb;
-        --wpts-danger: #ef4444;
-        --wpts-danger-bg: #fef2f2;
-        --wpts-surface: #ffffff;
-        --wpts-bg: #f8fafc;
-        --wpts-border: #e2e8f0;
-        --wpts-text: #0f172a;
-        --wpts-text-muted: #64748b;
-        --wpts-radius: 14px;
-        --wpts-radius-sm: 8px;
-        --wpts-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
-    }
-
-    .wpts-admin-wrap {
-        max-width: 1180px;
-        margin: 20px auto 40px;
-        padding-right: 20px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
-        color: var(--wpts-text);
-        box-sizing: border-box;
-    }
-    .wpts-admin-wrap *, .wpts-admin-wrap *::before, .wpts-admin-wrap *::after {
-        box-sizing: border-box;
-    }
-
-    /* Top Header Card */
-    .wpts-header {
-        background: var(--wpts-surface);
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius);
-        padding: 20px 24px;
-        margin-bottom: 24px;
-        box-shadow: var(--wpts-shadow);
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 65%);
-    }
-    .wpts-header-left {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-    }
-    .wpts-back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 8px 14px;
-        background: #ffffff;
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius-sm);
-        color: var(--wpts-text);
-        font-size: 13px;
-        font-weight: 600;
-        text-decoration: none;
-        cursor: pointer;
-        transition: all 0.15s ease;
-    }
-    .wpts-back-btn:hover {
-        background: var(--wpts-primary-light);
-        border-color: var(--wpts-primary-border);
-        color: var(--wpts-primary-hover);
-    }
-    .wpts-title-group h1 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--wpts-text);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 0;
-        line-height: 1.3;
-    }
-    .wpts-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        background: var(--wpts-primary-light);
-        color: var(--wpts-primary-hover);
-        font-size: 12px;
-        font-weight: 700;
-        padding: 4px 10px;
-        border-radius: 999px;
-        border: 1px solid var(--wpts-primary-border);
-    }
-    .wpts-subtitle {
-        margin: 4px 0 0;
-        font-size: 13px;
-        color: var(--wpts-text-muted);
-    }
-    .wpts-header-actions {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    /* Buttons */
-    .wpts-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 9px 16px;
-        border-radius: var(--wpts-radius-sm);
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.15s ease;
-        border: 1px solid transparent;
-        line-height: 1.2;
-        white-space: nowrap;
-    }
-    .wpts-btn-primary {
-        background: var(--wpts-primary);
-        color: #ffffff;
-        box-shadow: 0 1px 2px rgba(13, 148, 136, 0.25);
-    }
-    .wpts-btn-primary:hover {
-        background: var(--wpts-primary-hover);
-        color: #ffffff;
-        transform: translateY(-1px);
-    }
-    .wpts-btn-soft {
-        background: var(--wpts-primary-light);
-        color: var(--wpts-primary-hover);
-        border-color: var(--wpts-primary-border);
-    }
-    .wpts-btn-soft:hover {
-        background: var(--wpts-primary);
-        color: #ffffff;
-        border-color: var(--wpts-primary);
-    }
-    .wpts-btn-secondary {
-        background: #ffffff;
-        border-color: var(--wpts-border);
-        color: var(--wpts-text);
-    }
-    .wpts-btn-secondary:hover {
-        background: var(--wpts-bg);
-        border-color: #cbd5e1;
-        color: var(--wpts-primary);
-    }
-
-    /* Layout Grid & Cards */
+/* Page-specific styles: Publish Wizard Grid, Embed Methods & Success Card */
     .wpts-wizard-grid {
         display: grid;
         grid-template-columns: 1.3fr 1fr;
@@ -187,84 +27,12 @@ if ( empty( $this->item ) && ! empty( $myrows ) ) {
             grid-template-columns: 1fr;
         }
     }
-    .wpts-card {
-        background: var(--wpts-surface);
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius);
-        box-shadow: var(--wpts-shadow);
-        margin-bottom: 24px;
-        overflow: hidden;
-    }
-    .wpts-card-header {
-        padding: 18px 24px;
-        border-bottom: 1px solid var(--wpts-border);
-        background: #fcfcfd;
-    }
-    .wpts-card-title {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 700;
-        color: var(--wpts-text);
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    .wpts-card-desc {
-        margin: 4px 0 0;
-        font-size: 13px;
-        color: var(--wpts-text-muted);
-    }
-    .wpts-card-body {
-        padding: 24px;
-    }
-
-    /* Form Controls */
-    .wpts-field {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
+    .wpts-wizard-grid .wpts-field {
         margin-bottom: 18px;
     }
-    .wpts-field:last-child {
+    .wpts-wizard-grid .wpts-field:last-child {
         margin-bottom: 0;
     }
-    .wpts-field label {
-        font-size: 13px;
-        font-weight: 600;
-        color: var(--wpts-text);
-    }
-    .wpts-help {
-        font-size: 12px;
-        color: var(--wpts-text-muted);
-        line-height: 1.45;
-    }
-    .wpts-admin-wrap input[type="text"],
-    .wpts-admin-wrap select {
-        width: 100%;
-        max-width: 100%;
-        padding: 9px 12px;
-        font-size: 13.5px;
-        line-height: 1.4;
-        color: var(--wpts-text);
-        background-color: #ffffff;
-        border: 1px solid #cbd5e1;
-        border-radius: var(--wpts-radius-sm);
-        transition: border-color 0.15s ease, box-shadow 0.15s ease;
-        box-shadow: none;
-        min-height: 40px;
-    }
-    .wpts-admin-wrap select {
-        padding-right: 32px !important;
-        background-position: right 8px center;
-    }
-    .wpts-admin-wrap input[type="text"]:focus,
-    .wpts-admin-wrap select:focus {
-        border-color: var(--wpts-primary);
-        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.14);
-        outline: none;
-    }
-
-    /* Shortcode Copy Box */
     .wpts-shortcode-box {
         display: flex;
         align-items: center;
@@ -284,8 +52,6 @@ if ( empty( $this->item ) && ! empty( $myrows ) ) {
         padding: 0;
         word-break: break-all;
     }
-
-    /* Inline Widget Pro Callout */
     .wpts-pro-callout {
         display: none;
         background: linear-gradient(135deg, #f0fdfa 0%, #f8fafc 100%);
@@ -297,8 +63,6 @@ if ( empty( $this->item ) && ! empty( $myrows ) ) {
         font-size: 13px;
         line-height: 1.5;
     }
-
-    /* Embed Method Items */
     .wpts-method-item {
         padding: 14px 16px;
         background: var(--wpts-bg);
@@ -324,8 +88,6 @@ if ( empty( $this->item ) && ! empty( $myrows ) ) {
         color: var(--wpts-text-muted);
         line-height: 1.5;
     }
-
-    /* Published Success Card */
     .wpts-success-card {
         background: var(--wpts-surface);
         border: 1px solid var(--wpts-border);
@@ -400,7 +162,7 @@ if ( empty( $this->item ) && ! empty( $myrows ) ) {
     }
 </style>
 
-<div class="wrap wpts-admin-wrap">
+<div class="wrap wpts-admin-wrap wpts-wrap-sm">
 
     <!-- Top SaaS Header -->
     <div class="wpts-header">
@@ -638,51 +400,9 @@ function ahb_update_shortcode(calId) {
 }
 
 function ahb_copy_shortcode(btn) {
-    var codeEl = document.getElementById('ahb_shortcode_text');
-    if (!codeEl) return;
-
-    var text = (codeEl.textContent || codeEl.innerText).trim();
-
-    function showCopiedFeedback() {
-        var originalText = btn.getAttribute('data-original') || btn.textContent;
-        btn.setAttribute('data-original', originalText);
-        btn.textContent = '✓ Copied!';
-        setTimeout(function() {
-            btn.textContent = originalText;
-        }, 2000);
+    if (typeof window.wptsCopyElementText === 'function') {
+        window.wptsCopyElementText('ahb_shortcode_text', btn, '✓ Copied!');
     }
-
-    if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(showCopiedFeedback).catch(function() {
-            ahb_fallback_copy(text, showCopiedFeedback);
-        });
-    } else {
-        ahb_fallback_copy(text, showCopiedFeedback);
-    }
-}
-
-function ahb_fallback_copy(text, callback) {
-    var tempTextArea = document.createElement('textarea');
-    tempTextArea.value = text;
-    tempTextArea.style.position = 'fixed';
-    tempTextArea.style.top = '0';
-    tempTextArea.style.left = '-9999px';
-    tempTextArea.setAttribute('readonly', '');
-    
-    document.body.appendChild(tempTextArea);
-    tempTextArea.focus();
-    tempTextArea.select();
-
-    try {
-        var successful = document.execCommand('copy');
-        if (successful && typeof callback === 'function') {
-            callback();
-        }
-    } catch (err) {
-        console.error('Could not copy shortcode:', err);
-    }
-
-    document.body.removeChild(tempTextArea);
 }
 
 function mvpublish_displayoption(sel) {

@@ -6,7 +6,7 @@ global $wpdb;
 
 $this->item = intval($_GET["cal"]);
 
-$blocked_by_admin_indicator = 'BLOCKED_BY_ADMIN'; // currently not in use
+$blocked_by_admin_indicator = isset($this->blocked_by_admin_indicator) ? $this->blocked_by_admin_indicator : 'BLOCKED@BY.ADMIN';
 
 $current_user = wp_get_current_user();
 $current_user_access = current_user_can('edit_pages');

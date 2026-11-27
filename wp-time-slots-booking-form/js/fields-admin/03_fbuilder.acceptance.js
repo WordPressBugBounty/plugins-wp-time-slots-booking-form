@@ -32,11 +32,21 @@
 				'</div>';
 			},
 			editItemEvents: function () {
+				var me = this;
 				var evt = [
 					{ s: '#sValue', e: 'input change keyup', l: 'value' },
 					{ s: '#sURL', e: 'input change keyup', l: 'url' },
 					{ s: '#sMessage', e: 'input change keyup', l: 'message' }
 				];
+				$('#wptsUsePrivacyUrlBtn').on('click', function (e) {
+					e.preventDefault();
+					var url = (window.wptsAdminConfig && window.wptsAdminConfig.privacyPolicyUrl) ? window.wptsAdminConfig.privacyPolicyUrl : '';
+					if (url) {
+						$('#sURL').val(url).trigger('change');
+						me.url = url;
+						$.fbuilder.reloadItems({ field: me });
+					}
+				});
 				$.fbuilder.controls['ffields'].prototype.editItemEvents.call(this, evt);
 			},
 			showRequired: function () {
@@ -57,8 +67,12 @@
 				'</div>';
 			},
 			showURL: function () {
+				var hasPrivacyUrl = !!(window.wptsAdminConfig && window.wptsAdminConfig.privacyPolicyUrl);
 				return '<div class="wpts-setting-group">' +
-					'<label for="sURL">URL to Consent / Terms page</label>' +
+					'<div class="wpts-label-action-row">' +
+						'<label for="sURL">URL to Consent / Terms page</label>' +
+						(hasPrivacyUrl ? '<button type="button" id="wptsUsePrivacyUrlBtn" class="wpts-link-action-btn">Use site Privacy Policy</button>' : '') +
+					'</div>' +
 					'<input class="large" type="text" name="sURL" id="sURL" value="' + $.fbuilder.htmlEncode(this.url) + '" placeholder="https://example.com/terms" />' +
 				'</div>';
 			},
@@ -68,14 +82,11 @@
 					'<textarea class="large" name="sMessage" id="sMessage" rows="5" placeholder="Optional popup text shown when clicked...">' + $.fbuilder.htmlEncode(this.message) + '</textarea>' +
 				'</div>';
 			},
-			showCsslayout: function () {
+			showSpecialDataInstance: function () {
 				var notice = '<div class="wpts-gdpr-notice">' +
 					'<strong>GDPR Compliance:</strong> This control records explicit user consent before the booking can be submitted.' +
 				'</div>';
-				return $.fbuilder.controls['ffields'].prototype.showCsslayout.call(this) + notice;
-			},
-			showSpecialDataInstance: function () {
-				return this.showValue() + this.showURL() + this.showMessage();
+				return this.showValue() + this.showURL() + this.showMessage() + notice;
 			}
 		}
 	);

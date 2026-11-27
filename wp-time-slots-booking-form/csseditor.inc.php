@@ -72,237 +72,8 @@ $active_form_name = $this->item ? $this->get_option("form_name", "Calendar") : '
 ?>
 
 <style type="text/css">
-    :root {
-        --wpts-primary: #0d9488;
-        --wpts-primary-hover: #0f766e;
-        --wpts-primary-light: #f0fdfa;
-        --wpts-primary-border: #99f6e4;
-        --wpts-accent: #0284c7;
-        --wpts-accent-light: #f0f9ff;
-        --wpts-accent-border: #bae6fd;
-        --wpts-success: #10b981;
-        --wpts-success-bg: #ecfdf5;
-        --wpts-warning: #f59e0b;
-        --wpts-warning-bg: #fffbeb;
-        --wpts-danger: #ef4444;
-        --wpts-danger-bg: #fef2f2;
-        --wpts-surface: #ffffff;
-        --wpts-bg: #f8fafc;
-        --wpts-border: #e2e8f0;
-        --wpts-text: #0f172a;
-        --wpts-text-muted: #64748b;
-        --wpts-radius: 14px;
-        --wpts-radius-sm: 8px;
-        --wpts-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.05), 0 1px 2px -1px rgba(15, 23, 42, 0.05);
-    }
-
-    .wpts-admin-wrap {
-        max-width: 1360px;
-        margin: 20px auto 40px;
-        padding-right: 20px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
-        color: var(--wpts-text);
-        box-sizing: border-box;
-    }
-    .wpts-admin-wrap *, .wpts-admin-wrap *::before, .wpts-admin-wrap *::after {
-        box-sizing: border-box;
-    }
-
+/* Page-specific styles: Visual Styles Editor Stage & Live Inspector Modal */
     .ahbadminoptions { display: none !important; }
-
-    /* Toast Notification */
-    .wpts-toast {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background: var(--wpts-success-bg);
-        border: 1px solid #a7f3d0;
-        border-left: 4px solid var(--wpts-success);
-        color: #065f46;
-        padding: 14px 20px;
-        border-radius: var(--wpts-radius-sm);
-        margin-bottom: 20px;
-        font-size: 13.5px;
-        font-weight: 500;
-        box-shadow: var(--wpts-shadow);
-        animation: wptsSlideDown 0.25s ease-out;
-    }
-    @keyframes wptsSlideDown {
-        from { opacity: 0; transform: translateY(-8px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Top Hero & Sub-Navigation Hub */
-    .wpts-hero-shell {
-        background: var(--wpts-surface);
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius);
-        box-shadow: var(--wpts-shadow);
-        margin-bottom: 24px;
-        overflow: hidden;
-    }
-    .wpts-hero-top {
-        padding: 20px 26px;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 65%);
-    }
-    .wpts-brand-group {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-    }
-    .wpts-brand-icon {
-        width: 44px;
-        height: 44px;
-        border-radius: 12px;
-        background: var(--wpts-primary);
-        color: #ffffff;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 22px;
-        box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
-        flex-shrink: 0;
-    }
-    .wpts-title-group h1 {
-        margin: 0;
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--wpts-text);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 0;
-        line-height: 1.3;
-    }
-    .wpts-badge {
-        display: inline-flex;
-        align-items: center;
-        background: var(--wpts-primary-light);
-        color: var(--wpts-primary-hover);
-        border: 1px solid var(--wpts-primary-border);
-        font-size: 12px;
-        font-weight: 700;
-        padding: 3px 10px;
-        border-radius: 999px;
-    }
-    .wpts-subtitle {
-        margin: 4px 0 0;
-        font-size: 13px;
-        color: var(--wpts-text-muted);
-    }
-
-    .wpts-subnav {
-        padding: 10px 26px;
-        background: var(--wpts-bg);
-        border-top: 1px solid var(--wpts-border);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 12px;
-    }
-    .wpts-nav-links {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        flex-wrap: wrap;
-    }
-    .wpts-nav-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 7px 13px;
-        border-radius: var(--wpts-radius-sm);
-        font-size: 12.5px;
-        font-weight: 600;
-        color: var(--wpts-text-muted);
-        text-decoration: none;
-        transition: all 0.15s ease;
-    }
-    .wpts-nav-link:hover {
-        background: #ffffff;
-        color: var(--wpts-primary);
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-    }
-    .wpts-nav-link.active {
-        background: #ffffff;
-        color: var(--wpts-primary);
-        border: 1px solid var(--wpts-border);
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-    }
-
-    /* Buttons */
-    .wpts-btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 8px 15px;
-        border-radius: var(--wpts-radius-sm);
-        font-size: 13px;
-        font-weight: 600;
-        cursor: pointer;
-        text-decoration: none;
-        transition: all 0.15s ease;
-        border: 1px solid transparent;
-        line-height: 1.2;
-        white-space: nowrap;
-    }
-    .wpts-btn-primary {
-        background: var(--wpts-primary);
-        color: #ffffff;
-        box-shadow: 0 1px 2px rgba(13, 148, 136, 0.25);
-    }
-    .wpts-btn-primary:hover {
-        background: var(--wpts-primary-hover);
-        color: #ffffff;
-        transform: translateY(-1px);
-    }
-    .wpts-btn-soft {
-        background: var(--wpts-primary-light);
-        color: var(--wpts-primary-hover);
-        border-color: var(--wpts-primary-border);
-    }
-    .wpts-btn-soft:hover {
-        background: var(--wpts-primary);
-        color: #ffffff;
-        border-color: var(--wpts-primary);
-    }
-    .wpts-btn-secondary {
-        background: #ffffff;
-        border-color: var(--wpts-border);
-        color: var(--wpts-text);
-    }
-    .wpts-btn-secondary:hover {
-        background: var(--wpts-bg);
-        border-color: #cbd5e1;
-        color: var(--wpts-primary);
-    }
-    .wpts-btn-danger-soft {
-        background: var(--wpts-danger-bg);
-        color: #dc2626;
-        border-color: #fecaca;
-    }
-    .wpts-btn-danger-soft:hover {
-        background: var(--wpts-danger);
-        color: #ffffff;
-        border-color: var(--wpts-danger);
-    }
-
-    /* Studio Card & Control Bar */
-    .wpts-card {
-        background: var(--wpts-surface);
-        border: 1px solid var(--wpts-border);
-        border-radius: var(--wpts-radius);
-        box-shadow: var(--wpts-shadow);
-        margin-bottom: 24px;
-        overflow: hidden;
-    }
     .wpts-studio-bar {
         padding: 16px 24px;
         background: #fcfcfd;
@@ -325,24 +96,9 @@ $active_form_name = $this->item ? $this->get_option("form_name", "Calendar") : '
         color: var(--wpts-text);
     }
     .wpts-studio-bar select {
-        padding: 7px 32px 7px 12px !important;
-        background-position: right 8px center;
-        font-size: 13.5px;
         font-weight: 600;
-        color: var(--wpts-text);
-        background-color: #ffffff;
-        border: 1px solid #cbd5e1;
-        border-radius: var(--wpts-radius-sm);
-        min-height: 38px;
         min-width: 220px;
     }
-    .wpts-studio-bar select:focus {
-        border-color: var(--wpts-primary);
-        box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.14);
-        outline: none;
-    }
-
-    /* Studio Instruction Banner */
     .wpts-studio-hint {
         padding: 12px 24px;
         background: var(--wpts-accent-light);
@@ -355,8 +111,6 @@ $active_form_name = $this->item ? $this->get_option("form_name", "Calendar") : '
         flex-wrap: wrap;
         gap: 10px;
     }
-
-    /* Interactive Preview Stage */
     #ahbcustomizationarea {
         padding: 32px 28px;
         background-color: #f8fafc;
@@ -373,8 +127,6 @@ $active_form_name = $this->item ? $this->get_option("form_name", "Calendar") : '
         max-width: 960px;
         margin: 0 auto;
     }
-
-    /* Hover Outline for Inspectable Elements */
     .cp_csseditor {
         outline: 2px dashed var(--wpts-accent) !important;
         outline-offset: 2px;
@@ -387,8 +139,6 @@ $active_form_name = $this->item ? $this->get_option("form_name", "Calendar") : '
     .cp_csseditor .cp_csseditor .cp_csseditor {
         outline: 2px solid #f59e0b !important;
     }
-
-    /* Inspector Modal (#myModal & #modalBackground) */
     #modalBackground {
         display: none;
         position: fixed;
@@ -453,7 +203,6 @@ $active_form_name = $this->item ? $this->get_option("form_name", "Calendar") : '
         color: var(--wpts-danger);
         text-decoration: none;
     }
-
     #editor {
         padding: 20px;
     }
@@ -541,8 +290,6 @@ $active_form_name = $this->item ? $this->get_option("form_name", "Calendar") : '
     #editor button.addProperty:hover {
         background: var(--wpts-primary-hover);
     }
-
-    /* Generated CSS Code Block inside Modal */
     .divbuttonCode {
         position: relative;
         border-radius: 8px;
@@ -619,28 +366,7 @@ $active_form_name = $this->item ? $this->get_option("form_name", "Calendar") : '
             </div>
         </div>
 
-        <div class="wpts-subnav">
-            <div class="wpts-nav-links">
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter)); ?>" class="wpts-nav-link">
-                    🗓️ <?php esc_html_e('Calendars List', 'wp-time-slots-booking-form'); ?>
-                </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'&cal=0&list=1')); ?>" class="wpts-nav-link">
-                    📋 <?php esc_html_e('All Booking Orders', 'wp-time-slots-booking-form'); ?>
-                </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'&cal=0&schedule=1&calendarview=1')); ?>" class="wpts-nav-link">
-                    🕒 <?php esc_html_e('Master Schedule', 'wp-time-slots-booking-form'); ?>
-                </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_settings')); ?>" class="wpts-nav-link">
-                    ⚙️ <?php esc_html_e('General Settings', 'wp-time-slots-booking-form'); ?>
-                </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_addons')); ?>" class="wpts-nav-link">
-                    🧩 <?php esc_html_e('Add-Ons', 'wp-time-slots-booking-form'); ?>
-                </a>
-                <a href="<?php echo esc_url(admin_url('admin.php?page='.$this->menu_parameter.'_csseditor_page')); ?>" class="wpts-nav-link active">
-                    🎨 <?php esc_html_e('Styles Editor', 'wp-time-slots-booking-form'); ?>
-                </a>
-            </div>
-        </div>
+        <?php $this->render_admin_subnav('csseditor'); ?>
     </div>
 
     <!-- Main Visual Studio Card -->
@@ -1039,16 +765,10 @@ jQuery(document).on("showHideDepEvent", function(){
         }
        
         $(document).on('click', ".buttonCode", function(event) {
-            const $btn = $(this);
             const preText = $(this).siblings('.preCode').text() || $('.preCode:visible').text();
-            const $temp = $('<textarea>');
-            $('body').append($temp);
-            $temp.val(preText).select();
-            document.execCommand('copy');
-            $temp.remove();
-            const origText = $btn.text();
-            $btn.text('✓ Copied!');
-            setTimeout(function() { $btn.text(origText); }, 1600);
+            if (typeof window.wptsCopyText === 'function') {
+                window.wptsCopyText(preText, this, '✓ Copied!');
+            }
         });
 
         $(document).on('click', ".delProperty", function(event) { 
